@@ -210,21 +210,31 @@ process get_software_versions {
 
 /*
  * STEP 1: Check for paired-end or single-end bam
+ * { samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1
+ *   #boolPairedEnd = `${numPaired} / 1000 | awk '{print int(${1})}'`
+ * Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for # * all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
+ # TODO:  This feature will be available in v20.01.0 https://github.com/nextflow-io/nextflow/issues/69, so I will add #it then, until then help myself with a fill unfortunately
+   echo ` expr \$(( ( { samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1 )  / 1000 ))
+       | awk '{print int(\${1})}'`
+        > isPairedEnd.txt
  */
 
 process checkIfPairedEnd{
+  publishDir "${params.outdir}/checkPairedEnd", mode: 'copy'
 
-    input:
-    file(bam) from bam_files
+  input:
+  file(bam) from bam_files
 
-    output:
+  output:
+  file '*.txt' into isAllPairedEnd
 
-    script:
-    """
-    echo "here"
-    """
+  script:
+  """
+  echo ` { samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1  | awk '{print \$1/1000}' ` > ${bam}.isPairedEnd.txt
+  """
 
 }
+
 // /*
 //  * STEP 2a: Handle paired-end bams 
 //  */ 
