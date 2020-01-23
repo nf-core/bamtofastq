@@ -78,8 +78,10 @@ ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 
 if(params.bam) { //Checks whether a bam file was specified
     Channel
-        .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO
-        .into {bam_files} //else send to first process
+        .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
+        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
+        .into {bam_files_check; bam_files_paired_map_map; bam_files_paired_unmap_unmap; bam_files_paired_unmap_map; bam_files_paired_map_unmap} //else send to first process
+        
 } else{
      exit 1, "Parameter 'params.bam' was not specified!\n"
 }
@@ -208,45 +210,130 @@ process get_software_versions {
 //     """
 // }
 
+// /*
+//  * STEP 1: Check for paired-end or single-end bam
+//  */
+// import groovy.json.JsonSlurper
+
+// process checkIfPairedEnd{
+//   publishDir "${params.outdir}/checkPairedEnd", mode: 'copy'
+
+//   input:
+//   file(bam) from bam_files_check
+
+//   output:
+//   file('*.txt') into isAllPairedEnd
+//   //stdout into isAllPairedEnd
+
+//   script:
+//   """
+//   # Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
+//   # all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
+
+//   # TODO:  Store results in var instead of file:  feature will be available in v20.01.0 https://github.com/nextflow-io/nextflow/issues/69
+
+//   echo `{ samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1  | awk '{print \$1/1000}'`  > ${bam}.isPairedEnd.txt
+//   """
+
+// }
+
+// slurp = new JsonSlurper()
+
+// isAllPairedEnd
+//     .flatMap{ x -> slurp.parseText(x) }
+//     .view()
+
 /*
- * STEP 1: Check for paired-end or single-end bam
- * { samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1
- *   #boolPairedEnd = `${numPaired} / 1000 | awk '{print int(${1})}'`
- * Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for # * all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
- # TODO:  This feature will be available in v20.01.0 https://github.com/nextflow-io/nextflow/issues/69, so I will add #it then, until then help myself with a fill unfortunately
-   echo ` expr \$(( ( { samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1 )  / 1000 ))
-       | awk '{print int(\${1})}'`
-        > isPairedEnd.txt
+ * STEP 2a: Handle paired-end bams 
+ */ 
+// process pairedEnd{
+//     publishDir "${params.outdir}/test", mode: 'copy'
+
+//     // TODO join the right file pairs
+//     input:
+//     file(bam) from bam_files_paired 
+//     val(isAllPairedEnd) from isAllPairedEnd
+    
+//     output:
+//     file '*.txt' into test
+    
+//     when:
+//     isPE == '1'
+//     //triggerCondition(isPE)
+//     //output from checkIfPairedEnd is true
+//     script:
+//     """
+//     isPE = file(isAllPairedEnd).text
+//     isPE.trim()
+//     #pe=\$(cat - )
+//     if ["${isPE}" == "1"];then 
+//       echo "1 test" > ${bam}.test.txt
+//     else
+//       echo "unkwon" > ${bam}.failed.txt
+//     fi
+//     echo "${isPE}" > blub.txt
+//     """
+//  }
+
+/*
+ * Step 2a: Handle paired-end bams
+ *TODO: For now assume only paired end files are given, this needs be changed later
  */
-
-process checkIfPairedEnd{
-  publishDir "${params.outdir}/checkPairedEnd", mode: 'copy'
-
+process pairedEndMapMap{
+  publishDir "${params.outdir}/paired", mode: 'copy'
   input:
-  file(bam) from bam_files
+  set val(name), file(bam) from bam_files_paired_map_map
 
   output:
-  file '*.txt' into isAllPairedEnd
+  file '*.map_map.bam' into map_map_bam 
 
   script:
   """
-  echo ` { samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1  | awk '{print \$1/1000}' ` > ${bam}.isPairedEnd.txt
+  samtools view -u -f1 -F12 $bam > ${name}.map_map.bam
   """
-
 }
 
-// /*
-//  * STEP 2a: Handle paired-end bams 
-//  */ 
-// process pairedEnd{
+process pairedEndUnmapUnmap{
+  publishDir "${params.outdir}/paired", mode: 'copy'
+  input:
+  set val(name), file(bam) from bam_files_paired_unmap_unmap
 
-//     input:
-    
-//     output:
-    
-//     when:
-//      //output from checkIfPairedEnd is true
-//  }
+  output:
+  file '*.unmap_unmap.bam' into unmap_unmap_bam 
+
+  script:
+  """
+  samtools view -u -f12 -F256 $bam > ${name}.unmap_unmap.bam
+  """
+}
+
+process pairedEndUnmapMap{
+  publishDir "${params.outdir}/paired", mode: 'copy'
+  input:
+  set val(name), file(bam) from bam_files_paired_unmap_map
+
+  output:
+  file '*.unmap_map.bam' into unmap_map_bam 
+
+  script:
+  """
+  samtools view -u -f4 -F264 $bam > ${name}.unmap_map.bam
+  """
+}
+
+process pairedEndMapUnmap{
+  publishDir "${params.outdir}/paired", mode: 'copy'
+  input:
+  set val(name), file(bam) from bam_files_paired_map_unmap
+
+  output:
+  file '*.map_unmap.bam' into map_unmap_bam 
+
+  script:
+  """
+  samtools view -u -f8 -F260 $bam > ${name}.map_unmap.bam
+  """
+}
 
 
 // /*
