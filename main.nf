@@ -285,7 +285,7 @@ process pairedEndMapMap{
   set val(name), file(bam) from bam_files_paired_map_map
 
   output:
-  file '*.map_map.bam' into map_map_bam 
+  set val(name), file( '*.map_map.bam') into map_map_bam 
 
   script:
   """
@@ -299,7 +299,7 @@ process pairedEndUnmapUnmap{
   set val(name), file(bam) from bam_files_paired_unmap_unmap
 
   output:
-  file '*.unmap_unmap.bam' into unmap_unmap_bam 
+  set val(name), file('*.unmap_unmap.bam') into unmap_unmap_bam 
 
   script:
   """
@@ -313,7 +313,7 @@ process pairedEndUnmapMap{
   set val(name), file(bam) from bam_files_paired_unmap_map
 
   output:
-  file '*.unmap_map.bam' into unmap_map_bam 
+  set val(name), file( '*.unmap_map.bam') into unmap_map_bam 
 
   script:
   """
@@ -327,7 +327,7 @@ process pairedEndMapUnmap{
   set val(name), file(bam) from bam_files_paired_map_unmap
 
   output:
-  file '*.map_unmap.bam' into map_unmap_bam 
+  set val(name), file( '*.map_unmap.bam') into map_unmap_bam 
 
   script:
   """
@@ -335,6 +335,52 @@ process pairedEndMapUnmap{
   """
 }
 
+unmap_unmap_bam.join(map_unmap_bam, remainder: true)
+               .join(unmap_map_bam, remainder: true)
+               .set{ all_unmapped_bam }
+
+process mergeUnmapped{
+  publishDir "${params.outdir}/paired", mode: 'copy'
+
+  input:
+  set val(name), file(unmap_unmap), file (map_unmap),  from (unmap_map_bam) from all_unmapped_bam
+
+  output:
+  set val(name), file('*.merged_unmapped.bam') into merged_unmapped 
+
+  script:
+  """
+  samtools merge -u ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map
+  """
+}
+
+// process sortMapped{
+
+//   input:
+//   set val(name), file(all_map_bam) from map_map_bam
+
+//   output:
+
+//   script:
+//   """
+//   samtools collate $all_map_bam ${name}.sort
+//   """
+// }
+
+// process sortUnmapped{
+
+//   input:
+//   set val(name), file(all_unmapped) from all_unmapped
+
+//   output:
+
+  
+
+//   script:
+//   """
+//   samtools collate $all_unmapped ${name}.sort
+//   """
+// }
 
 // /*
 //  * STEP 2b: Handle single-end bams 
