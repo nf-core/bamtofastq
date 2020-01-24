@@ -354,33 +354,81 @@ process mergeUnmapped{
   """
 }
 
-// process sortMapped{
+process sortMapped{
 
-//   input:
-//   set val(name), file(all_map_bam) from map_map_bam
+  input:
+  set val(name), file(all_map_bam) from map_map_bam
 
-//   output:
+  output:
+  set val(name), file('*.sort') into sort_unmapped
 
-//   script:
-//   """
-//   samtools collate $all_map_bam ${name}.sort
-//   """
-// }
+  script:
+  """
+  samtools collate $all_map_bam ${name}.sort
+  """
+}
 
-// process sortUnmapped{
+process sortUnmapped{
 
-//   input:
-//   set val(name), file(all_unmapped) from all_unmapped
+  input:
+  set val(name), file(all_unmapped) from all_unmapped
 
-//   output:
+  output:
+  set val(name), file('*.sort') into sort_mapped
 
-  
+  script:
+  """
+  samtools collate $all_unmapped ${name}.sort
+  """
+}
 
-//   script:
-//   """
-//   samtools collate $all_unmapped ${name}.sort
-//   """
-// }
+process mappedToFastq{
+
+  input:
+  set val(name), file(sort_mapped) from sort_mapped
+
+  output:
+  set val(name), file('*.fq') into fastq_mapped
+
+  script:
+  """
+  samtools fastq -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -0 /dev/null -s /dev/null -n $sort_mapped
+  """
+}
+
+process unmappedToFastq{
+
+  input:
+  set val(name), file(sort_unmapped) from sort_unmapped
+
+  output:
+  set val(name), file('*.fq') into fastq_unmapped
+
+  script:
+  """
+  samtools fastq -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -0 /dev/null -s /dev/null -n $sort_unmapped
+  """
+}
+
+fastq_mapped.join(fastq_unmapped, remainder: true).set{ all_fastq }
+
+process joinMappedAndUnmappedFastq{
+  publishDir "${params.outdir}/reads", mode: 'copy'
+
+  input:
+  set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq
+
+  output:
+  file('*.fq') into read_files
+
+  script:
+  """
+  cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq
+  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq
+  """
+}
+
+
 
 // /*
 //  * STEP 2b: Handle single-end bams 
