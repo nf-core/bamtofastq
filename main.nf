@@ -80,7 +80,9 @@ if(params.bam) { //Checks whether a bam file was specified
     Channel
         .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .into {bam_files_check; bam_files_paired_map_map; bam_files_paired_unmap_unmap; bam_files_paired_unmap_map; bam_files_paired_map_unmap} //else send to first process
+        .into {bam_files_check; 
+              bam_files_paired_map_map; bam_files_paired_unmap_unmap; bam_files_paired_unmap_map; bam_files_paired_map_unmap;
+              bam_file_single_end} //else send to first process
         
 } else{
      exit 1, "Parameter 'params.bam' was not specified!\n"
@@ -163,54 +165,6 @@ process get_software_versions {
 }
 
 // /*
-//  * STEP 1 - FastQC
-//  */
-// process fastqc {
-//     tag "$name"
-//     label 'process_medium'
-//     publishDir "${params.outdir}/fastqc", mode: 'copy',
-//         saveAs: { filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename" }
-
-//     input:
-//     set val(name), file(reads) from read_files_fastqc
-
-//     output:
-//     file "*_fastqc.{zip,html}" into fastqc_results
-
-//     script:
-//     """
-//     fastqc --quiet --threads $task.cpus $reads
-//     """
-// }
-
-// /*
-//  * STEP 2 - MultiQC
-//  */
-// process multiqc {
-//     publishDir "${params.outdir}/MultiQC", mode: 'copy'
-
-//     input:
-//     file multiqc_config from ch_multiqc_config
-//     // TODO nf-core: Add in log files from your new processes for MultiQC to find!
-//     file ('fastqc/*') from fastqc_results.collect().ifEmpty([])
-//     file ('software_versions/*') from software_versions_yaml.collect()
-//     file workflow_summary from create_workflow_summary(summary)
-
-//     output:
-//     file "*multiqc_report.html" into multiqc_report
-//     file "*_data"
-//     file "multiqc_plots"
-
-//     script:
-//     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
-//     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
-//     // TODO nf-core: Specify which MultiQC modules to use with -m for a faster run time
-//     """
-//     multiqc -f $rtitle $rfilename --config $multiqc_config .
-//     """
-// }
-
-// /*
 //  * STEP 1: Check for paired-end or single-end bam
 //  */
 // import groovy.json.JsonSlurper
@@ -277,7 +231,7 @@ process get_software_versions {
 
 /*
  * Step 2a: Handle paired-end bams
- *TODO: For now assume only paired end files are given, this needs be changed later
+ * TODO: For now assume only paired end files are given, this needs be changed later
  */
 process pairedEndMapMap{
 
@@ -353,46 +307,84 @@ process mergeUnmapped{
   """
 }
 
-process extractMappedReads{
-
+process sortMapped{
+  label 'process_medium'
   input:
   set val(name), file(all_map_bam) from map_map_bam
 
   output:
-  set val(name), file('*.fq') into fastq_mapped
+  set val(name), file('*.sort') into sort_mapped
 
   script:
   """
-  samtools collate $all_map_bam ${name}.sort |
-  bamToFastq -i - -fq ${name}_R1_mapped.fq -fq2 ${name}_R2_mapped.fq
+  samtools collate $all_map_bam -o ${name}_mapped.sort -@ $task.cpu
+  
   """
 }
 
-process extractUnmappedReads{
-
+process sortUnmapped{
+  label 'process_medium'
   input:
   set val(name), file(all_unmapped) from merged_unmapped
 
   output:
-  set val(name), file('*.fq') into fastq_unmapped
+  set val(name), file('*.sort') into sort_unmapped
 
   script:
   """
-  samtools collate $all_unmapped ${name}.sort |
-  bamToFastq -i - -fq ${name}_R1_unmapped.fq -fq2 ${name}_R2_unmapped.fq
+  samtools collate $all_unmapped -o ${name}_unmapped.sort -@ $task.cpu
   """
 }
 
-fastq_mapped.join(fastq_unmapped, remainder: true).set{ all_fastq }
+process extractMappedReads{
+  label 'process_medium'
+  publishDir "${params.outdir}/reads", mode: 'copy'
+
+  input:
+  set val(name), file(sort) from sort_mapped
+
+  output:
+  set val(name), file('*mapped.fq') into reads_mapped
+  file ('*singletons.fq')
+
+  script:
+  """
+  # bamToFastq -i $sort -fq ${name}_R1_mapped.fq -fq2 ${name}_R2_mapped.fq
+  samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
+  """
+}
+
+process extractUnmappedReads{
+  label 'process_medium'
+  publishDir "${params.outdir}/reads", mode: 'copy'
+
+  input:
+  set val(name), file(sort) from sort_unmapped
+
+  output:
+  set val(name), file('*unmapped.fq') into reads_unmapped
+  file ('*singletons.fq')
+
+  script:
+  """
+  # bamToFastq -i $sort -fq ${name}_R1_unmapped.fq -fq2 ${name}_R2_unmapped.fq
+  samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpu
+  """
+}
+
+//TODO: thouroughly test that the right files are joined!!!
+
+
+reads_mapped.join(reads_unmapped, remainder: true).flatMap().flatMap().toList(). view().set{ all_fastq }
 
 process joinMappedAndUnmappedFastq{
-  publishDir "${params.outdir}/reads", mode: 'copy'
+  publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz
 
   input:
   set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq
 
   output:
-  file('*.fq') into read_files
+  set file('*1.fq'), file('*2.fq') into read_files
 
   script:
   """
@@ -401,19 +393,58 @@ process joinMappedAndUnmappedFastq{
   """
 }
 
+process compressFiles{
+  publishDir "${params.outdir}/reads", mode: 'copy'
+
+  input:
+  set file(read1), file(read2) from read_files
+
+  output:
+  file('*.gz') into fastq_gz
+
+  when:
+  params.gz
+
+  script:
+  """
+  gzip -c $read1 > ${read1}.gz 
+  gzip -c $read2 > ${read2}.gz
+  """
+}
 
 
-// /*
-//  * STEP 2b: Handle single-end bams 
-//  */
-// process singleEnd{
+
+/*
+ * STEP 2b: Handle single-end bams 
+ */
+// process singleEndSort{
+//     publishDir "${params.outdir}/reads", mode: 'copy'
 
 //     input:
+//     set val(name), file(bam) from bam_file_single_end
     
 //     output:
+//     file ('*.sort') into sort_single_end
     
-//     when:
-//      //output from checkIfPairedEnd is false
+//     script:
+//     """
+//     samtools collate $bam_file_single_end -o ${name}.sort  
+//     """
+//  } 
+
+// process singleEndExtract{
+//     publishDir "${params.outdir}/reads", mode: 'copy'
+
+//     input:
+//     set val(name), file(sort) from sort_single_end
+    
+//     output:
+//     file ('*.fq') into reads_single_end
+    
+//     script:
+//     """
+//     bamToFastq -i $sort -fq ${name}.fq 
+//     """
 //  } 
 
 // /*
