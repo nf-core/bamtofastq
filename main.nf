@@ -280,7 +280,7 @@ process get_software_versions {
  *TODO: For now assume only paired end files are given, this needs be changed later
  */
 process pairedEndMapMap{
-  publishDir "${params.outdir}/paired", mode: 'copy'
+
   input:
   set val(name), file(bam) from bam_files_paired_map_map
 
@@ -294,7 +294,7 @@ process pairedEndMapMap{
 }
 
 process pairedEndUnmapUnmap{
-  publishDir "${params.outdir}/paired", mode: 'copy'
+
   input:
   set val(name), file(bam) from bam_files_paired_unmap_unmap
 
@@ -308,7 +308,7 @@ process pairedEndUnmapUnmap{
 }
 
 process pairedEndUnmapMap{
-  publishDir "${params.outdir}/paired", mode: 'copy'
+
   input:
   set val(name), file(bam) from bam_files_paired_unmap_map
 
@@ -322,7 +322,7 @@ process pairedEndUnmapMap{
 }
 
 process pairedEndMapUnmap{
-  publishDir "${params.outdir}/paired", mode: 'copy'
+
   input:
   set val(name), file(bam) from bam_files_paired_map_unmap
 
@@ -340,10 +340,9 @@ unmap_unmap_bam.join(map_unmap_bam, remainder: true)
                .set{ all_unmapped_bam }
 
 process mergeUnmapped{
-  publishDir "${params.outdir}/paired", mode: 'copy'
 
   input:
-  set val(name), file(unmap_unmap), file (map_unmap),  from (unmap_map_bam) from all_unmapped_bam
+  set val(name), file(unmap_unmap), file (map_unmap),  file(unmap_map) from all_unmapped_bam
 
   output:
   set val(name), file('*.merged_unmapped.bam') into merged_unmapped 
@@ -354,59 +353,33 @@ process mergeUnmapped{
   """
 }
 
-process sortMapped{
+process extractMappedReads{
 
   input:
   set val(name), file(all_map_bam) from map_map_bam
-
-  output:
-  set val(name), file('*.sort') into sort_unmapped
-
-  script:
-  """
-  samtools collate $all_map_bam ${name}.sort
-  """
-}
-
-process sortUnmapped{
-
-  input:
-  set val(name), file(all_unmapped) from all_unmapped
-
-  output:
-  set val(name), file('*.sort') into sort_mapped
-
-  script:
-  """
-  samtools collate $all_unmapped ${name}.sort
-  """
-}
-
-process mappedToFastq{
-
-  input:
-  set val(name), file(sort_mapped) from sort_mapped
 
   output:
   set val(name), file('*.fq') into fastq_mapped
 
   script:
   """
-  samtools fastq -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -0 /dev/null -s /dev/null -n $sort_mapped
+  samtools collate $all_map_bam ${name}.sort |
+  bamToFastq -i - -fq ${name}_R1_mapped.fq -fq2 ${name}_R2_mapped.fq
   """
 }
 
-process unmappedToFastq{
+process extractUnmappedReads{
 
   input:
-  set val(name), file(sort_unmapped) from sort_unmapped
+  set val(name), file(all_unmapped) from merged_unmapped
 
   output:
   set val(name), file('*.fq') into fastq_unmapped
 
   script:
   """
-  samtools fastq -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -0 /dev/null -s /dev/null -n $sort_unmapped
+  samtools collate $all_unmapped ${name}.sort |
+  bamToFastq -i - -fq ${name}_R1_unmapped.fq -fq2 ${name}_R2_unmapped.fq
   """
 }
 
