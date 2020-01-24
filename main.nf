@@ -394,6 +394,7 @@ process joinMappedAndUnmappedFastq{
 }
 
 process compressFiles{
+  label 'process_medium'
   publishDir "${params.outdir}/reads", mode: 'copy'
 
   input:
@@ -407,8 +408,11 @@ process compressFiles{
 
   script:
   """
-  gzip -c $read1 > ${read1}.gz 
-  gzip -c $read2 > ${read2}.gz
+  pigz -f -p ${task.cpus} -k $read1
+  pigz -f -p ${task.cpus} -k $read2
+
+  #pigz $read1
+  #pigz $read2
   """
 }
 
