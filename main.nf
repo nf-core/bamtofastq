@@ -80,9 +80,7 @@ if(params.bam) { //Checks whether a bam file was specified
     Channel
         .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .into {bam_files_check; 
-              bam_files_paired_map_map; bam_files_paired_unmap_unmap; bam_files_paired_unmap_map; bam_files_paired_map_unmap;
-              bam_file_single_end} //else send to first process
+        .into { bam_files_check } //else send to first process
         
 } else{
      exit 1, "Parameter 'params.bam' was not specified!\n"
@@ -164,70 +162,34 @@ process get_software_versions {
     """
 }
 
-// /*
-//  * STEP 1: Check for paired-end or single-end bam
-//  */
-// import groovy.json.JsonSlurper
-
-// process checkIfPairedEnd{
-//   publishDir "${params.outdir}/checkPairedEnd", mode: 'copy'
-
-//   input:
-//   file(bam) from bam_files_check
-
-//   output:
-//   file('*.txt') into isAllPairedEnd
-//   //stdout into isAllPairedEnd
-
-//   script:
-//   """
-//   # Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
-//   # all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
-
-//   # TODO:  Store results in var instead of file:  feature will be available in v20.01.0 https://github.com/nextflow-io/nextflow/issues/69
-
-//   echo `{ samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1  | awk '{print \$1/1000}'`  > ${bam}.isPairedEnd.txt
-//   """
-
-// }
-
-// slurp = new JsonSlurper()
-
-// isAllPairedEnd
-//     .flatMap{ x -> slurp.parseText(x) }
-//     .view()
-
 /*
- * STEP 2a: Handle paired-end bams 
- */ 
-// process pairedEnd{
-//     publishDir "${params.outdir}/test", mode: 'copy'
+ * STEP 1: Check for paired-end or single-end bam
+ */
+process checkIfPairedEnd{
+  publishDir "${params.outdir}/checkPairedEnd", pattern: '*.txt', mode: 'copy'
 
-//     // TODO join the right file pairs
-//     input:
-//     file(bam) from bam_files_paired 
-//     val(isAllPairedEnd) from isAllPairedEnd
-    
-//     output:
-//     file '*.txt' into test
-    
-//     when:
-//     isPE == '1'
-//     //triggerCondition(isPE)
-//     //output from checkIfPairedEnd is true
-//     script:
-//     """
-//     isPE = file(isAllPairedEnd).text
-//     isPE.trim()
-//     #pe=\$(cat - )
-//     if ["${isPE}" == "1"];then 
-//       echo "1 test" > ${bam}.test.txt
-//     else
-//       echo "unkwon" > ${bam}.failed.txt
-//     fi
-//     echo "${isPE}" > blub.txt
-//     """
-//  }
+  input:
+  set val(name), file(bam) from bam_files_check
+
+  output:
+  set val(name), file(bam), file('*paired.txt') optional true into bam_files_paired_map_map,      
+                                                                   bam_files_paired_unmap_unmap, bam_files_paired_unmap_map, bam_files_paired_map_unmap
+  set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end //aka is not paired end
+
+  script:
+  """
+  # Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
+  # all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
+  # TODO:  Store results in var instead of file:  feature will be available in v20.01.0 https://github.com/nextflow-io/nextflow/issues/69
+
+  if [ \$({ samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1  | awk '{print \$1/1000}') = "1" ]; then 
+    echo 1 > ${name}.paired.txt
+  else
+    echo 0 > ${name}.single.txt
+  fi
+  """
+
+}
 
 /*
  * Step 2a: Handle paired-end bams
@@ -236,10 +198,13 @@ process get_software_versions {
 process pairedEndMapMap{
 
   input:
-  set val(name), file(bam) from bam_files_paired_map_map
+  set val(name), file(bam), file(txt) from bam_files_paired_map_map
 
   output:
   set val(name), file( '*.map_map.bam') into map_map_bam 
+
+  when:
+  txt.exists()
 
   script:
   """
@@ -250,10 +215,13 @@ process pairedEndMapMap{
 process pairedEndUnmapUnmap{
 
   input:
-  set val(name), file(bam) from bam_files_paired_unmap_unmap
+  set val(name), file(bam), file(txt) from bam_files_paired_unmap_unmap
 
   output:
   set val(name), file('*.unmap_unmap.bam') into unmap_unmap_bam 
+
+  when:
+  txt.exists()
 
   script:
   """
@@ -264,10 +232,13 @@ process pairedEndUnmapUnmap{
 process pairedEndUnmapMap{
 
   input:
-  set val(name), file(bam) from bam_files_paired_unmap_map
+  set val(name), file(bam), file(txt) from bam_files_paired_unmap_map
 
   output:
   set val(name), file( '*.unmap_map.bam') into unmap_map_bam 
+
+  when:
+  txt.exists()
 
   script:
   """
@@ -278,10 +249,13 @@ process pairedEndUnmapMap{
 process pairedEndMapUnmap{
 
   input:
-  set val(name), file(bam) from bam_files_paired_map_unmap
+  set val(name), file(bam), file(txt) from bam_files_paired_map_unmap
 
   output:
   set val(name), file( '*.map_unmap.bam') into map_unmap_bam 
+
+  when:
+  txt.exists()
 
   script:
   """
@@ -309,6 +283,7 @@ process mergeUnmapped{
 
 process sortMapped{
   label 'process_medium'
+
   input:
   set val(name), file(all_map_bam) from map_map_bam
 
@@ -318,7 +293,6 @@ process sortMapped{
   script:
   """
   samtools collate $all_map_bam -o ${name}_mapped.sort -@ $task.cpu
-  
   """
 }
 
@@ -338,50 +312,51 @@ process sortUnmapped{
 
 process extractMappedReads{
   label 'process_medium'
-  publishDir "${params.outdir}/reads", mode: 'copy'
 
   input:
   set val(name), file(sort) from sort_mapped
 
   output:
   set val(name), file('*mapped.fq') into reads_mapped
-  file ('*singletons.fq')
+  file ('*singletons.fq') //This should always be empty, as only mapped_mapped are extracted
 
   script:
   """
   # bamToFastq -i $sort -fq ${name}_R1_mapped.fq -fq2 ${name}_R2_mapped.fq
+  # TODO: Is this really correct. The samtools instructions are very weird
   samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
   """
 }
 
 process extractUnmappedReads{
   label 'process_medium'
-  publishDir "${params.outdir}/reads", mode: 'copy'
 
   input:
   set val(name), file(sort) from sort_unmapped
 
   output:
   set val(name), file('*unmapped.fq') into reads_unmapped
-  file ('*singletons.fq')
+  file ('*singletons.fq') // There may be something in here, if for some reason out of a sequencer there was a singleton present. Other than that each read should have a pair as reads are from (unm_unm, m_unm, unm_m). Actually the singletons file should also be empty as only pairs are extracted as well. 
 
   script:
   """
   # bamToFastq -i $sort -fq ${name}_R1_unmapped.fq -fq2 ${name}_R2_unmapped.fq
+  # Multithreading only work for compression, since we can't compress here, can prob delete this or double check whether samtools or bedtools is faster
+  # TODO: Is this really correct. The samtools instructions are very weird
   samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpu
   """
 }
 
 //TODO: thouroughly test that the right files are joined!!!
 
+reads_mapped.join(reads_unmapped, remainder: true).flatMap().flatMap().toList().set{ all_fastq }
 
-reads_mapped.join(reads_unmapped, remainder: true).flatMap().flatMap().toList(). view().set{ all_fastq }
 
 process joinMappedAndUnmappedFastq{
   publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz
 
   input:
-  set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq
+  set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq.filter{ it.size()>0 }
 
   output:
   set file('*1.fq'), file('*2.fq') into read_files
@@ -410,46 +385,48 @@ process compressFiles{
   """
   pigz -f -p ${task.cpus} -k $read1
   pigz -f -p ${task.cpus} -k $read2
-
-  #pigz $read1
-  #pigz $read2
   """
 }
 
+//TODO: Make sure only uniqely mapped reads are used!!!!! Maybe samtools is taking care of this after all????+
 
 
 /*
  * STEP 2b: Handle single-end bams 
  */
-// process singleEndSort{
-//     publishDir "${params.outdir}/reads", mode: 'copy'
+process singleEndSort{
 
-//     input:
-//     set val(name), file(bam) from bam_file_single_end
+    input:
+    set val(name), file(bam), file(txt) from bam_file_single_end
     
-//     output:
-//     file ('*.sort') into sort_single_end
-    
-//     script:
-//     """
-//     samtools collate $bam_file_single_end -o ${name}.sort  
-//     """
-//  } 
+    output:
+    set val(name), file ('*.sort') into sort_single_end
 
-// process singleEndExtract{
-//     publishDir "${params.outdir}/reads", mode: 'copy'
+    when:
+    txt.exists()
 
-//     input:
-//     set val(name), file(sort) from sort_single_end
+    script:
+    """
+    samtools collate $bam -o ${name}.sort  
+    """
+ } 
+
+process singleEndExtract{
+    publishDir "${params.outdir}/reads", mode: 'copy'
+
+    input:
+    set val(name), file(sort) from sort_single_end
     
-//     output:
-//     file ('*.fq') into reads_single_end
+    output:
+    file ('*.fq.gz') into reads_single_end
     
-//     script:
-//     """
-//     bamToFastq -i $sort -fq ${name}.fq 
-//     """
-//  } 
+    script:
+    """
+    # TODO: Is this really correct. The samtools instructions are very weird
+    # TODO: set params.gz condition, maybe test this next step also with all possible output files  
+    samtools fastq $sort -0 ${name}.singleton.fq.gz  -@ ${task.cpus}
+    """
+ } 
 
 // /*
 //  * STEP 3 - Output Description HTML
