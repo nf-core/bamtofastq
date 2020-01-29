@@ -166,6 +166,7 @@ process get_software_versions {
  * STEP 1: Check for paired-end or single-end bam
  */
 process checkIfPairedEnd{
+  tag "$name"
   publishDir "${params.outdir}/checkPairedEnd", pattern: '*.txt', mode: 'copy'
 
   input:
@@ -196,6 +197,7 @@ process checkIfPairedEnd{
  * TODO: For now assume only paired end files are given, this needs be changed later
  */
 process pairedEndMapMap{
+  tag "$name"
 
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_map_map
@@ -208,11 +210,12 @@ process pairedEndMapMap{
 
   script:
   """
-  samtools view -u -f1 -F12 $bam > ${name}.map_map.bam
+  samtools view -u -f1 -F12 $bam -@ ${task.cpus} > ${name}.map_map.bam
   """
 }
 
 process pairedEndUnmapUnmap{
+  tag "$name"
 
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_unmap
@@ -225,11 +228,12 @@ process pairedEndUnmapUnmap{
 
   script:
   """
-  samtools view -u -f12 -F256 $bam > ${name}.unmap_unmap.bam
+  samtools view -u -f12 -F256 $bam -@ ${task.cpus} > ${name}.unmap_unmap.bam
   """
 }
 
 process pairedEndUnmapMap{
+  tag "$name"
 
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_map
@@ -242,11 +246,12 @@ process pairedEndUnmapMap{
 
   script:
   """
-  samtools view -u -f4 -F264 $bam > ${name}.unmap_map.bam
+  samtools view -u -f4 -F264 $bam -@ ${task.cpus} > ${name}.unmap_map.bam
   """
 }
 
 process pairedEndMapUnmap{
+  tag "$name"
 
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_map_unmap
@@ -259,7 +264,7 @@ process pairedEndMapUnmap{
 
   script:
   """
-  samtools view -u -f8 -F260 $bam > ${name}.map_unmap.bam
+  samtools view -u -f8 -F260 $bam  -@ ${task.cpus} > ${name}.map_unmap.bam
   """
 }
 
@@ -268,6 +273,7 @@ unmap_unmap_bam.join(map_unmap_bam, remainder: true)
                .set{ all_unmapped_bam }
 
 process mergeUnmapped{
+  tag "$name"
 
   input:
   set val(name), file(unmap_unmap), file (map_unmap),  file(unmap_map) from all_unmapped_bam
@@ -277,12 +283,13 @@ process mergeUnmapped{
 
   script:
   """
-  samtools merge -u ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map
+  samtools merge -u ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@ ${task.cpus}
   """
 }
 
 process sortMapped{
   label 'process_medium'
+  tag "$name"
 
   input:
   set val(name), file(all_map_bam) from map_map_bam
@@ -298,6 +305,8 @@ process sortMapped{
 
 process sortUnmapped{
   label 'process_medium'
+  tag "$name"
+ 
   input:
   set val(name), file(all_unmapped) from merged_unmapped
 
@@ -312,13 +321,14 @@ process sortUnmapped{
 
 process extractMappedReads{
   label 'process_medium'
+  tag "$name"
 
   input:
   set val(name), file(sort) from sort_mapped
 
   output:
   set val(name), file('*mapped.fq') into reads_mapped
-  file ('*singletons.fq') //This should always be empty, as only mapped_mapped are extracted
+  //file ('*singletons.fq') //This should always be empty, as only mapped_mapped are extracted
 
   script:
   """
@@ -330,13 +340,14 @@ process extractMappedReads{
 
 process extractUnmappedReads{
   label 'process_medium'
+  tag "$name"
 
   input:
   set val(name), file(sort) from sort_unmapped
 
   output:
   set val(name), file('*unmapped.fq') into reads_unmapped
-  file ('*singletons.fq') // There may be something in here, if for some reason out of a sequencer there was a singleton present. Other than that each read should have a pair as reads are from (unm_unm, m_unm, unm_m). Actually the singletons file should also be empty as only pairs are extracted as well. 
+  //file ('*singletons.fq') // There may be something in here, if for some reason out of a sequencer there was a singleton present. Other than that each read should have a pair as reads are from (unm_unm, m_unm, unm_m). Actually the singletons file should also be empty as only pairs are extracted as well. 
 
   script:
   """
@@ -347,12 +358,18 @@ process extractUnmappedReads{
   """
 }
 
-//TODO: thouroughly test that the right files are joined!!!
+//TODO: thouroughly test that the right files are joined!!! -> so far not working
 
-reads_mapped.join(reads_unmapped, remainder: true).flatMap().flatMap().toList().set{ all_fastq }
+reads_mapped.join(reads_unmapped, remainder: true)
+            .map{
+              row -> tuple(row[0], row[1][0], row[1][1], row[2][0], row[2][1])
+            }
+            .view()
+            .set{ all_fastq }
 
 
 process joinMappedAndUnmappedFastq{
+  tag "$name"
   publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz
 
   input:
@@ -369,7 +386,8 @@ process joinMappedAndUnmappedFastq{
 }
 
 process compressFiles{
-  label 'process_medium'
+  tag "$read1"
+  label 'process_long'
   publishDir "${params.outdir}/reads", mode: 'copy'
 
   input:
@@ -383,8 +401,7 @@ process compressFiles{
 
   script:
   """
-  pigz -f -p ${task.cpus} -k $read1
-  pigz -f -p ${task.cpus} -k $read2
+  pigz -f -p ${task.cpus} -k $read1 $read2
   """
 }
 
@@ -395,6 +412,7 @@ process compressFiles{
  * STEP 2b: Handle single-end bams 
  */
 process singleEndSort{
+    tag "$name"
 
     input:
     set val(name), file(bam), file(txt) from bam_file_single_end
@@ -407,25 +425,32 @@ process singleEndSort{
 
     script:
     """
-    samtools collate $bam -o ${name}.sort  
+    samtools collate $bam -o ${name}.sort -@ ${task.cpus}
     """
  } 
 
 process singleEndExtract{
+    tag "$name"
     publishDir "${params.outdir}/reads", mode: 'copy'
 
     input:
     set val(name), file(sort) from sort_single_end
     
     output:
-    file ('*.fq.gz') into reads_single_end
+    file ('*.singleton.fq*') into reads_single_end
     
     script:
+    if(params.gz){
     """
-    # TODO: Is this really correct. The samtools instructions are very weird
-    # TODO: set params.gz condition, maybe test this next step also with all possible output files  
     samtools fastq $sort -0 ${name}.singleton.fq.gz  -@ ${task.cpus}
     """
+    }else{
+     """
+    # TODO: Is this really correct. The samtools instructions are very weird
+    # TODO: set params.gz condition, maybe test this next step also with all possible output files  
+    samtools fastq $sort -0 ${name}.singleton.fq  -@ ${task.cpus}
+    """
+    }
  } 
 
 // /*
