@@ -13,3 +13,4 @@ dependencies:
   - bioconda::bedtools=2.29.2
   - conda-forge::r-markdown=1.1
   - conda-forge::r-base=3.6.1
+  - conda-forge::pigz=2.3.4
