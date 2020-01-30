@@ -76,7 +76,7 @@ ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
  * Create a channel for input bam files
  */
 
-if(params.bam) { //Checks whether a bam file was specified
+if(params.bam) { //Checks whether bam file(s) was specified
     Channel
         .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
@@ -156,8 +156,8 @@ process get_software_versions {
     """
     echo $workflow.manifest.version > v_pipeline.txt
     echo $workflow.nextflow.version > v_nextflow.txt
-    fastqc --version > v_fastqc.txt
     multiqc --version > v_multiqc.txt
+    samtools --version > v_samtools.txt
     scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }
@@ -358,7 +358,7 @@ process extractUnmappedReads{
   """
 }
 
-//TODO: thouroughly test that the right files are joined!!! -> so far not working
+//TODO: thouroughly test that the right files are joined!!! -> looks good now
 
 reads_mapped.join(reads_unmapped, remainder: true)
             .map{
@@ -453,23 +453,23 @@ process singleEndExtract{
     }
  } 
 
-// /*
-//  * STEP 3 - Output Description HTML
-//  */
-// process output_documentation {
-//     publishDir "${params.outdir}/pipeline_info", mode: 'copy'
+/*
+ * STEP 3 - Output Description HTML
+ */
+process output_documentation {
+    publishDir "${params.outdir}/pipeline_info", mode: 'copy'
 
-//     input:
-//     file output_docs from ch_output_docs
+    input:
+    file output_docs from ch_output_docs
 
-//     output:
-//     file "results_description.html"
+    output:
+    file "results_description.html"
 
-//     script:
-//     """
-//     markdown_to_html.r $output_docs results_description.html
-//     """
-// }
+    script:
+    """
+    markdown_to_html.r $output_docs results_description.html
+    """
+}
 
 /*
  * Completion e-mail notification
