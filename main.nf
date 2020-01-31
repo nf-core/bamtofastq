@@ -178,6 +178,7 @@ process checkIfPairedEnd{
   set val(name), file(bam), file('*paired.txt') optional true into bam_files_paired_map_map,      
                                                                    bam_files_paired_unmap_unmap, bam_files_paired_unmap_map, bam_files_paired_map_unmap
   set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end //aka is not paired end
+  file "*.{flagstat,idxstats,stats}" into ch_bam_flagstat_mqc
 
   script:
   """
@@ -190,13 +191,16 @@ process checkIfPairedEnd{
   else
     echo 0 > ${name}.single.txt
   fi
+
+  samtools flagstat $bam > ${bam}.flagstat
+  samtools idxstats $bam > ${bam}.idxstats
+  samtools stats $bam > ${bam}.stats
   """
 
 }
 
 /*
  * Step 2a: Handle paired-end bams
- * TODO: For now assume only paired end files are given, this needs be changed later
  */
 process pairedEndMapMap{
   tag "$name"
@@ -360,8 +364,6 @@ process extractUnmappedReads{
   """
 }
 
-//TODO: thouroughly test that the right files are joined!!! -> looks good now
-
 reads_mapped.join(reads_unmapped, remainder: true)
             .map{
               row -> tuple(row[0], row[1][0], row[1][1], row[2][0], row[2][1])
@@ -469,6 +471,34 @@ process output_documentation {
     script:
     """
     markdown_to_html.r $output_docs results_description.html
+    """
+}
+
+/*
+ * STEP 4 - MultiQC
+ */
+process multiqc {
+    publishDir "${params.outdir}/MultiQC", mode: 'copy'
+
+    input:
+    file multiqc_config from ch_multiqc_config
+    // TODO nf-core: Add in log files from your new processes for MultiQC to find!
+    //file ('fastqc/*') from ch_fastqc_results.collect().ifEmpty([])
+    file ('software_versions/*') from software_versions_yaml.collect()
+    file workflow_summary from create_workflow_summary(summary)
+    file samstats from ch_bam_flagstat_mqc.collect()
+
+    output:
+    file "*multiqc_report.html" into ch_multiqc_report
+    file "*_data"
+    file "multiqc_plots"
+
+    script:
+    rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
+    rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
+    // TODO nf-core: Specify which MultiQC modules to use with -m for a faster run time
+    """
+    multiqc -f $rtitle $rfilename --config $multiqc_config .
     """
 }
 
