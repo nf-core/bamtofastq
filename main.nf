@@ -80,7 +80,7 @@ if(params.bam) { //Checks whether bam file(s) was specified
     Channel
         .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .into { bam_files_check } //else send to first process
+        .set { bam_files_check } //else send to first process
         
 } else{
      exit 1, "Parameter 'params.bam' was not specified!\n"
@@ -150,6 +150,7 @@ process get_software_versions {
     output:
     file 'software_versions_mqc.yaml' into software_versions_yaml
     file "software_versions.csv"
+    file "*.txt"
 
     script:
     // TODO nf-core: Get all tools to print their version number here
@@ -158,6 +159,7 @@ process get_software_versions {
     echo $workflow.nextflow.version > v_nextflow.txt
     multiqc --version > v_multiqc.txt
     samtools --version > v_samtools.txt
+    echo \$(pigz --version 2>&1) > v_pigz.txt
     scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }
@@ -364,7 +366,6 @@ reads_mapped.join(reads_unmapped, remainder: true)
             .map{
               row -> tuple(row[0], row[1][0], row[1][1], row[2][0], row[2][1])
             }
-            .view()
             .set{ all_fastq }
 
 
