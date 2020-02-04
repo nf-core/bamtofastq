@@ -296,7 +296,7 @@ process mergeUnmapped{
 }
 
 process sortMapped{
-  label 'process_medium'
+  //label 'process_medium'
   tag "$name"
 
   input:
@@ -307,12 +307,12 @@ process sortMapped{
 
   script:
   """
-  samtools collate $all_map_bam -o ${name}_mapped.sort -@ $task.cpu
+  samtools collate $all_map_bam -o ${name}_mapped.sort # -@ $task.cpu
   """
 }
 
 process sortUnmapped{
-  label 'process_medium'
+  //label 'process_medium'
   tag "$name"
  
   input:
@@ -323,19 +323,21 @@ process sortUnmapped{
 
   script:
   """
-  samtools collate $all_unmapped -o ${name}_unmapped.sort -@ $task.cpu
+  samtools collate $all_unmapped -o ${name}_unmapped.sort # -@ $task.cpu
   """
 }
 
 process extractMappedReads{
-  label 'process_medium'
+  //label 'process_low'
   tag "$name"
 
   input:
   set val(name), file(sort) from sort_mapped
 
   output:
-  set val(name), file('*mapped.fq') into reads_mapped
+  set val(name), file('*_mapped.fq') into reads_mapped
+  set val(name), file('*_Bedmapped.fq') into bed_reads_mapped
+
   //file ('*singletons.fq') //This should always be empty, as only mapped_mapped are extracted
 
   script:
@@ -343,18 +345,22 @@ process extractMappedReads{
   # bamToFastq -i $sort -fq ${name}_R1_mapped.fq -fq2 ${name}_R2_mapped.fq
   # TODO: Is this really correct. The samtools instructions are very weird
   samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
+
+  bamToFastq -i $sort -fq ${name}._R1_Bedmapped.fq -fq2 ${name}_R2_Bedmapped.fq 
   """
 }
 
 process extractUnmappedReads{
-  label 'process_medium'
+  //label 'process_medium'
   tag "$name"
 
   input:
   set val(name), file(sort) from sort_unmapped
 
   output:
-  set val(name), file('*unmapped.fq') into reads_unmapped
+  set val(name), file('*_unmapped.fq') into reads_unmapped
+  set val(name), file('*Bedunmapped.fq') into bed_reads_unmapped
+
   //file ('*singletons.fq') // There may be something in here, if for some reason out of a sequencer there was a singleton present. Other than that each read should have a pair as reads are from (unm_unm, m_unm, unm_m). Actually the singletons file should also be empty as only pairs are extracted as well. 
 
   script:
@@ -363,6 +369,9 @@ process extractUnmappedReads{
   # Multithreading only work for compression, since we can't compress here, can prob delete this or double check whether samtools or bedtools is faster
   # TODO: Is this really correct. The samtools instructions are very weird
   samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpu
+
+  bamToFastq -i $sort -fq ${name}._R1_Bedunmapped.fq -fq2 ${name}_R2_Bedunmapped.fq 
+
   """
 }
 
@@ -372,6 +381,12 @@ reads_mapped.join(reads_unmapped, remainder: true)
             }
             .set{ all_fastq }
 
+bed_reads_mapped.join(bed_reads_unmapped, remainder: true)
+            .map{
+              row -> tuple(row[0], row[1][0], row[1][1], row[2][0], row[2][1])
+            }
+            .set{ bed_all_fastq }
+
 
 process joinMappedAndUnmappedFastq{
   tag "$name"
@@ -379,6 +394,8 @@ process joinMappedAndUnmappedFastq{
 
   input:
   set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq.filter{ it.size()>0 }
+
+  set val(name), file(bed_mapped_fq1), file(bed_mapped_fq2), file(bed_unmapped_fq1), file(bed_unmapped_fq2) from bed_all_fastq.filter{ it.size()>0 }
 
   output:
   set file('*1.fq'), file('*2.fq') into read_files
@@ -391,12 +408,18 @@ process joinMappedAndUnmappedFastq{
 
   fastqc -q -t $task.cpus ${name}.1.fq
   fastqc -q -t $task.cpus ${name}.2.fq 
+
+  cat $bed_mapped_fq1 $bed_unmapped_fq1 > ${name}.bed_1.fq
+  cat $bed_mapped_fq2 $bed_unmapped_fq2 > ${name}.bed_2.fq
+
+  fastqc -q -t $task.cpus ${name}.bed_1.fq
+  fastqc -q -t $task.cpus ${name}.bed_2.fq 
   """
 }
 
 process compressFiles{
   tag "$read1"
-  label 'process_long'
+  //label 'process_long'
   publishDir "${params.outdir}/reads", mode: 'copy'
 
   input:
@@ -460,8 +483,10 @@ process singleEndExtract{
       # TODO: Is this really correct. The samtools instructions are very weird
       # TODO: set params.gz condition, maybe test this next step also with all possible output files  
       samtools fastq $sort -0 ${name}.singleton.fq  -@ ${task.cpus}
+      bamToFastq -i $sort -fq ${name}.Bedsingleton.fq 
 
       fastqc -q -t $task.cpus ${name}.singleton.fq
+      fastqc -q -t $task.cpus ${name}.Bedsingleton.fq 
       """
     }
  } 
