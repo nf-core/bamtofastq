@@ -179,6 +179,7 @@ process checkIfPairedEnd{
                                                                    bam_files_paired_unmap_unmap, bam_files_paired_unmap_map, bam_files_paired_map_unmap
   set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end //aka is not paired end
   file "*.{flagstat,idxstats,stats}" into ch_bam_flagstat_mqc
+  file "*.{zip,html}" into ch_fastqc_reports_mqc_bam
 
   script:
   """
@@ -195,6 +196,7 @@ process checkIfPairedEnd{
   samtools flagstat $bam > ${bam}.flagstat
   samtools idxstats $bam > ${bam}.idxstats
   samtools stats $bam > ${bam}.stats
+  fastqc -q -t $task.cpus $bam
   """
 
 }
@@ -380,11 +382,15 @@ process joinMappedAndUnmappedFastq{
 
   output:
   set file('*1.fq'), file('*2.fq') into read_files
+  file "*.{zip,html}" into ch_fastqc_reports_mqc
 
   script:
   """
   cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq
   cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq
+
+  fastqc -q -t $task.cpus ${name}.1.fq
+  fastqc -q -t $task.cpus ${name}.2.fq 
   """
 }
 
@@ -440,19 +446,23 @@ process singleEndExtract{
     set val(name), file(sort) from sort_single_end
     
     output:
-    file ('*.singleton.fq*') into reads_single_end
+    file ('*.singleton.fq*')
+    file "*.{zip,html}" into ch_se_fastqc_reports_mqc
     
     script:
     if(params.gz){
-    """
-    samtools fastq $sort -0 ${name}.singleton.fq.gz  -@ ${task.cpus}
-    """
+      """
+      samtools fastq $sort -0 ${name}.singleton.fq.gz  -@ ${task.cpus}
+      fastqc -q -t $task.cpus ${name}.singleton.fq.gz
+      """
     }else{
-     """
-    # TODO: Is this really correct. The samtools instructions are very weird
-    # TODO: set params.gz condition, maybe test this next step also with all possible output files  
-    samtools fastq $sort -0 ${name}.singleton.fq  -@ ${task.cpus}
-    """
+      """
+      # TODO: Is this really correct. The samtools instructions are very weird
+      # TODO: set params.gz condition, maybe test this next step also with all possible output files  
+      samtools fastq $sort -0 ${name}.singleton.fq  -@ ${task.cpus}
+
+      fastqc -q -t $task.cpus ${name}.singleton.fq
+      """
     }
  } 
 
@@ -483,7 +493,10 @@ process multiqc {
     input:
     file multiqc_config from ch_multiqc_config
     // TODO nf-core: Add in log files from your new processes for MultiQC to find!
-    //file ('fastqc/*') from ch_fastqc_results.collect().ifEmpty([])
+    file fastqc from ch_se_fastqc_reports_mqc.collect().ifEmpty([])
+    file fastqc1 from ch_fastqc_reports_mqc.collect().ifEmpty([])
+    file fastqc2 from ch_fastqc_reports_mqc_bam.collect().ifEmpty([])
+
     file ('software_versions/*') from software_versions_yaml.collect()
     file workflow_summary from create_workflow_summary(summary)
     file samstats from ch_bam_flagstat_mqc.collect()
@@ -496,9 +509,9 @@ process multiqc {
     script:
     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
-    // TODO nf-core: Specify which MultiQC modules to use with -m for a faster run time
     """
-    multiqc -f $rtitle $rfilename --config $multiqc_config .
+    multiqc . -f $rtitle $rfilename --config $multiqc_config  \\
+      -m samtools -m fastqc
     """
 }
 
