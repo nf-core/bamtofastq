@@ -170,7 +170,7 @@ process get_software_versions {
 process checkIfPairedEnd{
   tag "$name"
   publishDir "${params.outdir}/checkPairedEnd", pattern: '*.txt', mode: 'copy'
-
+  label 'process_medium'
   input:
   set val(name), file(bam) from bam_files_check
 
@@ -206,7 +206,7 @@ process checkIfPairedEnd{
  */
 process pairedEndMapMap{
   tag "$name"
-
+  label 'process_medium'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_map_map
 
@@ -224,7 +224,7 @@ process pairedEndMapMap{
 
 process pairedEndUnmapUnmap{
   tag "$name"
-
+  label 'process_medium'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_unmap
 
@@ -242,7 +242,7 @@ process pairedEndUnmapUnmap{
 
 process pairedEndUnmapMap{
   tag "$name"
-
+  label 'process_medium'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_map
 
@@ -260,7 +260,7 @@ process pairedEndUnmapMap{
 
 process pairedEndMapUnmap{
   tag "$name"
-
+  label 'process_medium'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_map_unmap
 
@@ -282,7 +282,7 @@ unmap_unmap_bam.join(map_unmap_bam, remainder: true)
 
 process mergeUnmapped{
   tag "$name"
-
+  label 'process_medium'
   input:
   set val(name), file(unmap_unmap), file (map_unmap),  file(unmap_map) from all_unmapped_bam
 
@@ -291,19 +291,19 @@ process mergeUnmapped{
 
   script:
   """
-  samtools merge -u ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@ ${task.cpus}
+  samtools merge -u ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@ $task.cpus
   """
 }
 
 process sortMapped{
-  //label 'process_medium'
+  label 'process_medium'
   tag "$name"
 
   input:
   set val(name), file(all_map_bam) from map_map_bam
 
   output:
-  set val(name), file('*.sort') into sort_mapped
+  set val(name), file('*.sort') into sort_mapped, sort_mapped_bed
 
   script:
   """
@@ -312,14 +312,14 @@ process sortMapped{
 }
 
 process sortUnmapped{
-  //label 'process_medium'
+  label 'process_medium'
   tag "$name"
  
   input:
   set val(name), file(all_unmapped) from merged_unmapped
 
   output:
-  set val(name), file('*.sort') into sort_unmapped
+  set val(name), file('*.sort') into sort_unmapped, sort_unmapped_bed
 
   script:
   """
@@ -328,7 +328,7 @@ process sortUnmapped{
 }
 
 process extractMappedReads{
-  //label 'process_low'
+  label 'process_medium'
   tag "$name"
 
   input:
@@ -336,22 +336,18 @@ process extractMappedReads{
 
   output:
   set val(name), file('*_mapped.fq') into reads_mapped
-  set val(name), file('*_Bedmapped.fq') into bed_reads_mapped
 
   //file ('*singletons.fq') //This should always be empty, as only mapped_mapped are extracted
 
   script:
   """
-  # bamToFastq -i $sort -fq ${name}_R1_mapped.fq -fq2 ${name}_R2_mapped.fq
   # TODO: Is this really correct. The samtools instructions are very weird
   samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
-
-  bamToFastq -i $sort -fq ${name}._R1_Bedmapped.fq -fq2 ${name}_R2_Bedmapped.fq 
   """
 }
 
 process extractUnmappedReads{
-  //label 'process_medium'
+  label 'process_medium'
   tag "$name"
 
   input:
@@ -359,19 +355,15 @@ process extractUnmappedReads{
 
   output:
   set val(name), file('*_unmapped.fq') into reads_unmapped
-  set val(name), file('*Bedunmapped.fq') into bed_reads_unmapped
 
   //file ('*singletons.fq') // There may be something in here, if for some reason out of a sequencer there was a singleton present. Other than that each read should have a pair as reads are from (unm_unm, m_unm, unm_m). Actually the singletons file should also be empty as only pairs are extracted as well. 
 
   script:
   """
-  # bamToFastq -i $sort -fq ${name}_R1_unmapped.fq -fq2 ${name}_R2_unmapped.fq
   # Multithreading only work for compression, since we can't compress here, can prob delete this or double check whether samtools or bedtools is faster
   # TODO: Is this really correct. The samtools instructions are very weird
+  # might have to add -F : https://github.com/samtools/samtools/releases/tag/1.10 The -F option now defaults to 0x900 (SECONDARY,SUPPLEMENTARY). Previously secondary and supplementary records were filtered internally in a way that could not be turned off. (#1042; #939 reported by @finswimmer)
   samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpu
-
-  bamToFastq -i $sort -fq ${name}._R1_Bedunmapped.fq -fq2 ${name}_R2_Bedunmapped.fq 
-
   """
 }
 
@@ -380,6 +372,42 @@ reads_mapped.join(reads_unmapped, remainder: true)
               row -> tuple(row[0], row[1][0], row[1][1], row[2][0], row[2][1])
             }
             .set{ all_fastq }
+
+
+process extractMappedReadsBed{
+  tag "$name"
+
+  input:
+  set val(name), file(sort) from sort_mapped_bed
+
+  output:
+  set val(name), file('*_Bedmapped.fq') into bed_reads_mapped
+
+  //file ('*singletons.fq') //This should always be empty, as only mapped_mapped are extracted
+
+  script:
+  """
+  bamToFastq -i $sort -fq ${name}._R1_Bedmapped.fq -fq2 ${name}_R2_Bedmapped.fq 
+  """
+}
+
+process extractUnmappedReadsBed{
+  tag "$name"
+
+  input:
+  set val(name), file(sort) from sort_unmapped_bed
+
+  output:
+  set val(name), file('*Bedunmapped.fq') into bed_reads_unmapped
+
+  //file ('*singletons.fq') // There may be something in here, if for some reason out of a sequencer there was a singleton present. Other than that each read should have a pair as reads are from (unm_unm, m_unm, unm_m). Actually the singletons file should also be empty as only pairs are extracted as well. 
+
+  script:
+  """
+  bamToFastq -i $sort -fq ${name}._R1_Bedunmapped.fq -fq2 ${name}_R2_Bedunmapped.fq 
+  """
+}
+
 
 bed_reads_mapped.join(bed_reads_unmapped, remainder: true)
             .map{
@@ -391,6 +419,7 @@ bed_reads_mapped.join(bed_reads_unmapped, remainder: true)
 process joinMappedAndUnmappedFastq{
   tag "$name"
   publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz
+  label 'process_medium'
 
   input:
   set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq.filter{ it.size()>0 }
@@ -419,7 +448,7 @@ process joinMappedAndUnmappedFastq{
 
 process compressFiles{
   tag "$read1"
-  //label 'process_long'
+  label 'process_long'
   publishDir "${params.outdir}/reads", mode: 'copy'
 
   input:
@@ -445,12 +474,13 @@ process compressFiles{
  */
 process singleEndSort{
     tag "$name"
+    label 'process_medium'
 
     input:
     set val(name), file(bam), file(txt) from bam_file_single_end
     
     output:
-    set val(name), file ('*.sort') into sort_single_end
+    set val(name), file ('*.sort') into sort_single_end, sort_single_end_bed
 
     when:
     txt.exists()
@@ -463,6 +493,7 @@ process singleEndSort{
 
 process singleEndExtract{
     tag "$name"
+    label 'process_medium'
     publishDir "${params.outdir}/reads", mode: 'copy'
 
     input:
@@ -483,13 +514,41 @@ process singleEndExtract{
       # TODO: Is this really correct. The samtools instructions are very weird
       # TODO: set params.gz condition, maybe test this next step also with all possible output files  
       samtools fastq $sort -0 ${name}.singleton.fq  -@ ${task.cpus}
-      bamToFastq -i $sort -fq ${name}.Bedsingleton.fq 
 
       fastqc -q -t $task.cpus ${name}.singleton.fq
-      fastqc -q -t $task.cpus ${name}.Bedsingleton.fq 
       """
     }
  } 
+
+ process singleEndExtractBed{
+    tag "$name"
+    label 'process_medium'
+
+    publishDir "${params.outdir}/reads", mode: 'copy'
+
+    input:
+    set val(name), file(sort) from sort_single_end_bed
+    
+    output:
+    file ('*.Bedsingleton.fq*')
+    file "*.{zip,html}" into ch_se_fastqc_reports_mqc_bed
+    
+    script:
+    if(params.gz){
+      """
+      bamToFastq -i $sort -fq ${name}.Bedsingleton.fq.gz 
+      fastqc -q -t $task.cpus ${name}.Bedsingleton.fq.gz
+      """
+    }else{
+      """
+      # TODO: Is this really correct. The samtools instructions are very weird
+      # TODO: set params.gz condition, maybe test this next step also with all possible output files  
+      bamToFastq -i $sort -fq ${name}.Bedsingleton.fq 
+
+      fastqc -q -t $task.cpus ${name}.Bedsingleton.fq 
+      """
+    }
+ }
 
 /*
  * STEP 3 - Output Description HTML
@@ -521,6 +580,7 @@ process multiqc {
     file fastqc from ch_se_fastqc_reports_mqc.collect().ifEmpty([])
     file fastqc1 from ch_fastqc_reports_mqc.collect().ifEmpty([])
     file fastqc2 from ch_fastqc_reports_mqc_bam.collect().ifEmpty([])
+    file fastqc3 from ch_se_fastqc_reports_mqc_bed.collect().ifEmpty([])
 
     file ('software_versions/*') from software_versions_yaml.collect()
     file workflow_summary from create_workflow_summary(summary)
