@@ -170,7 +170,7 @@ process get_software_versions {
 process checkIfPairedEnd{
   tag "$name"
   publishDir "${params.outdir}/checkPairedEnd", pattern: '*.txt', mode: 'copy'
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam) from bam_files_check
 
@@ -206,7 +206,7 @@ process checkIfPairedEnd{
  */
 process pairedEndMapMap{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_map_map
 
@@ -224,7 +224,7 @@ process pairedEndMapMap{
 
 process pairedEndUnmapUnmap{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_unmap
 
@@ -242,7 +242,7 @@ process pairedEndUnmapUnmap{
 
 process pairedEndUnmapMap{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_map
 
@@ -260,7 +260,7 @@ process pairedEndUnmapMap{
 
 process pairedEndMapUnmap{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_map_unmap
 
@@ -282,7 +282,7 @@ unmap_unmap_bam.join(map_unmap_bam, remainder: true)
 
 process mergeUnmapped{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(unmap_unmap), file (map_unmap),  file(unmap_map) from all_unmapped_bam
 
@@ -296,7 +296,7 @@ process mergeUnmapped{
 }
 
 process sortMapped{
-  label 'process_medium'
+  label 'process_low'
   tag "$name"
 
   input:
@@ -312,7 +312,7 @@ process sortMapped{
 }
 
 process sortUnmapped{
-  label 'process_medium'
+  label 'process_low'
   tag "$name"
  
   input:
@@ -328,7 +328,7 @@ process sortUnmapped{
 }
 
 process extractMappedReads{
-  label 'process_medium'
+  label 'process_low'
   tag "$name"
 
   input:
@@ -347,7 +347,7 @@ process extractMappedReads{
 }
 
 process extractUnmappedReads{
-  label 'process_medium'
+  label 'process_low'
   tag "$name"
 
   input:
@@ -419,7 +419,7 @@ bed_reads_mapped.join(bed_reads_unmapped, remainder: true)
 process joinMappedAndUnmappedFastq{
   tag "$name"
   publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz
-  label 'process_medium'
+  label 'process_low'
 
   input:
   set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq.filter{ it.size()>0 }
@@ -474,7 +474,7 @@ process compressFiles{
  */
 process singleEndSort{
     tag "$name"
-    label 'process_medium'
+    label 'process_low'
 
     input:
     set val(name), file(bam), file(txt) from bam_file_single_end
@@ -493,7 +493,7 @@ process singleEndSort{
 
 process singleEndExtract{
     tag "$name"
-    label 'process_medium'
+    label 'process_low'
     publishDir "${params.outdir}/reads", mode: 'copy'
 
     input:
@@ -522,7 +522,7 @@ process singleEndExtract{
 
  process singleEndExtractBed{
     tag "$name"
-    label 'process_medium'
+    label 'process_low'
 
     publishDir "${params.outdir}/reads", mode: 'copy'
 
