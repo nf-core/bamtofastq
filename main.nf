@@ -185,7 +185,6 @@ process checkIfPairedEnd{
   """
   # Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
   # all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
-  # TODO:  Store results in var instead of file:  feature will be available in v20.01.0 https://github.com/nextflow-io/nextflow/issues/69
 
   if [ \$({ samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1  | awk '{print \$1/1000}') = "1" ]; then 
     echo 1 > ${name}.paired.txt
@@ -418,7 +417,11 @@ bed_reads_mapped.join(bed_reads_unmapped, remainder: true)
 
 process joinMappedAndUnmappedFastq{
   tag "$name"
-  publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz
+  publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz,
+        saveAs: { filename ->
+            if (filename.indexOf(".fq") > 0) filename
+            else null
+        }
   label 'process_medium'
 
   input:
@@ -494,7 +497,12 @@ process singleEndSort{
 process singleEndExtract{
     tag "$name"
     label 'process_medium'
-    publishDir "${params.outdir}/reads", mode: 'copy'
+    publishDir "${params.outdir}/reads", mode: 'copy',
+            saveAs: { filename ->
+            if (filename.indexOf(".fq")  > 0) filename
+            else if ( filename.indexOf(".fq.gz") > 0 ) filename
+            else null
+        }
 
     input:
     set val(name), file(sort) from sort_single_end
@@ -524,7 +532,12 @@ process singleEndExtract{
     tag "$name"
     label 'process_medium'
 
-    publishDir "${params.outdir}/reads", mode: 'copy'
+    publishDir "${params.outdir}/reads", mode: 'copy',
+         saveAs: { filename ->
+            if (filename.indexOf(".fq")  > 0) filename
+            else if ( filename.indexOf(".fq.gz") > 0 ) filename
+            else null
+        }
 
     input:
     set val(name), file(sort) from sort_single_end_bed
