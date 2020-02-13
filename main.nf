@@ -195,6 +195,8 @@ process checkIfPairedEnd{
   samtools flagstat $bam > ${bam}.flagstat
   samtools idxstats $bam > ${bam}.idxstats
   samtools stats $bam > ${bam}.stats
+
+  [ ! -f  ${name}.bam ] && ln -s $bam ${name}.bam
   fastqc -q -t $task.cpus $bam
   """
 
@@ -438,11 +440,13 @@ process joinMappedAndUnmappedFastq{
   cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq
   cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq
 
+
   fastqc -q -t $task.cpus ${name}.1.fq
   fastqc -q -t $task.cpus ${name}.2.fq 
 
   cat $bed_mapped_fq1 $bed_unmapped_fq1 > ${name}.bed_1.fq
   cat $bed_mapped_fq2 $bed_unmapped_fq2 > ${name}.bed_2.fq
+
 
   fastqc -q -t $task.cpus ${name}.bed_1.fq
   fastqc -q -t $task.cpus ${name}.bed_2.fq 
@@ -609,7 +613,7 @@ process multiqc {
     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
     """
     multiqc . -f $rtitle $rfilename --config $multiqc_config  \\
-      -m samtools -m fastqc
+      -m samtools -m fastqc --verbose
     """
 }
 
