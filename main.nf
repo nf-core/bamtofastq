@@ -81,7 +81,7 @@ if(params.bam) { //Checks whether bam file(s) was specified
     Channel
         .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .set { bam_files_check, bam_files_stats } //else send to first process
+        .set { bam_files_check; bam_files_stats } //else send to first process
         
 } else{
      exit 1, "Parameter 'params.bam' was not specified!\n"
