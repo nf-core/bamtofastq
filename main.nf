@@ -195,7 +195,7 @@ process checkIfPairedEnd{
 
 }
 
-process computeStatiticsOnInput{
+process computeStatisticsOnInput{
   tag "$name"
   label 'process_medium'
 
@@ -378,7 +378,8 @@ process extractUnmappedReads{
   # Multithreading only work for compression, since we can't compress here, can prob delete this or double check whether samtools or bedtools is faster
   # TODO: Is this really correct. The samtools instructions are very weird
   # might have to add -F : https://github.com/samtools/samtools/releases/tag/1.10 The -F option now defaults to 0x900 (SECONDARY,SUPPLEMENTARY). Previously secondary and supplementary records were filtered internally in a way that could not be turned off. (#1042; #939 reported by @finswimmer)
-  samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpu
+  samtools collate $all_unmapped -@ $task.cpu | 
+  samtools fastq - -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpu
   """
 }
 
