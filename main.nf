@@ -81,7 +81,7 @@ if(params.bam) { //Checks whether bam file(s) was specified
     Channel
         .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .set { bam_files_check } //else send to first process
+        .set { bam_files_check, bam_files_stats } //else send to first process
         
 } else{
      exit 1, "Parameter 'params.bam' was not specified!\n"
@@ -179,8 +179,7 @@ process checkIfPairedEnd{
   set val(name), file(bam), file('*paired.txt') optional true into bam_files_paired_map_map,      
                                                                    bam_files_paired_unmap_unmap, bam_files_paired_unmap_map, bam_files_paired_map_unmap
   set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end //aka is not paired end
-  file "*.{flagstat,idxstats,stats}" into ch_bam_flagstat_mqc
-  file "*.{zip,html}" into ch_fastqc_reports_mqc_bam
+ 
 
   script:
   """
@@ -192,14 +191,29 @@ process checkIfPairedEnd{
   else
     echo 0 > ${name}.single.txt
   fi
+  """
 
+}
+
+process computeStatiticsOnInput{
+  tag "$name"
+  label 'process_medium'
+
+  input:
+  set val(name), file(bam) from bam_files_stats
+
+  output:
+  file "*.{flagstat,idxstats,stats}" into ch_bam_flagstat_mqc
+  file "*.{zip,html}" into ch_fastqc_reports_mqc_bam
+
+  script:
+  """
   samtools flagstat -@ $task.cpus $bam > ${bam}.flagstat
   samtools idxstats -@ $task.cpus $bam > ${bam}.idxstats
   samtools stats -@ $task.cpus $bam > ${bam}.stats
 
   fastqc -q -t $task.cpus $bam
   """
-
 }
 
 /*
@@ -308,7 +322,7 @@ process sortMapped{
 
   script:
   """
-  samtools collate $all_map_bam -o ${name}_mapped.sort # -@ $task.cpu
+  samtools collate $all_map_bam -o ${name}_mapped.sort  -@ $task.cpu
   """
 }
 
@@ -324,7 +338,7 @@ process sortUnmapped{
 
   script:
   """
-  samtools collate $all_unmapped -o ${name}_unmapped.sort # -@ $task.cpu
+  samtools collate $all_unmapped -o ${name}_unmapped.sort  -@ $task.cpu
   """
 }
 
