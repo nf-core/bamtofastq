@@ -310,21 +310,21 @@ process mergeUnmapped{
   """
 }
 
-process sortMapped{
-  label 'process_medium'
-  tag "$name"
+// process sortMapped{
+//   label 'process_medium'
+//   tag "$name"
 
-  input:
-  set val(name), file(all_map_bam) from map_map_bam
+//   input:
+//   set val(name), file(all_map_bam) from map_map_bam
 
-  output:
-  set val(name), file('*.sort') into sort_mapped
+//   output:
+//   set val(name), file('*.sort') into sort_mapped
 
-  script:
-  """
-  samtools collate $all_map_bam -o ${name}_mapped.sort  -@ $task.cpu
-  """
-}
+//   script:
+//   """
+//   samtools collate $all_map_bam -o ${name}_mapped.sort  -@ $task.cpu
+//   """
+// }
 
 process sortUnmapped{
   label 'process_medium'
@@ -357,7 +357,8 @@ process extractMappedReads{
   script:
   """
   # TODO: Is this really correct. The samtools instructions are very weird
-  samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
+  samtools collate $sort -uO  -@ $task.cpu |
+  samtools fastq - -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
   """
 }
 
