@@ -193,9 +193,9 @@ process checkIfPairedEnd{
     echo 0 > ${name}.single.txt
   fi
 
-  samtools flagstat $bam > ${bam}.flagstat
-  samtools idxstats $bam > ${bam}.idxstats
-  samtools stats $bam > ${bam}.stats
+  samtools flagstat -@ $task.cpus $bam > ${bam}.flagstat
+  samtools idxstats -@ $task.cpus $bam > ${bam}.idxstats
+  samtools stats -@ $task.cpus $bam > ${bam}.stats
 
   fastqc -q -t $task.cpus $bam
   """
