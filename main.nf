@@ -347,7 +347,7 @@ process extractMappedReads{
   tag "$name"
 
   input:
-  set val(name), file(sort) from sort_mapped
+  set val(name), file(sort) from map_map_bam
 
   output:
   set val(name), file('*_mapped.fq') into reads_mapped
