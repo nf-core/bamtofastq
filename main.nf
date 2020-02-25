@@ -49,9 +49,6 @@ if (params.help) {
  * SET UP CONFIGURATION VARIABLES
  */
 
-// TODO nf-core: Add any reference files that are needed
-// Configurable reference genomes
-
 // Has the run name been specified by the user?
 //  this has the bonus effect of catching both -name and --name
 custom_runName = params.name
@@ -81,7 +78,11 @@ if(params.bam) { //Checks whether bam file(s) was specified
     Channel
         .fromPath(params.bam, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .into { bam_files_check; bam_files_stats } //else send to first process
+        .into { bam_files_check; 
+                bam_files_flagstats;
+                bam_files_idxstats;
+                bam_files_stats;
+                bam_files_fastqc } //else send to first process
         
 } else{
      exit 1, "Parameter 'params.bam' was not specified!\n"
@@ -171,7 +172,7 @@ process get_software_versions {
 process checkIfPairedEnd{
   tag "$name"
   publishDir "${params.outdir}/checkPairedEnd", pattern: '*.txt', mode: 'copy'
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam) from bam_files_check
 
@@ -195,7 +196,39 @@ process checkIfPairedEnd{
 
 }
 
-process computeStatiticsOnInput{
+process computeFlagstatInput{
+  tag "$name"
+  label 'process_medium'
+
+  input:
+  set val(name), file(bam) from bam_files_flagstats
+
+  output:
+  file "*.flagstat" into ch_bam_flagstat_mqc
+
+  script:
+  """
+  samtools flagstat -@ $task.cpus $bam > ${bam}.flagstat
+  """
+}
+
+process computeIdxstatsInput{
+  tag "$name"
+  label 'process_medium'
+
+  input:
+  set val(name), file(bam) from bam_files_idxstats
+
+  output:
+  file "*.idxstats" into ch_bam_idxstat_mqc
+
+  script:
+  """
+  samtools idxstats -@ $task.cpus $bam > ${bam}.idxstats
+  """
+}
+
+process computeStatsInput{
   tag "$name"
   label 'process_medium'
 
@@ -203,15 +236,26 @@ process computeStatiticsOnInput{
   set val(name), file(bam) from bam_files_stats
 
   output:
-  file "*.{flagstat,idxstats,stats}" into ch_bam_flagstat_mqc
-  file "*.{zip,html}" into ch_fastqc_reports_mqc_bam
+  file "*.stats" into ch_bam_stats_mqc
 
   script:
   """
-  samtools flagstat -@ $task.cpus $bam > ${bam}.flagstat
-  samtools idxstats -@ $task.cpus $bam > ${bam}.idxstats
   samtools stats -@ $task.cpus $bam > ${bam}.stats
+  """
+}
 
+process computeFastQCInput{
+  tag "$name"
+  label 'process_medium'
+
+  input:
+  set val(name), file(bam) from bam_files_fastqc
+
+  output:
+  file "*.{zip,html}" into ch_fastqc_reports_mqc_input_bam
+
+  script:
+  """
   fastqc -q -t $task.cpus $bam
   """
 }
@@ -221,7 +265,7 @@ process computeStatiticsOnInput{
  */
 process pairedEndMapMap{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_map_map
 
@@ -233,13 +277,14 @@ process pairedEndMapMap{
 
   script:
   """
-  samtools view -u -f1 -F12 $bam -@ ${task.cpus} > ${name}.map_map.bam
+  #TODO not sure @ does anything here
+  samtools view -u -f1 -F12 $bam -@ $task.cpus > ${name}.map_map.bam
   """
 }
 
 process pairedEndUnmapUnmap{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_unmap
 
@@ -257,7 +302,7 @@ process pairedEndUnmapUnmap{
 
 process pairedEndUnmapMap{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_map
 
@@ -275,7 +320,7 @@ process pairedEndUnmapMap{
 
 process pairedEndMapUnmap{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(bam), file(txt) from bam_files_paired_map_unmap
 
@@ -297,7 +342,7 @@ unmap_unmap_bam.join(map_unmap_bam, remainder: true)
 
 process mergeUnmapped{
   tag "$name"
-  label 'process_medium'
+  label 'process_low'
   input:
   set val(name), file(unmap_unmap), file (map_unmap),  file(unmap_map) from all_unmapped_bam
 
@@ -310,21 +355,21 @@ process mergeUnmapped{
   """
 }
 
-// process sortMapped{
-//   label 'process_medium'
-//   tag "$name"
+process sortMapped{
+  label 'process_medium'
+  tag "$name"
 
-//   input:
-//   set val(name), file(all_map_bam) from map_map_bam
+  input:
+  set val(name), file(all_map_bam) from map_map_bam
 
-//   output:
-//   set val(name), file('*.sort') into sort_mapped
+  output:
+  set val(name), file('*.sort') into sort_mapped
 
-//   script:
-//   """
-//   samtools collate $all_map_bam -o ${name}_mapped.sort  -@ $task.cpu
-//   """
-// }
+  script:
+  """
+  samtools collate $all_map_bam -o ${name}_mapped.sort  -@ $task.cpu
+  """
+}
 
 process sortUnmapped{
   label 'process_medium'
@@ -343,11 +388,11 @@ process sortUnmapped{
 }
 
 process extractMappedReads{
-  label 'process_medium'
+  label 'process_low'
   tag "$name"
 
   input:
-  set val(name), file(sort) from map_map_bam
+  set val(name), file(sort) from sort_mapped
 
   output:
   set val(name), file('*_mapped.fq') into reads_mapped
@@ -357,13 +402,12 @@ process extractMappedReads{
   script:
   """
   # TODO: Is this really correct. The samtools instructions are very weird
-  samtools collate $sort -uO  -@ $task.cpu |
-  samtools fastq - -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
+  samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
   """
 }
 
 process extractUnmappedReads{
-  label 'process_medium'
+  label 'process_low'
   tag "$name"
 
   input:
@@ -390,20 +434,20 @@ reads_mapped.join(reads_unmapped, remainder: true)
             .set{ all_fastq }
 
 process joinMappedAndUnmappedFastq{
+  label 'process_low'
   tag "$name"
   publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz,
         saveAs: { filename ->
             if (filename.indexOf(".fq") > 0) filename
             else null
         }
-  label 'process_medium'
 
   input:
   set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq.filter{ it.size()>0 }
 
   output:
   set file('*1.fq'), file('*2.fq') into read_files
-  file "*.{zip,html}" into ch_fastqc_reports_mqc
+  file "*.{zip,html}" into ch_fastqc_reports_mqc_pe_output
 
   script:
   """
@@ -416,6 +460,8 @@ process joinMappedAndUnmappedFastq{
   """
 }
 
+
+//Not tested on AWS yet!!!!
 process compressFiles{
   tag "$read1"
   label 'process_long'
@@ -442,6 +488,8 @@ process compressFiles{
 /*
  * STEP 2b: Handle single-end bams 
  */
+ //Not tested on AWS yet!!!!
+
 process singleEndSort{
     tag "$name"
     label 'process_medium'
@@ -460,6 +508,7 @@ process singleEndSort{
     samtools collate $bam -o ${name}.sort -@ ${task.cpus}
     """
  } 
+//Not tested on AWS yet!!!!
 
 process singleEndExtract{
     tag "$name"
@@ -522,14 +571,16 @@ process multiqc {
 
     input:
     file multiqc_config from ch_multiqc_config
-    // TODO nf-core: Add in log files from your new processes for MultiQC to find!
-    file fastqc from ch_se_fastqc_reports_mqc.collect().ifEmpty([])
-    file fastqc1 from ch_fastqc_reports_mqc.collect().ifEmpty([])
-    file fastqc2 from ch_fastqc_reports_mqc_bam.collect().ifEmpty([])
+
+    file fastqcSE from ch_se_fastqc_reports_mqc.collect().ifEmpty([])
+    file fastqcPE from ch_fastqc_reports_mqc_pe_output.collect().ifEmpty([])
 
     file ('software_versions/*') from software_versions_yaml.collect()
     file workflow_summary from create_workflow_summary(summary)
-    file samstats from ch_bam_flagstat_mqc.collect()
+    file flagstats from ch_bam_flagstat_mqc.collect()
+    file stats from ch_bam_stats_mqc.collect()
+    file idxstats from ch_bam_idxstat_mqc.collect()
+    file fastqcInput from ch_fastqc_reports_mqc_input_bam.collect().ifEmpty([])
 
     output:
     file "*multiqc_report.html" into ch_multiqc_report
