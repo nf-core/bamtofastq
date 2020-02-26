@@ -367,7 +367,7 @@ process sortMapped{
 
   script:
   """
-  samtools collate $all_map_bam -o ${name}_mapped.sort  -@ $task.cpu
+  samtools collate $all_map_bam -o ${name}_mapped.sort  -@ $task.cpus
   """
 }
 
@@ -383,12 +383,12 @@ process sortUnmapped{
 
   script:
   """
-  samtools collate $all_unmapped -o ${name}_unmapped.sort  -@ $task.cpu
+  samtools collate $all_unmapped -o ${name}_unmapped.sort -@ $task.cpus
   """
 }
 
 process extractMappedReads{
-  label 'process_low'
+  label 'process_medium'
   tag "$name"
 
   input:
@@ -402,12 +402,12 @@ process extractMappedReads{
   script:
   """
   # TODO: Is this really correct. The samtools instructions are very weird
-  samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpu
+  samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpus
   """
 }
 
 process extractUnmappedReads{
-  label 'process_low'
+  label 'process_medium'
   tag "$name"
 
   input:
@@ -423,7 +423,7 @@ process extractUnmappedReads{
   # Multithreading only work for compression, since we can't compress here, can prob delete this or double check whether samtools or bedtools is faster
   # TODO: Is this really correct. The samtools instructions are very weird
   # might have to add -F : https://github.com/samtools/samtools/releases/tag/1.10 The -F option now defaults to 0x900 (SECONDARY,SUPPLEMENTARY). Previously secondary and supplementary records were filtered internally in a way that could not be turned off. (#1042; #939 reported by @finswimmer)
-  samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpu
+  samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpus
   """
 }
 
