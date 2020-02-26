@@ -187,7 +187,7 @@ process checkIfPairedEnd{
   # Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
   # all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
 
-  if [ \$({ samtools view -H $bam ; samtools view $bam | head -n1000; } | samtools view -c -f 1  | awk '{print \$1/1000}') = "1" ]; then 
+  if [ \$({ samtools view -H $bam -@ $task.cpus ; samtools view $bam -@ $task.cpus | head -n1000; } | samtools view -c -f 1  -@ $task.cpus | awk '{print \$1/1000}') = "1" ]; then 
     echo 1 > ${name}.paired.txt
   else
     echo 0 > ${name}.single.txt
@@ -224,7 +224,7 @@ process computeIdxstatsInput{
 
   script:
   """
-  samtools idxstats -@ $task.cpus $bam > ${bam}.idxstats
+  samtools index $bam -@ $task.cpus | samtools idxstats -@ $task.cpus > ${bam}.idxstats
   """
 }
 
@@ -256,7 +256,7 @@ process computeFastQCInput{
 
   script:
   """
-  fastqc -q -t $task.cpus $bam
+  fastqc --quiet --threads $task.cpus $bam
   """
 }
 
@@ -454,9 +454,9 @@ process joinMappedAndUnmappedFastq{
   cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq
   cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq
 
-
-  fastqc -q -t $task.cpus ${name}.1.fq
-  fastqc -q -t $task.cpus ${name}.2.fq 
+  fastqc  --quiet --threads $task.cpus ${name}.1.fq
+  fastqc  --quiet --threads $task.cpus ${name}.2.fq
+  
   """
 }
 
@@ -540,6 +540,7 @@ process singleEndExtract{
       samtools fastq $sort -0 ${name}.singleton.fq  -@ ${task.cpus}
 
       fastqc -q -t $task.cpus ${name}.singleton.fq
+
       """
     }
  } 
@@ -591,7 +592,7 @@ process multiqc {
     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
     """
-    multiqc . -f $rtitle $rfilename --config $multiqc_config  \\
+    multiqc . -s -f $rtitle $rfilename --config $multiqc_config  \\
       -m samtools -m fastqc --verbose
     """
 }
