@@ -367,7 +367,7 @@ process sortMapped{
 
   script:
   """
-  samtools collate $all_map_bam -o ${name}_mapped.sort  -@ $task.cpus
+  samtools collate $all_map_bam -o ${name}_mapped.sort -@ $task.cpus
   """
 }
 
@@ -446,25 +446,36 @@ process joinMappedAndUnmappedFastq{
   set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq.filter{ it.size()>0 }
 
   output:
-  set file('*1.fq'), file('*2.fq') into read_files
-  file "*.{zip,html}" into ch_fastqc_reports_mqc_pe_output
+  set file('*1.fq'), file('*2.fq') into read_files, read_qc
+  
 
   script:
   """
   cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq
-  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq
-
-  fastqc  --quiet --threads $task.cpus ${name}.1.fq
-  fastqc  --quiet --threads $task.cpus ${name}.2.fq
-  
+  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq  
   """
 }
 
+process PEreadsQC{
+  label 'process_medium'
+  tag "$name"
+
+  input:
+  set file(read1), file(read2) from read_qc
+
+  output:
+  file "*.{zip,html}" into ch_fastqc_reports_mqc_pe_output
+
+  script:
+  """
+  fastqc  --quiet --threads $task.cpus $read1 $read2
+  """
+}
 
 //Not tested on AWS yet!!!!
 process compressFiles{
   tag "$read1"
-  label 'process_long'
+  label 'process_high'
   publishDir "${params.outdir}/reads", mode: 'copy'
 
   input:
