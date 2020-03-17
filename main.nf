@@ -191,11 +191,11 @@ if (!params.chr.isEmpty()){
                 bam_files_fastqc
 
     script:
-    //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2
+    //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification of format chr:start-end
     chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
     """
     samtools index $bam
-    samtools view -hb $bam ${params.chr} -@ $task.cpus > ${name}.${chr_list_joined}.bam
+    samtools view -hb $bam ${params.chr} -@$task.cpus > ${name}.${chr_list_joined}.bam
     """
   }
 }
@@ -220,7 +220,7 @@ process checkIfPairedEnd{
   # Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
   # all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
 
-  if [ \$({ samtools view -H $bam -@ $task.cpus ; samtools view $bam -@ $task.cpus | head -n1000; } | samtools view -c -f 1  -@ $task.cpus | awk '{print \$1/1000}') = "1" ]; then 
+  if [ \$({ samtools view -H $bam -@$task.cpus ; samtools view $bam -@$task.cpus | head -n1000; } | samtools view -c -f 1  -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then 
     echo 1 > ${name}.paired.txt
   else
     echo 0 > ${name}.single.txt
@@ -240,7 +240,7 @@ process computeFlagstatInput{
 
   script:
   """
-  samtools flagstat -@ $task.cpus $bam > ${bam}.flagstat
+  samtools flagstat -@$task.cpus $bam > ${bam}.flagstat
   """
 }
 
@@ -256,7 +256,7 @@ process computeIdxstatsInput{
 
   script:
   """
-  samtools index $bam -@ $task.cpus | samtools idxstats -@ $task.cpus > ${bam}.idxstats
+  samtools index $bam -@$task.cpus | samtools idxstats -@$task.cpus > ${bam}.idxstats
   """
 }
 
@@ -272,7 +272,7 @@ process computeStatsInput{
 
   script:
   """
-  samtools stats -@ $task.cpus $bam > ${bam}.stats
+  samtools stats -@$task.cpus $bam > ${bam}.stats
   """
 }
 
@@ -309,8 +309,8 @@ process pairedEndMapMap{
 
   script:
   """
-  #TODO not sure @ does anything here
-  samtools view -u -f1 -F12 $bam -@ $task.cpus > ${name}.map_map.bam
+  #TODO not sure @does anything here
+  samtools view -u -f1 -F12 $bam -@$task.cpus > ${name}.map_map.bam
   """
 }
 
@@ -328,7 +328,7 @@ process pairedEndUnmapUnmap{
 
   script:
   """
-  samtools view -u -f12 -F256 $bam -@ ${task.cpus} > ${name}.unmap_unmap.bam
+  samtools view -u -f12 -F256 $bam -@${task.cpus} > ${name}.unmap_unmap.bam
   """
 }
 
@@ -346,7 +346,7 @@ process pairedEndUnmapMap{
 
   script:
   """
-  samtools view -u -f4 -F264 $bam -@ ${task.cpus} > ${name}.unmap_map.bam
+  samtools view -u -f4 -F264 $bam -@${task.cpus} > ${name}.unmap_map.bam
   """
 }
 
@@ -364,7 +364,7 @@ process pairedEndMapUnmap{
 
   script:
   """
-  samtools view -u -f8 -F260 $bam  -@ ${task.cpus} > ${name}.map_unmap.bam
+  samtools view -u -f8 -F260 $bam  -@${task.cpus} > ${name}.map_unmap.bam
   """
 }
 
@@ -383,7 +383,7 @@ process mergeUnmapped{
 
   script:
   """
-  samtools merge -u ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@ $task.cpus
+  samtools merge -u ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@$task.cpus
   """
 }
 
@@ -399,7 +399,7 @@ process sortMapped{
 
   script:
   """
-  samtools collate $all_map_bam -o ${name}_mapped.sort -@ $task.cpus
+  samtools collate $all_map_bam -o ${name}_mapped.sort -@$task.cpus
   """
 }
 
@@ -415,7 +415,7 @@ process sortUnmapped{
 
   script:
   """
-  samtools collate $all_unmapped -o ${name}_unmapped.sort -@ $task.cpus
+  samtools collate $all_unmapped -o ${name}_unmapped.sort -@$task.cpus
   """
 }
 
@@ -434,7 +434,7 @@ process extractMappedReads{
   script:
   """
   # TODO: Is this really correct. The samtools instructions are very weird
-  samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@ $task.cpus
+  samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@$task.cpus
   """
 }
 
@@ -455,7 +455,7 @@ process extractUnmappedReads{
   # Multithreading only work for compression, since we can't compress here, can prob delete this or double check whether samtools or bedtools is faster
   # TODO: Is this really correct. The samtools instructions are very weird
   # might have to add -F : https://github.com/samtools/samtools/releases/tag/1.10 The -F option now defaults to 0x900 (SECONDARY,SUPPLEMENTARY). Previously secondary and supplementary records were filtered internally in a way that could not be turned off. (#1042; #939 reported by @finswimmer)
-  samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@ $task.cpus
+  samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@$task.cpus
   """
 }
 
@@ -548,7 +548,7 @@ process singleEndSort{
 
     script:
     """
-    samtools collate $bam -o ${name}.sort -@ ${task.cpus}
+    samtools collate $bam -o ${name}.sort -@${task.cpus}
     """
  } 
 //Not tested on AWS yet!!!!
@@ -573,14 +573,14 @@ process singleEndExtract{
     script:
     if(params.gz){
       """
-      samtools fastq $sort -0 ${name}.singleton.fq.gz  -@ ${task.cpus}
+      samtools fastq $sort -0 ${name}.singleton.fq.gz  -@${task.cpus}
       fastqc -q -t $task.cpus ${name}.singleton.fq.gz
       """
     }else{
       """
       # TODO: Is this really correct. The samtools instructions are very weird
       # TODO: set params.gz condition, maybe test this next step also with all possible output files  
-      samtools fastq $sort -0 ${name}.singleton.fq  -@ ${task.cpus}
+      samtools fastq $sort -0 ${name}.singleton.fq  -@${task.cpus}
 
       fastqc -q -t $task.cpus ${name}.singleton.fq
 
