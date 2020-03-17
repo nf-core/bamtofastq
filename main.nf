@@ -75,7 +75,7 @@ ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
  * Create a channel for input bam files
  */
 
-if(params.input && params.chr.isEmpty()) { //Checks whether bam file(s) was specified
+if(params.input && params.chr.isEmpty()) { //Checks whether bam file(s) and no chromosome/region was specified
     Channel
         .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
@@ -85,7 +85,7 @@ if(params.input && params.chr.isEmpty()) { //Checks whether bam file(s) was spec
                 bam_files_stats;
                 bam_files_fastqc } //else send to first process
         
-} else if(params.input && params.chr){ 
+} else if(params.input && params.chr){ //Checks whether bam file(s) and chromosome(s)/region(s) was specified
      Channel
         .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
@@ -172,27 +172,32 @@ process get_software_versions {
     """
 }
 
+/*
+ * STEP 0: Extract reads mapping to specific chromosome(s)
+ */
 if (!params.chr.isEmpty()){
-process extractReadsMappingToRegion{
-  tag "${name}.${chr_name}"
+  process extractReadsMappingToChromosome{
+    tag "${name}.${chr_list_joined}"
+    label 'process_medium'
   
-  input:
-  set val(name), file(bam) from bam_chr 
+    input:
+    set val(name), file(bam) from bam_chr 
 
-  output:
-  set val("${name}.${chr_name}"), file("${name}.${chr_name}.bam") into bam_files_check, 
+    output:
+    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check, 
                 bam_files_flagstats,
                 bam_files_idxstats,
                 bam_files_stats,
                 bam_files_fastqc
 
-  script:
-  chr_name = params.chr.split(' ').size() > 1 ? params.chr.split(' ').join('_') : params.chr
-  """
-  samtools index $bam
-  samtools view -hb $bam ${params.chr} -@ $task.cpus > ${name}.${chr_name}.bam
-  """
-}
+    script:
+    //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2
+    chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
+    """
+    samtools index $bam
+    samtools view -hb $bam ${params.chr} -@ $task.cpus > ${name}.${chr_list_joined}.bam
+    """
+  }
 }
 
 /*
@@ -221,7 +226,6 @@ process checkIfPairedEnd{
     echo 0 > ${name}.single.txt
   fi
   """
-
 }
 
 process computeFlagstatInput{
