@@ -244,6 +244,7 @@ process computeFlagstatInput{
   """
 }
 
+
 process computeIdxstatsInput{
   tag "$name"
   label 'process_medium'
@@ -261,6 +262,7 @@ process computeIdxstatsInput{
 }
 
 process computeStatsInput{
+
   tag "$name"
   label 'process_medium'
 
