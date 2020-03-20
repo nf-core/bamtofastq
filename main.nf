@@ -492,7 +492,7 @@ process joinMappedAndUnmappedFastq{
 
 process PEreadsQC{
   label 'process_medium'
-  tag "$name"
+  tag "$read1"
 
   input:
   set file(read1), file(read2) from read_qc
