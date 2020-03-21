@@ -154,6 +154,8 @@ process get_software_versions {
             if (filename.indexOf(".csv") > 0) filename
             else null
         }
+    label 'process_low'
+
 
     output:
     file 'software_versions_mqc.yaml' into software_versions_yaml
@@ -596,6 +598,7 @@ process singleEndExtract{
  */
 process output_documentation {
     publishDir "${params.outdir}/pipeline_info", mode: 'copy'
+    label 'process_low'
 
     input:
     file output_docs from ch_output_docs
@@ -614,6 +617,7 @@ process output_documentation {
  */
 process multiqc {
     publishDir "${params.outdir}/MultiQC", mode: 'copy'
+    label 'process_low'
 
     input:
     file multiqc_config from ch_multiqc_config
