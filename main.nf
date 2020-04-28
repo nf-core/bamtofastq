@@ -75,7 +75,7 @@ ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
  * Create a channel for input bam files
  */
 
-if(params.input && params.chr.isEmpty()) { //Checks whether bam file(s) and no chromosome/region was specified, then Step 0 is skipped
+if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome/region was specified, then Step 0 is skipped
     Channel
         .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
@@ -89,7 +89,7 @@ if(params.input && params.chr.isEmpty()) { //Checks whether bam file(s) and no c
      Channel
         .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists, somehow i don't get a local error message, but in all other pipelines on the cluser it seems to work. TODO, what if only one file is faulty? this seems to cause the pipeline to fail completely 
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .into { bam_chr } //else send to first process
+        .set { bam_chr } //else send to first process
 }else{
      exit 1, "Parameter 'params.input' was not specified!\n"
 }
@@ -177,7 +177,7 @@ process get_software_versions {
 /*
  * STEP 0: Extract reads mapping to specific chromosome(s)
  */
-if (!params.chr.isEmpty()){
+if (params.chr){
   process extractReadsMappingToChromosome{
     tag "${name}.${chr_list_joined}"
     label 'process_medium'
@@ -248,6 +248,7 @@ process computeFlagstatInput{
 
 
 process computeIdxstatsInput{
+  //TODO: Fix idxbug, currently only the help message is displayed
   tag "$name"
   label 'process_medium'
 
