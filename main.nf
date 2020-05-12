@@ -197,7 +197,7 @@ if (params.chr){
     chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
     """
     samtools index -@$task.cpus $bam 
-    samtools view -hb $bam ${params.chr} -@$task.cpus > ${name}.${chr_list_joined}.bam
+    samtools view -hb $bam ${params.chr} -@$task.cpus -o ${name}.${chr_list_joined}.bam
     """
   }
 }
@@ -333,7 +333,7 @@ process pairedEndUnmapUnmap{
 
   script:
   """
-  samtools view -u -f12 -F256 $bam -@${task.cpus} > ${name}.unmap_unmap.bam
+  samtools view -b -f12 -F256 $bam -@${task.cpus} -o ${name}.unmap_unmap.bam
   """
 }
 
@@ -351,7 +351,7 @@ process pairedEndUnmapMap{
 
   script:
   """
-  samtools view -u -f4 -F264 $bam -@${task.cpus} > ${name}.unmap_map.bam
+  samtools view -b -f4 -F264 $bam -@${task.cpus} -o ${name}.unmap_map.bam
   """
 }
 
@@ -369,7 +369,7 @@ process pairedEndMapUnmap{
 
   script:
   """
-  samtools view -u -f8 -F260 $bam  -@${task.cpus} > ${name}.map_unmap.bam
+  samtools view -b -f8 -F260 $bam  -@${task.cpus} -o ${name}.map_unmap.bam
   """
 }
 
@@ -388,7 +388,7 @@ process mergeUnmapped{
 
   script:
   """
-  samtools merge -u ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@$task.cpus
+  samtools merge ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@$task.cpus
   """
 }
 
@@ -536,7 +536,7 @@ process compressFiles{
 /*
  * STEP 2b: Handle single-end bams 
  */
- //Not tested on AWS yet!!!!
+ //Not tested on AWS yet!!!! All sorts of changes from paired end need to be added here for efficiency
 
 process singleEndSort{
     tag "$name"
