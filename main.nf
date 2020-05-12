@@ -315,7 +315,7 @@ process pairedEndMapMap{
   script:
   """
   #TODO not sure @does anything here
-  samtools view -u -f1 -F12 $bam -@$task.cpus > ${name}.map_map.bam
+  samtools view -b -f1 -F12 $bam -@$task.cpus -o ${name}.map_map.bam
   """
 }
 
