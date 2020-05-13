@@ -404,7 +404,7 @@ process sortMapped{
 
   script:
   """
-  samtools collate -o ${name}_mapped.sort -@$task.cpus $all_map_bam \$TMPDIR
+  samtools collate -o ${name}_mapped.sort -n 32 -@$task.cpus $all_map_bam \$TMPDIR
   """
 }
 
