@@ -400,12 +400,12 @@ process sortMapped{
   set val(name), file(all_map_bam) from map_map_bam
 
   output:
-  set val(name), file('*_mapped.fq') into reads_mapped
+  set val(name), file('*_mapped.fq.gz') into reads_mapped
 
   script:
   """
-  samtools collate -@$task.cpus $all_map_bam \$PWD -O \
-    | samtools fastq -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@$task.cpus
+  samtools collate -@$task.cpus $all_map_bam \$TMPDIR -O \
+    | samtools fastq -1 ${name}_R1_mapped.fq.gz -2 ${name}_R2_mapped.fq.gz -s ${name}_mapped_singletons.fq.gz -N -@$task.cpus
   """
 }
 
@@ -417,11 +417,13 @@ process sortUnmapped{
   set val(name), file(all_unmapped) from merged_unmapped
 
   output:
-  set val(name), file('*.sort') into sort_unmapped
+  set val(name), file('*_unmapped.fq.gz') into reads_unmapped
 
   script:
   """
-  samtools collate -o ${name}_unmapped.sort -@$task.cpus $all_unmapped \$TMPDIR
+  samtools collate -@$task.cpus $all_unmapped \$TMPDIR -O \
+     | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
+
   """
 }
 
@@ -444,7 +446,7 @@ process sortUnmapped{
   """
 }
  */
-process extractUnmappedReads{
+/* process extractUnmappedReads{
   label 'process_medium'
   tag "$name"
 
@@ -463,7 +465,7 @@ process extractUnmappedReads{
   # might have to add -F : https://github.com/samtools/samtools/releases/tag/1.10 The -F option now defaults to 0x900 (SECONDARY,SUPPLEMENTARY). Previously secondary and supplementary records were filtered internally in a way that could not be turned off. (#1042; #939 reported by @finswimmer)
   samtools fastq $sort -1 ${name}_R1_unmapped.fq -2 ${name}_R2_unmapped.fq -s ${name}_unmapped_singletons.fq -N -@$task.cpus
   """
-}
+} */
 
 reads_mapped.join(reads_unmapped, remainder: true)
             .map{
@@ -476,7 +478,7 @@ process joinMappedAndUnmappedFastq{
   tag "$name"
   publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz,
         saveAs: { filename ->
-            if (filename.indexOf(".fq") > 0) filename
+            if (filename.indexOf(".fq.gz") > 0) filename
             else null
         }
 
@@ -484,13 +486,13 @@ process joinMappedAndUnmappedFastq{
   set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq.filter{ it.size()>0 }
 
   output:
-  set file('*1.fq'), file('*2.fq') into read_files, read_qc
+  set file('*1.fq.gz'), file('*2.fq.gz') into read_files, read_qc
   
 
   script:
   """
-  cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq
-  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq  
+  cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq.gz
+  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq.gz  
   """
 }
 
@@ -510,26 +512,25 @@ process PEreadsQC{
   """
 }
 
-//Not tested on AWS yet!!!!
-process compressFiles{
-  tag "$read1"
-  label 'process_high'
-  publishDir "${params.outdir}/reads", mode: 'copy'
+// process compressFiles{
+//   tag "$read1"
+//   label 'process_high'
+//   publishDir "${params.outdir}/reads", mode: 'copy'
 
-  input:
-  set file(read1), file(read2) from read_files
+//   input:
+//   set file(read1), file(read2) from read_files
 
-  output:
-  file('*.gz') into fastq_gz
+//   output:
+//   file('*.gz') into fastq_gz
 
-  when:
-  params.gz
+//   when:
+//   params.gz
 
-  script:
-  """
-  pigz -f -p ${task.cpus} -k $read1 $read2
-  """
-}
+//   script:
+//   """
+//   pigz --force -p ${task.cpus} --keep $read1 $read2
+//   """
+// }
 
 //TODO: Make sure only uniqely mapped reads are used!!!!! Maybe samtools is taking care of this after all????
 
