@@ -394,16 +394,18 @@ process mergeUnmapped{
 
 process sortMapped{
   tag "$name"
+  label 'process_medium'
 
   input:
   set val(name), file(all_map_bam) from map_map_bam
 
   output:
-  set val(name), file('*.sort') into sort_mapped
+  set val(name), file('*_mapped.fq') into reads_mapped
 
   script:
   """
-  samtools collate -o ${name}_mapped.sort -n 32 -@$task.cpus $all_map_bam \$TMPDIR
+  samtools collate -@$task.cpus $all_map_bam \$TMPDIR -O \
+    | samtools fastq -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@$task.cpus
   """
 }
 
@@ -423,7 +425,7 @@ process sortUnmapped{
   """
 }
 
-process extractMappedReads{
+/* process extractMappedReads{
   label 'process_medium'
   tag "$name"
 
@@ -441,7 +443,7 @@ process extractMappedReads{
   samtools fastq $sort -1 ${name}_R1_mapped.fq -2 ${name}_R2_mapped.fq -s ${name}_mapped_singletons.fq -N -@$task.cpus
   """
 }
-
+ */
 process extractUnmappedReads{
   label 'process_medium'
   tag "$name"
