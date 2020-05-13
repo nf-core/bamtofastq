@@ -393,7 +393,6 @@ process mergeUnmapped{
 }
 
 process sortMapped{
-  label 'process_medium'
   tag "$name"
 
   input:
