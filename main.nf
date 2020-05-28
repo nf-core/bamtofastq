@@ -476,7 +476,7 @@ reads_mapped.join(reads_unmapped, remainder: true)
 process joinMappedAndUnmappedFastq{
   label 'process_low'
   tag "$name"
-  publishDir "${params.outdir}/reads", mode: 'copy', enabled: !params.gz,
+  publishDir "${params.outdir}/reads", mode: 'copy',
         saveAs: { filename ->
             if (filename.indexOf(".fq.gz") > 0) filename
             else null
