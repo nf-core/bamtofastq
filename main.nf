@@ -404,7 +404,7 @@ process sortMapped{
 
   script:
   """
-  samtools collate -@$task.cpus $all_map_bam \${TMPDIR:-/tmp} -O \
+  samtools collate -@$task.cpus $all_map_bam \$TMPDIR -O \
     | samtools fastq -1 ${name}_R1_mapped.fq.gz -2 ${name}_R2_mapped.fq.gz -s ${name}_mapped_singletons.fq.gz -N -@$task.cpus
   """
 }
@@ -421,7 +421,7 @@ process sortUnmapped{
 
   script:
   """
-  samtools collate -@$task.cpus $all_unmapped \${TMPDIR:-/tmp} -O \
+  samtools collate -@$task.cpus $all_unmapped \$TMPDIR -O \
      | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
 
   """
