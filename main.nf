@@ -218,7 +218,7 @@ process checkIfPairedEnd{
   output:
   set val(name), file(bam), file('*paired.txt') optional true into bam_files_paired_map_map,      
                                                                    bam_files_paired_unmap_unmap, bam_files_paired_unmap_map, bam_files_paired_map_unmap
-  set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end //is not paired end
+  set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end // = is not paired end
  
 
   script:
@@ -427,7 +427,6 @@ process sortUnmapped{
   """
   samtools collate -O -@$task.cpus $all_unmapped . \
      | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
-
   """
 }
 
@@ -460,7 +459,7 @@ process joinMappedAndUnmappedFastq{
   """
 }
 
-process PairedEndreadsQC{
+process PairedEndReadsQC{
     label 'process_medium'
     tag "$read1"
 
@@ -483,8 +482,6 @@ process PairedEndreadsQC{
 /*
  * STEP 2b: Handle single-end bams 
  */
- //Not tested on AWS yet!!!! All sorts of changes from paired end need to be added here for efficiency
-
 process singleEndExtract{
     tag "$name"
     label 'process_medium'
@@ -506,7 +503,7 @@ process singleEndExtract{
 
     script:
     """
-    samtools collate -@$task.cpus $bam -O . \
+    samtools collate -O -@$task.cpus $bam . \
      | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
     """
  } 
