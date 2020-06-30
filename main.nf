@@ -252,7 +252,6 @@ process computeFlagstatInput{
 
 
 process computeIdxstatsInput{
-  //TODO: Fix idxbug, currently only the help message is displayed
   tag "$name"
   label 'process_medium'
 
