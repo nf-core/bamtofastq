@@ -218,7 +218,7 @@ process checkIfPairedEnd{
   output:
   set val(name), file(bam), file('*paired.txt') optional true into bam_files_paired_map_map,      
                                                                    bam_files_paired_unmap_unmap, bam_files_paired_unmap_map, bam_files_paired_map_unmap
-  set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end //aka is not paired end
+  set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end //is not paired end
  
 
   script:
@@ -264,7 +264,8 @@ process computeIdxstatsInput{
 
   script:
   """
-  samtools index $bam -@$task.cpus | samtools idxstats -@$task.cpus > ${bam}.idxstats
+  samtools index -@$task.cpus $bam 
+  samtools idxstats -@$task.cpus $bam > ${bam}.idxstats
   """
 }
 
