@@ -1,13 +1,15 @@
-# ![nf-core/bamtofastq](docs/images/nf-core-bamtofastq_logo.png)
+# ![qbic-pipelines/bamtofastq](docs/images/qbic-pipelines-bamtofastq_logo.png)
 
 **Workflow converts one or multiple bam files back to the fastq format**.
 
-[![Build Status](https://travis-ci.com/nf-core/bamtofastq.svg?branch=master)](https://travis-ci.com/nf-core/bamtofastq)
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A50.32.0-brightgreen.svg)](https://www.nextflow.io/)
+[![nf-core](https://img.shields.io/badge/nf--core-pipeline-brightgreen.svg)](https://nf-co.re/)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/)
 [![Docker](https://img.shields.io/docker/automated/nfcore/bamtofastq.svg)](https://hub.docker.com/r/nfcore/bamtofastq)
 
+[![GitHub Actions CI status](https://github.com/qbic-pipelines/bamtofastq/workflows/nf-core%20CI/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+CI%22)
+[![GitHub Actions Linting status](https://github.com/qbic-pipelines/bamtofastq/workflows/nf-core%20linting/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+linting%22)
 ## Introduction
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
@@ -21,21 +23,20 @@ ii. Install one of [`docker`](https://docs.docker.com/engine/installation/), [`s
 iii. Download the pipeline and test it on a minimal dataset with a single command
 
 ```bash
-nextflow run nf-core/bamtofastq -profile test,<docker/singularity/conda>
+nextflow run qbic-pipelines/bamtofastq -profile test,<docker/singularity/conda>
 ```
 
 iv. Start running your own analysis!
 
-<!-- TODO nf-core: Update the default command above used to run the pipeline -->
 ```bash
-nextflow run nf-core/bamtofastq -profile <docker/singularity/conda> --reads '*_R{1,2}.fastq.gz' --genome GRCh37
+nextflow run qbic-pipelines/bamtofastq -profile <docker/singularity/conda> --input '*.bam' 
 ```
 
 See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
 
 ## Documentation
 
-The nf-core/bamtofastq pipeline comes with documentation about the pipeline, found in the `docs/` directory:
+The qbic-pipelines/bamtofastq pipeline comes with documentation about the pipeline, found in the `docs/` directory:
 
 1. [Installation](https://nf-co.re/usage/installation)
 2. Pipeline configuration
