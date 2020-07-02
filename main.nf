@@ -216,8 +216,10 @@ process checkIfPairedEnd{
   set val(name), file(bam) from bam_files_check
 
   output:
-  set val(name), file(bam), file('*paired.txt') optional true into bam_files_paired_map_map,      
-                                                                   bam_files_paired_unmap_unmap, bam_files_paired_unmap_map, bam_files_paired_map_unmap
+  set val(name), file(bam), file('*paired.txt') optional true into bam_files_paired_map_map,
+                                                                   bam_files_paired_unmap_unmap,
+                                                                   bam_files_paired_unmap_map,
+                                                                   bam_files_paired_map_unmap
   set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end // = is not paired end
  
 
@@ -396,7 +398,7 @@ process mergeUnmapped{
   """
 }
 
-process sortMapped{
+process sortExtractMapped{
   tag "$name"
   label 'process_medium'
 
@@ -413,7 +415,7 @@ process sortMapped{
   """
 }
 
-process sortUnmapped{
+process sortExtractUnmapped{
   label 'process_medium'
   tag "$name"
  
@@ -449,7 +451,7 @@ process joinMappedAndUnmappedFastq{
   set val(name), file(mapped_fq1), file(mapped_fq2), file(unmapped_fq1), file(unmapped_fq2) from all_fastq.filter{ it.size()>0 }
 
   output:
-  set file('*1.fq.gz'), file('*2.fq.gz') into read_files, read_qc
+  set file('*1.fq.gz'), file('*2.fq.gz') into read_qc
   
 
   script:
@@ -459,7 +461,7 @@ process joinMappedAndUnmappedFastq{
   """
 }
 
-process PairedEndReadsQC{
+process pairedEndReadsQC{
     label 'process_medium'
     tag "$read1"
 
@@ -482,7 +484,7 @@ process PairedEndReadsQC{
 /*
  * STEP 2b: Handle single-end bams 
  */
-process singleEndExtract{
+process sortExtractSingleEnd{
     tag "$name"
     label 'process_medium'
 
@@ -569,7 +571,7 @@ process multiqc {
     file fastqcInput from ch_fastqc_reports_mqc_input_bam.collect().ifEmpty([])
 
     output:
-    file "*multiqc_report.html" into ch_multiqc_report
+    file "*multiqc_report.html"
     file "*_data"
     file "multiqc_plots"
 
