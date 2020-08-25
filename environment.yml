@@ -10,7 +10,6 @@ dependencies:
   - bioconda::multiqc=1.8
   - bioconda::samtools=1.10
   - bioconda::fastqc=0.11.9
-  - bioconda::bedtools=2.29.2
   - conda-forge::r-markdown=1.1
   - conda-forge::r-base=3.6.1
   - conda-forge::pigz=2.3.4
