@@ -167,13 +167,13 @@ process get_software_versions {
     file "*.txt"
 
     script:
-    // TODO nf-core: Get all tools to print their version number here
     """
     echo $workflow.manifest.version > v_pipeline.txt
     echo $workflow.nextflow.version > v_nextflow.txt
-    multiqc --version > v_multiqc.txt
+    fastqc --version &> v_fastqc.txt
     samtools --version > v_samtools.txt
     echo \$(pigz --version 2>&1) > v_pigz.txt
+    multiqc --version > v_multiqc.txt
     scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }
