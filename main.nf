@@ -69,7 +69,8 @@ if ( workflow.profile == 'awsbatch') {
 }
 
 // Stage config files
-ch_multiqc_config = file(params.multiqc_config, checkIfExists: true)
+ch_multiqc_config = file("$baseDir/assets/multiqc_config.yaml", checkIfExists: true)
+ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
 ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 
 /*
@@ -469,7 +470,7 @@ process pairedEndReadsQC{
     set file(read1), file(read2) from read_qc
 
     output:
-    file "*.{zip,html}" into ch_fastqc_reports_mqc_pe_output
+    file "*.{zip,html}" into ch_fastqc_reports_mqc_pe
 
     when:
     !params.no_read_QC
@@ -519,7 +520,7 @@ process singleEndReadQC{
     set val(name), file(reads) from single_end_reads
     
     output:
-    file "*.{zip,html}" into ch_se_fastqc_reports_mqc
+    file "*.{zip,html}" into ch_fastqc_reports_mqc_se
     
     when:
     !params.no_read_QC
@@ -527,6 +528,10 @@ process singleEndReadQC{
     script:
     """
     fastqc --quiet --threads $task.cpus $reads
+    #for f in *; 
+    #do
+    # mv "\$f" "PRE_\$f"; 
+    #done
     """
 
 } 
@@ -559,17 +564,18 @@ process multiqc {
 
     input:
     file multiqc_config from ch_multiqc_config
+    //file mqc_custom_config from ch_multiqc_custom_config.collect().ifEmpty([])
 
-    file (fastqcSE) from ch_se_fastqc_reports_mqc.collect().ifEmpty([]) 
-    file (fastqcPE) from ch_fastqc_reports_mqc_pe_output.collect().ifEmpty([])
+    
 
     file ('software_versions/*') from software_versions_yaml.collect()
     file workflow_summary from create_workflow_summary(summary)
     file flagstats from ch_bam_flagstat_mqc.collect()
     file stats from ch_bam_stats_mqc.collect()
     file idxstats from ch_bam_idxstat_mqc.collect()
-    file fastqcInput from ch_fastqc_reports_mqc_input_bam.collect().ifEmpty([])
-
+    file fastqc_bam from ch_fastqc_reports_mqc_input_bam.collect().ifEmpty([])
+    file fastqc_se from ch_fastqc_reports_mqc_se.collect().ifEmpty([]) 
+    file fastqc_pe from ch_fastqc_reports_mqc_pe.collect().ifEmpty([])
     output:
     file "*multiqc_report.html"
     file "*_data"
@@ -578,9 +584,9 @@ process multiqc {
     script:
     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
+    //custom_config_file = params.multiqc_config ? "--config $mqc_custom_config" : ''
     """
-    multiqc . -s -f $rtitle $rfilename --config $multiqc_config  \\
-      -m samtools -m fastqc -m custom_content --verbose
+    multiqc -f ${rtitle} ${rfilename} .    
     """
 }
 
