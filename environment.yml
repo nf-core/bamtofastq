@@ -7,7 +7,7 @@ channels:
   - defaults
 dependencies:
   # TODO nf-core: Add required software dependencies here
-  - bioconda::multiqc=1.8
+  - bioconda::multiqc=1.9
   - bioconda::samtools=1.10
   - bioconda::fastqc=0.11.9
   - conda-forge::r-markdown=1.1
