@@ -70,7 +70,6 @@ if ( workflow.profile == 'awsbatch') {
 
 // Stage config files
 ch_multiqc_config = file("$baseDir/assets/multiqc_config.yaml", checkIfExists: true)
-ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config, checkIfExists: true) : Channel.empty()
 ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 
 /*
@@ -527,11 +526,9 @@ process singleEndReadQC{
 
     script:
     """
-    fastqc --quiet --threads $task.cpus $reads
-    #for f in *; 
-    #do
-    # mv "\$f" "PRE_\$f"; 
-    #done
+    mv {,Reads_}$reads
+
+    fastqc --quiet --threads $task.cpus "Reads_${reads}"
     """
 
 } 
@@ -564,9 +561,6 @@ process multiqc {
 
     input:
     file multiqc_config from ch_multiqc_config
-    //file mqc_custom_config from ch_multiqc_custom_config.collect().ifEmpty([])
-
-    
 
     file ('software_versions/*') from software_versions_yaml.collect()
     file workflow_summary from create_workflow_summary(summary)
@@ -576,6 +570,7 @@ process multiqc {
     file fastqc_bam from ch_fastqc_reports_mqc_input_bam.collect().ifEmpty([])
     file fastqc_se from ch_fastqc_reports_mqc_se.collect().ifEmpty([]) 
     file fastqc_pe from ch_fastqc_reports_mqc_pe.collect().ifEmpty([])
+
     output:
     file "*multiqc_report.html"
     file "*_data"
@@ -584,10 +579,10 @@ process multiqc {
     script:
     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
-    //custom_config_file = params.multiqc_config ? "--config $mqc_custom_config" : ''
     """
-    multiqc -f ${rtitle} ${rfilename} .    
+    multiqc -f $rtitle $rfilename $multiqc_config . 
     """
+
 }
 
 /*

@@ -14,6 +14,18 @@ report_section_order:
 
 top_modules:
     - 'fastqc':
-    - 'samtools'
+        name: 'FastQC (Input Bam)'
+        path_filters_exclude:
+            - '*singleton_fastqc*'
+            - '*.1_fastqc*'
+            - '*.2_fastqc*'
+    - 'samtools':
+        name: 'Samtools (Input Bam)'
+    - 'fastqc':
+        name: 'FastQC (Output Reads)'
+        path_filters:
+            - '*singleton_fastqc*'
+            - '*.1_fastqc*'
+            - '*.2_fastqc*'
        
 export_plots: true
