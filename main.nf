@@ -476,6 +476,7 @@ process pairedEndReadsQC{
 
     script:
     """
+    mv {,Reads_}$reads
     fastqc --quiet --threads $task.cpus $read1 $read2
     """
 }
@@ -527,7 +528,6 @@ process singleEndReadQC{
     script:
     """
     mv {,Reads_}$reads
-
     fastqc --quiet --threads $task.cpus "Reads_${reads}"
     """
 
