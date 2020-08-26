@@ -69,7 +69,7 @@ if ( workflow.profile == 'awsbatch') {
 }
 
 // Stage config files
-ch_multiqc_config = file(params.multiqc_config, checkIfExists: true)
+ch_multiqc_config = file("$baseDir/assets/multiqc_config.yaml", checkIfExists: true)
 ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 
 /*
@@ -90,7 +90,11 @@ if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome
      Channel
         .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .set { bam_chr } //else send to first process
+        .into { bam_chr;
+                bam_files_flagstats;
+                bam_files_idxstats;
+                bam_files_stats;
+                bam_files_fastqc} //else send to first process
 }else{
      exit 1, "Parameter 'params.input' was not specified!\n"
 }
@@ -99,34 +103,32 @@ if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome
 // Header log info
 log.info nfcoreHeader()
 def summary = [:]
-if (workflow.revision) summary['Pipeline Release'] = workflow.revision
-summary['Run Name']         = custom_runName ?: workflow.runName
-// TODO nf-core: Report custom parameters here
-summary['Input']            = params.input
-summary['Max Resources']    = "$params.max_memory memory, $params.max_cpus cpus, $params.max_time time per job"
-if (workflow.containerEngine) summary['Container'] = "$workflow.containerEngine - $workflow.container"
-summary['Output dir']       = params.outdir
-if (params.chr) summary['Only reads mapped to chr'] = params.chr
-summary['Read QC'] = params.no_read_QC ? 'No' : 'Yes'
-
-summary['Launch dir']       = workflow.launchDir
-summary['Working dir']      = workflow.workDir
-summary['Script dir']       = workflow.projectDir
-summary['User']             = workflow.userName
-if (workflow.profile == 'awsbatch') {
-  summary['AWS Region']     = params.awsregion
-  summary['AWS Queue']      = params.awsqueue
-}
-summary['Config Profile'] = workflow.profile
-if (params.config_profile_description) summary['Config Description'] = params.config_profile_description
-if (params.config_profile_contact)     summary['Config Contact']     = params.config_profile_contact
-if (params.config_profile_url)         summary['Config URL']         = params.config_profile_url
+if (workflow.revision) summary['Pipeline Release']                    = workflow.revision
+summary['Run Name']                                                   = custom_runName ?: workflow.runName
+summary['Input']                                                      = params.input
+summary['Max Resources']                                              = "$params.max_memory memory, $params.max_cpus cpus, $params.max_time time per job"
+if (workflow.containerEngine) summary['Container']                    = "$workflow.containerEngine - $workflow.container"
+summary['Output dir']                                                 = params.outdir
+if (params.chr) summary['Only reads mapped to chr']                   = params.chr
+summary['Read QC']                                                    = params.no_read_QC ? 'No' : 'Yes'
+summary['Launch dir']                                                 = workflow.launchDir
+summary['Working dir']                                                = workflow.workDir
+summary['Script dir']                                                 = workflow.projectDir
+summary['User']                                                       = workflow.userName
+if (workflow.profile == 'awsbatch') {                 
+  summary['AWS Region']                                               = params.awsregion
+  summary['AWS Queue']                                                = params.awsqueue
+}                 
+summary['Config Profile']                                             = workflow.profile
+if (params.config_profile_description) summary['Config Description']  = params.config_profile_description
+if (params.config_profile_contact)     summary['Config Contact']      = params.config_profile_contact
+if (params.config_profile_url)         summary['Config URL']          = params.config_profile_url
 if (params.email || params.email_on_fail) {
-  summary['E-mail Address']    = params.email
-  summary['E-mail on failure'] = params.email_on_fail
-  summary['MultiQC maxsize']   = params.maxMultiqcEmailFileSize
+  summary['E-mail Address']                                           = params.email
+  summary['E-mail on failure']                                        = params.email_on_fail
+  summary['MultiQC maxsize']                                          = params.maxMultiqcEmailFileSize
 }
-log.info summary.collect { k,v -> "${k.padRight(18)}: $v" }.join("\n")
+log.info summary.collect { k,v -> "${k.padRight(26)}: $v" }.join("\n")
 log.info "-\033[2m--------------------------------------------------\033[0m-"
 
 // Check the hostnames against configured profiles
@@ -167,13 +169,13 @@ process get_software_versions {
     file "*.txt"
 
     script:
-    // TODO nf-core: Get all tools to print their version number here
     """
     echo $workflow.manifest.version > v_pipeline.txt
     echo $workflow.nextflow.version > v_nextflow.txt
-    multiqc --version > v_multiqc.txt
+    fastqc --version &> v_fastqc.txt
     samtools --version > v_samtools.txt
     echo \$(pigz --version 2>&1) > v_pigz.txt
+    multiqc --version > v_multiqc.txt
     scrape_software_versions.py &> software_versions_mqc.yaml
     """
 }
@@ -190,11 +192,8 @@ if (params.chr){
     set val(name), file(bam) from bam_chr 
 
     output:
-    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check, 
-                bam_files_flagstats,
-                bam_files_idxstats,
-                bam_files_stats,
-                bam_files_fastqc
+    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
+                
 
     script:
     //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
@@ -320,7 +319,6 @@ process pairedEndMapMap{
 
   script:
   """
-  #TODO not sure @does anything here
   samtools view -b -f1 -F12 $bam -@$task.cpus -o ${name}.map_map.bam
   """
 }
@@ -469,7 +467,7 @@ process pairedEndReadsQC{
     set file(read1), file(read2) from read_qc
 
     output:
-    file "*.{zip,html}" into ch_fastqc_reports_mqc_pe_output
+    file "*.{zip,html}" into ch_fastqc_reports_mqc_pe
 
     when:
     !params.no_read_QC
@@ -519,14 +517,14 @@ process singleEndReadQC{
     set val(name), file(reads) from single_end_reads
     
     output:
-    file "*.{zip,html}" into ch_se_fastqc_reports_mqc
+    file "*.{zip,html}" into ch_fastqc_reports_mqc_se
     
     when:
     !params.no_read_QC
 
     script:
     """
-    fastqc --quiet --threads $task.cpus $reads
+    fastqc --quiet --threads $task.cpus ${reads}
     """
 
 } 
@@ -560,15 +558,14 @@ process multiqc {
     input:
     file multiqc_config from ch_multiqc_config
 
-    file (fastqcSE) from ch_se_fastqc_reports_mqc.collect().ifEmpty([]) 
-    file (fastqcPE) from ch_fastqc_reports_mqc_pe_output.collect().ifEmpty([])
-
     file ('software_versions/*') from software_versions_yaml.collect()
     file workflow_summary from create_workflow_summary(summary)
     file flagstats from ch_bam_flagstat_mqc.collect()
     file stats from ch_bam_stats_mqc.collect()
     file idxstats from ch_bam_idxstat_mqc.collect()
-    file fastqcInput from ch_fastqc_reports_mqc_input_bam.collect().ifEmpty([])
+    file fastqc_bam from ch_fastqc_reports_mqc_input_bam.collect().ifEmpty([])
+    file fastqc_se from ch_fastqc_reports_mqc_se.collect().ifEmpty([]) 
+    file fastqc_pe from ch_fastqc_reports_mqc_pe.collect().ifEmpty([])
 
     output:
     file "*multiqc_report.html"
@@ -579,9 +576,9 @@ process multiqc {
     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
     """
-    multiqc . -s -f $rtitle $rfilename --config $multiqc_config  \\
-      -m samtools -m fastqc -m custom_content --verbose
+    multiqc -f -s $rtitle $rfilename $multiqc_config . 
     """
+
 }
 
 /*
@@ -590,9 +587,9 @@ process multiqc {
 workflow.onComplete {
 
     // Set up the e-mail variables
-    def subject = "[nf-core/bamtofastq] Successful: $workflow.runName"
+    def subject = "[qbic-pipelines/bamtofastq] Successful: $workflow.runName"
     if (!workflow.success) {
-      subject = "[nf-core/bamtofastq] FAILED: $workflow.runName"
+      subject = "[qbic-pipelines/bamtofastq] FAILED: $workflow.runName"
     }
     def email_fields = [:]
     email_fields['version'] = workflow.manifest.version
@@ -624,12 +621,12 @@ workflow.onComplete {
         if (workflow.success) {
             mqc_report = multiqc_report.getVal()
             if (mqc_report.getClass() == ArrayList) {
-                log.warn "[nf-core/bamtofastq] Found multiple reports from process 'multiqc', will use only one"
+                log.warn "[qbic-pipelines/bamtofastq] Found multiple reports from process 'multiqc', will use only one"
                 mqc_report = mqc_report[0]
             }
         }
     } catch (all) {
-        log.warn "[nf-core/bamtofastq] Could not attach MultiQC report to summary email"
+        log.warn "[qbic-pipelines/bamtofastq] Could not attach MultiQC report to summary email"
     }
 
     // Check if we are only sending emails on failure
@@ -661,11 +658,11 @@ workflow.onComplete {
           if ( params.plaintext_email ){ throw GroovyException('Send plaintext e-mail, not HTML') }
           // Try to send HTML e-mail using sendmail
           [ 'sendmail', '-t' ].execute() << sendmail_html
-          log.info "[nf-core/bamtofastq] Sent summary e-mail to $email_address (sendmail)"
+          log.info "[qbic-pipelines/bamtofastq] Sent summary e-mail to $email_address (sendmail)"
         } catch (all) {
           // Catch failures and try with plaintext
           [ 'mail', '-s', subject, email_address ].execute() << email_txt
-          log.info "[nf-core/bamtofastq] Sent summary e-mail to $email_address (mail)"
+          log.info "[qbic-pipelines/bamtofastq] Sent summary e-mail to $email_address (mail)"
         }
     }
 
@@ -691,10 +688,10 @@ workflow.onComplete {
     }
 
     if (workflow.success) {
-        log.info "${c_purple}[nf-core/bamtofastq]${c_green} Pipeline completed successfully${c_reset}"
+        log.info "${c_purple}[qbic-pipelines/bamtofastq]${c_green} Pipeline completed successfully${c_reset}"
     } else {
         checkHostname()
-        log.info "${c_purple}[nf-core/bamtofastq]${c_red} Pipeline completed with errors${c_reset}"
+        log.info "${c_purple}[qbic-pipelines/bamtofastq]${c_red} Pipeline completed with errors${c_reset}"
     }
 
 }
