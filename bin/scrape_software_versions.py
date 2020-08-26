@@ -3,7 +3,6 @@ from __future__ import print_function
 from collections import OrderedDict
 import re
 
-# TODO nf-core: Add additional regexes for new tools in process get_software_versions
 regexes = {
     'qbic-pipelines/bamtofastq': ['v_pipeline.txt', r"(\S+)"],
     'Nextflow': ['v_nextflow.txt', r"(\S+)"],
@@ -37,8 +36,8 @@ for k in results:
 # Dump to YAML
 print ('''
 id: 'software_versions'
-section_name: 'nf-core/bamtofastq Software Versions'
-section_href: 'https://github.com/nf-core/bamtofastq'
+section_name: 'qbic-pipelines/bamtofastq Software Versions'
+section_href: 'https://github.com/qbic-pipelines/bamtofastq'
 plot_type: 'html'
 description: 'are collected at run time from the software output.'
 data: |
