@@ -1,6 +1,6 @@
 # ![qbic-pipelines/bamtofastq](docs/images/qbic-pipelines-bamtofastq_logo.png)
 
-**Workflow converts one or multiple bam files back to the fastq format**.
+> **An open-source pipeline converting (un)mapped single-end or paired-end bam files to fastq.gz**.
 
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A520.04.1-brightgreen.svg)](https://www.nextflow.io/)
 [![nf-core](https://img.shields.io/badge/nf--core-pipeline-brightgreen.svg)](https://nf-co.re/)
