@@ -54,7 +54,7 @@ The qbic-pipelines/bamtofastq pipeline comes with documentation about the pipeli
 
 qbic-pipelines/bamtofastq was originally written by [Friederike Hanssen](https://github.com/FriederikeHanssen).
 
-This pipeline was originally created using the [nf-core](https://github.com/nf-core) framework.
+This pipeline was created using the [nf-core](https://github.com/nf-core) framework and still uses some of their underlying infrastructure.
 
 Helpful contributors:
 

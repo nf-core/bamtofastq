@@ -137,10 +137,10 @@ checkHostname()
 def create_workflow_summary(summary) {
     def yaml_file = workDir.resolve('workflow_summary_mqc.yaml')
     yaml_file.text  = """
-    id: 'nf-core-bamtofastq-summary'
+    id: 'qbic-pipelines-bamtofastq-summary'
     description: " - this information is collected when the pipeline is started."
-    section_name: 'nf-core/bamtofastq Workflow Summary'
-    section_href: 'https://github.com/nf-core/bamtofastq'
+    section_name: 'qbic-pipelines/bamtofastq Workflow Summary'
+    section_href: 'https://github.com/qbic-pipelines/bamtofastq'
     plot_type: 'html'
     data: |
         <dl class=\"dl-horizontal\">
@@ -174,7 +174,6 @@ process get_software_versions {
     echo $workflow.nextflow.version > v_nextflow.txt
     fastqc --version &> v_fastqc.txt
     samtools --version > v_samtools.txt
-    echo \$(pigz --version 2>&1) > v_pigz.txt
     multiqc --version > v_multiqc.txt
     scrape_software_versions.py &> software_versions_mqc.yaml
     """
@@ -715,7 +714,7 @@ def nfcoreHeader(){
     ${c_blue}  |\\ | |__  __ /  ` /  \\ |__) |__         ${c_yellow}}  {${c_reset}
     ${c_blue}  | \\| |       \\__, \\__/ |  \\ |___     ${c_green}\\`-._,-`-,${c_reset}
                                             ${c_green}`._,._,\'${c_reset}
-    ${c_purple}  nf-core/bamtofastq v${workflow.manifest.version}${c_reset}
+    ${c_purple}  qbic-pipelines/bamtofastq v${workflow.manifest.version}${c_reset}
     -${c_dim}--------------------------------------------------${c_reset}-
     """.stripIndent()
 }
