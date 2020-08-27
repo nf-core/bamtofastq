@@ -61,11 +61,20 @@ Helpful contributors:
 * [Gisela Gabernet](https://github.com/ggabernet)
 * [Matilda Åslin](https://github.com/matrulda) 
 
+### Resources
+
+The individual steps of this pipeline are based on a variety of publically available resources:
+ 
+ 1. [Extracting paired FASTQ read data from a BAM mapping file](http://darencard.net/blog/2017-09-07-extract-fastq-bam/)
+ 2. [Check if BAM is derived from pair-end or single-end reads](https://www.biostars.org/p/178730/)
+ 
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
 
 For further information or help, don't hesitate to get in touch by opening an issue.
+
+## CHANGELOG
 
 ## Citation
 
