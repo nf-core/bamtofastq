@@ -1,0 +1,7 @@
+Sample	Unique Reads	Duplicate Reads
+First_SmallTest_Paired.1.fq.gz	29849.0	151.0
+First_SmallTest_Paired.2.fq.gz	29986.0	14.0
+JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.singleton.fq.gz	9684.0	172.0
+Second_SmallTest_Paired.1.fq.gz	29849.0	151.0
+Second_SmallTest_Paired.2.fq.gz	29986.0	14.0
+wgEncodeUwRepliSeqK562G1AlnRep1.singleton.fq.gz	782950.0	135621.0

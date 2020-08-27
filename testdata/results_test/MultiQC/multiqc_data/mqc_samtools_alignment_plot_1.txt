@@ -1,0 +1,5 @@
+Sample	Mapped	Unmapped
+First_SmallTest_Paired.bam.stats	59077.0	923.0
+JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam.stats	1197.0	8695.0
+Second_SmallTest_Paired.bam.stats	59142.0	858.0
+wgEncodeUwRepliSeqK562G1AlnRep1.bam.stats	918571.0	0.0

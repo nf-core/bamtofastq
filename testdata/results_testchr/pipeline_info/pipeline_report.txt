@@ -1,0 +1,48 @@
+----------------------------------------------------
+                                        ,--./,-.
+        ___     __   __   __   ___     /,-._.--~\
+  |\ | |__  __ /  ` /  \ |__) |__         }  {
+  | \| |       \__, \__/ |  \ |___     \`-._,-`-,
+                                        `._,._,'
+  nf-core/bamtofastq v1.0dev
+----------------------------------------------------
+
+Run Name: wise_mestorf
+
+## nf-core/bamtofastq execution completed successfully! ##
+
+
+The workflow was completed at 2020-08-27T15:29:07.436056+02:00 (duration: 1m 44s)
+
+The command used to launch the workflow was as follows:
+
+  nextflow run main.nf -profile conda,test_chr -resume
+
+
+
+Pipeline Configuration:
+-----------------------
+ - Run Name: wise_mestorf
+ - Input: [https://github.com/nf-core/test-datasets/raw/eager/testdata/Mammoth/bam/JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam, testdata/First_SmallTest_Paired.bam, testdata/Second_SmallTest_Paired.bam, testdata/wgEncodeUwRepliSeqK562G1AlnRep1.bam]
+ - Max Resources: 6 GB memory, 2 cpus, 2d time per job
+ - Output dir: ./results
+ - Only reads mapped to chr: chrX chrY X Y
+ - Read QC: Yes
+ - Launch dir: /Users/monarchy/Projects/bamtofastq
+ - Working dir: /Users/monarchy/Projects/bamtofastq/work
+ - Script dir: /Users/monarchy/Projects/bamtofastq
+ - User: monarchy
+ - Config Profile: conda,test_chr
+ - Config Description: Minimal test dataset to check pipeline function
+ - Date Started: 2020-08-27T15:27:23.024053+02:00
+ - Date Completed: 2020-08-27T15:29:07.436056+02:00
+ - Pipeline script file path: /Users/monarchy/Projects/bamtofastq/main.nf
+ - Pipeline script hash ID: 063e272731dfe7dbc2e0f6a2080f0b5f
+ - Docker image: fhanssen/bamtofastq:dev
+ - Nextflow Version: 20.07.1
+ - Nextflow Build: 5412
+ - Nextflow Compile Timestamp: 24-07-2020 15:18 UTC
+
+--
+nf-core/bamtofastq
+https://github.com/nf-core/bamtofastq

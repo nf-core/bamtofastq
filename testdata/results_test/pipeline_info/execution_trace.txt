@@ -1,0 +1,46 @@
+task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
+22	43/387a3e	37964	computeIdxstatsInput (wgEncodeUwRepliSeqK562G1AlnRep1)	COMPLETED	0	2020-08-27 15:11:07.295	7.5s	1s	-	-	-	-	-
+19	13/359ecb	40121	computeStatsInput (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:14.854	4.8s	0ms	-	-	-	-	-
+12	f6/029d3d	37969	computeFastQCInput (wgEncodeUwRepliSeqK562G1AlnRep1)	COMPLETED	0	2020-08-27 15:11:07.319	15.7s	9s	-	-	-	-	-
+21	4d/a8a406	41224	computeStatsInput (wgEncodeUwRepliSeqK562G1AlnRep1)	COMPLETED	0	2020-08-27 15:11:19.688	5.3s	2s	-	-	-	-	-
+20	56/5ea24f	41916	computeIdxstatsInput (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:23.009	3.8s	0ms	-	-	-	-	-
+8	27/471bed	42933	computeStatsInput (JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped)	COMPLETED	0	2020-08-27 15:11:25.014	3.8s	0ms	-	-	-	-	-
+16	1a/d7b93c	44008	computeStatsInput (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:26.834	4.2s	1s	-	-	-	-	-
+9	ed/6ba7d2	45075	computeFlagstatInput (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:28.852	3.8s	0ms	-	-	-	-	-
+11	16/c38c1e	46173	computeFlagstatInput (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:31.045	3.6s	0ms	-	-	-	-	-
+7	5d/db8ae7	47237	computeIdxstatsInput (JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped)	COMPLETED	0	2020-08-27 15:11:32.612	3.3s	0ms	-	-	-	-	-
+17	fc/f9035a	48314	checkIfPairedEnd (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:34.670	3.1s	0ms	-	-	-	-	-
+13	8e/0f6d07	50447	computeFlagstatInput (wgEncodeUwRepliSeqK562G1AlnRep1)	COMPLETED	0	2020-08-27 15:11:37.825	3.8s	0ms	-	-	-	-	-
+6	b4/7ed358	49374	computeFastQCInput (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:35.883	8s	4s	-	-	-	-	-
+14	40/963f60	52608	computeIdxstatsInput (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:43.910	3.5s	0ms	-	-	-	-	-
+5	3b/c43fb6	51974	computeFastQCInput (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:41.670	8s	5s	-	-	-	-	-
+3	9d/201551	54751	computeFlagstatInput (JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped)	COMPLETED	0	2020-08-27 15:11:49.675	3.1s	0ms	-	-	-	-	-
+4	dc/8d58b5	54113	computeFastQCInput (JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped)	COMPLETED	0	2020-08-27 15:11:47.419	6.9s	4s	-	-	-	-	-
+15	a6/dcb826	56869	checkIfPairedEnd (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:11:54.347	3.1s	0ms	-	-	-	-	-
+18	ee/3d6637	58396	checkIfPairedEnd (wgEncodeUwRepliSeqK562G1AlnRep1)	COMPLETED	0	2020-08-27 15:11:57.451	3s	0ms	-	-	-	-	-
+10	4d/51c601	59472	checkIfPairedEnd (JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped)	COMPLETED	0	2020-08-27 15:12:00.409	3.1s	0ms	-	-	-	-	-
+1	bb/35e8a5	56248	get_software_versions	COMPLETED	0	2020-08-27 15:11:52.826	11.7s	8s	-	-	-	-	-
+2	23/05b2b4	60561	output_documentation	COMPLETED	0	2020-08-27 15:12:03.550	3.7s	1s	-	-	-	-	-
+23	18/fd383a	61138	pairedEndUnmapUnmap (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:04.567	3.1s	0ms	-	-	-	-	-
+24	e4/8b84a9	62399	pairedEndMapMap (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:07.209	3.5s	0ms	-	-	-	-	-
+25	05/328be7	62760	pairedEndMapUnmap (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:07.677	3.2s	0ms	-	-	-	-	-
+26	50/33d559	64789	pairedEndUnmapMap (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:10.746	3.3s	1s	-	-	-	-	-
+29	56/313765	64852	pairedEndUnmapUnmap (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:10.918	3.3s	0ms	-	-	-	-	-
+27	0c/196659	66894	pairedEndMapMap (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:14.042	3.4s	0ms	-	-	-	-	-
+28	29/2c7b60	66990	pairedEndUnmapMap (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:14.222	3.3s	0ms	-	-	-	-	-
+30	99/9c9b11	69116	pairedEndMapUnmap (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:17.474	3.2s	0ms	-	-	-	-	-
+31	a5/1ae600	69126	sortExtractSingleEnd (wgEncodeUwRepliSeqK562G1AlnRep1)	COMPLETED	0	2020-08-27 15:12:17.514	6.6s	4s	-	-	-	-	-
+32	0d/e1b65a	71245	sortExtractSingleEnd (JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped)	COMPLETED	0	2020-08-27 15:12:20.645	5.2s	1s	-	-	-	-	-
+34	8a/6fcb00	72942	mergeUnmapped (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:25.824	3.5s	0ms	-	-	-	-	-
+33	7d/2cb443	72185	sortExtractMapped (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:24.103	5.7s	2s	-	-	-	-	-
+36	a7/cdf3ca	74471	mergeUnmapped (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:29.772	3.5s	0ms	-	-	-	-	-
+35	ca/44bc61	74459	sortExtractMapped (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:29.363	5.3s	2s	-	-	-	-	-
+38	75/367d42	77231	singleEndReadQC (JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped)	COMPLETED	0	2020-08-27 15:12:34.682	7s	4s	-	-	-	-	-
+37	20/6aabc3	76605	singleEndReadQC (wgEncodeUwRepliSeqK562G1AlnRep1)	COMPLETED	0	2020-08-27 15:12:33.228	9.8s	7s	-	-	-	-	-
+39	40/d1ccd4	78781	sortExtractUnmapped (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:41.658	5.2s	1s	-	-	-	-	-
+40	0a/a8b636	79377	sortExtractUnmapped (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:43.044	4.9s	1s	-	-	-	-	-
+41	5d/052797	80972	joinMappedAndUnmappedFastq (Second_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:46.915	3.4s	0ms	-	-	-	-	-
+42	53/261157	81513	joinMappedAndUnmappedFastq (First_SmallTest_Paired)	COMPLETED	0	2020-08-27 15:12:47.980	3.4s	0ms	-	-	-	-	-
+43	5c/16dd73	82683	pairedEndReadsQC (Second_SmallTest_Paired.1.fq.gz)	COMPLETED	0	2020-08-27 15:12:50.357	8.2s	5s	-	-	-	-	-
+44	10/7919f4	83635	pairedEndReadsQC (First_SmallTest_Paired.1.fq.gz)	COMPLETED	0	2020-08-27 15:12:51.442	9.3s	5s	-	-	-	-	-
+45	29/bdc3bd	85290	multiqc	COMPLETED	0	2020-08-27 15:13:00.742	36.2s	33s	-	-	-	-	-

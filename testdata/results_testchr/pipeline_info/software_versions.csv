@@ -1,0 +1,5 @@
+qbic-pipelines/bamtofastq	v1.0dev
+Nextflow	v20.07.1
+Samtools	v1.10
+FastQC	v0.11.9
+MultiQC	v1.9

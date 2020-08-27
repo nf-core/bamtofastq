@@ -1,0 +1,23 @@
+Module	Section	Sample Name	Source
+FastQC (Input Bam)	all_sections	wgEncodeUwRepliSeqK562G1AlnRep1.bam	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/wgEncodeUwRepliSeqK562G1AlnRep1_fastqc.zip
+FastQC (Input Bam)	all_sections	JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped_fastqc.zip
+FastQC (Input Bam)	all_sections	Second_SmallTest_Paired.bam	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/Second_SmallTest_Paired_fastqc.zip
+FastQC (Input Bam)	all_sections	First_SmallTest_Paired.bam	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/First_SmallTest_Paired_fastqc.zip
+Samtools (Input Bam)	stats	First_SmallTest_Paired.bam.stats	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/First_SmallTest_Paired.bam.stats
+Samtools (Input Bam)	stats	wgEncodeUwRepliSeqK562G1AlnRep1.bam.stats	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/wgEncodeUwRepliSeqK562G1AlnRep1.bam.stats
+Samtools (Input Bam)	stats	JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam.stats	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam.stats
+Samtools (Input Bam)	stats	Second_SmallTest_Paired.bam.stats	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/Second_SmallTest_Paired.bam.stats
+Samtools (Input Bam)	flagstat	wgEncodeUwRepliSeqK562G1AlnRep1.bam.flagstat	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/wgEncodeUwRepliSeqK562G1AlnRep1.bam.flagstat
+Samtools (Input Bam)	flagstat	JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam.flagstat	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam.flagstat
+Samtools (Input Bam)	flagstat	First_SmallTest_Paired.bam.flagstat	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/First_SmallTest_Paired.bam.flagstat
+Samtools (Input Bam)	flagstat	Second_SmallTest_Paired.bam.flagstat	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/Second_SmallTest_Paired.bam.flagstat
+Samtools (Input Bam)	idxstats	First_SmallTest_Paired.bam.idxstats	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/First_SmallTest_Paired.bam.idxstats
+Samtools (Input Bam)	idxstats	Second_SmallTest_Paired.bam.idxstats	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/Second_SmallTest_Paired.bam.idxstats
+Samtools (Input Bam)	idxstats	JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam.idxstats	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam.idxstats
+Samtools (Input Bam)	idxstats	wgEncodeUwRepliSeqK562G1AlnRep1.bam.idxstats	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/wgEncodeUwRepliSeqK562G1AlnRep1.bam.idxstats
+FastQC (Output Reads)	all_sections	Second_SmallTest_Paired.1.fq.gz	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/Second_SmallTest_Paired.1_fastqc.zip
+FastQC (Output Reads)	all_sections	First_SmallTest_Paired.1.fq.gz	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/First_SmallTest_Paired.1_fastqc.zip
+FastQC (Output Reads)	all_sections	First_SmallTest_Paired.2.fq.gz	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/First_SmallTest_Paired.2_fastqc.zip
+FastQC (Output Reads)	all_sections	Second_SmallTest_Paired.2.fq.gz	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/Second_SmallTest_Paired.2_fastqc.zip
+FastQC (Output Reads)	all_sections	JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.singleton.fq.gz	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.singleton_fastqc.zip
+FastQC (Output Reads)	all_sections	wgEncodeUwRepliSeqK562G1AlnRep1.singleton.fq.gz	/Users/monarchy/Projects/bamtofastq/work/29/bdc3bddb8137ef3059bc509705a695/wgEncodeUwRepliSeqK562G1AlnRep1.singleton_fastqc.zip
