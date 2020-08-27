@@ -13,6 +13,9 @@
 [![GitHub Actions Linting status](https://github.com/qbic-pipelines/bamtofastq/workflows/nf-core%20linting/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+linting%22) --> 
 ## Introduction
 
+This pipeline converts (un)mapped `.bam` files into `fq.gz` files.
+Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam files it is possible to only convert reads mapping to a specific region or chromosome. The obtained fastq files can then be used to further process with other pipelines.
+
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
 ## Quick Start
@@ -43,18 +46,15 @@ The qbic-pipelines/bamtofastq pipeline comes with documentation about the pipeli
 2. Pipeline configuration
     * [Local installation](https://nf-co.re/usage/local_installation)
     * [Adding your own system config](https://nf-co.re/usage/adding_own_config)
-    * [Reference genomes](https://nf-co.re/usage/reference_genomes)
 3. [Running the pipeline](docs/usage.md)
 4. [Output and how to interpret the results](docs/output.md)
 5. [Troubleshooting](https://nf-co.re/usage/troubleshooting)
-
-<!-- TODO nf-core: Add a brief overview of what the pipeline does and how it works -->
 
 ## Credits
 
 qbic-pipelines/bamtofastq was originally written by [Friederike Hanssen](https://github.com/FriederikeHanssen).
 
-This pipeline was created using the [nf-core](https://github.com/nf-core) framework and still uses some of their underlying infrastructure.
+This pipeline was created using the [nf-core](https://github.com/nf-core) framework and still uses some of its underlying infrastructure. For more information see [nf-co.re](nf-co.re).
 
 Helpful contributors:
 
@@ -63,11 +63,11 @@ Helpful contributors:
 
 ### Resources
 
-The individual steps of this pipeline are based on a variety of publically available resources:
+The individual steps of this pipeline are based of on the following tutorials and resources:
  
  1. [Extracting paired FASTQ read data from a BAM mapping file](http://darencard.net/blog/2017-09-07-extract-fastq-bam/)
  2. [Check if BAM is derived from pair-end or single-end reads](https://www.biostars.org/p/178730/)
- 
+
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
@@ -75,6 +75,8 @@ If you would like to contribute to this pipeline, please see the [contributing g
 For further information or help, don't hesitate to get in touch by opening an issue.
 
 ## CHANGELOG
+
+
 
 ## Citation
 
