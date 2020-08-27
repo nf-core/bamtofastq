@@ -137,10 +137,10 @@ checkHostname()
 def create_workflow_summary(summary) {
     def yaml_file = workDir.resolve('workflow_summary_mqc.yaml')
     yaml_file.text  = """
-    id: 'nf-core-bamtofastq-summary'
+    id: 'qbic-pipelines-bamtofastq-summary'
     description: " - this information is collected when the pipeline is started."
-    section_name: 'nf-core/bamtofastq Workflow Summary'
-    section_href: 'https://github.com/nf-core/bamtofastq'
+    section_name: 'qbic-pipelines/bamtofastq Workflow Summary'
+    section_href: 'https://github.com/qbic-pipelines/bamtofastq'
     plot_type: 'html'
     data: |
         <dl class=\"dl-horizontal\">
