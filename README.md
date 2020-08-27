@@ -14,7 +14,7 @@
 ## Introduction
 
 This pipeline converts (un)mapped `.bam` files into `fq.gz` files.
-Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam files it is possible to only convert reads mapping to a specific region or chromosome. The obtained fastq files can then be used to further process with other pipelines.
+Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam files it is possible to only convert reads mapping to a specific region or chromosome. The obtained FastQ files can then be used to further process with other pipelines.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
@@ -73,10 +73,6 @@ The individual steps of this pipeline are based of on the following tutorials an
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
 
 For further information or help, don't hesitate to get in touch by opening an issue.
-
-## CHANGELOG
-
-
 
 ## Citation
 
