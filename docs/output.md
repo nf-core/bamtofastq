@@ -8,12 +8,17 @@ This document describes the output produced by the pipeline. Most of the plots a
 The pipeline is built using [Nextflow](https://www.nextflow.io/)
 and processes data using the following steps:
 
-* [FastQC](#fastqc) - read quality control
+* [FastQC](#fastqc) - bam and read quality control
 * [Samtools](#samtools) - collate and extract reads
 * [MultiQC](#multiqc) - aggregate report, describing results of the whole pipeline
 
 ## FastQC
+  [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your reads. It provides information about the quality score distribution across your reads, the per base sequence content (%T/A/G/C). You get information about adapter contamination and other overrepresented sequences.
+
+  For further reading and documentation see the [FastQC help](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/).
   
+  
+
 ## Samtools
  [Samtools](https://www.htslib.org)
 
