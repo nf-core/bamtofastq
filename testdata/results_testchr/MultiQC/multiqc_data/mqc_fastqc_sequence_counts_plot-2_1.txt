@@ -1,7 +1,0 @@
-Sample	Unique Reads	Duplicate Reads
-First_SmallTest_Paired.chrX_chrY_X_Y.1.fq.gz	1505.0	2.0
-First_SmallTest_Paired.chrX_chrY_X_Y.2.fq.gz	1507.0	0.0
-JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.chrX_chrY_X_Y.singleton.fq.gz	0.0	0.0
-Second_SmallTest_Paired.chrX_chrY_X_Y.1.fq.gz	1457.0	1.0
-Second_SmallTest_Paired.chrX_chrY_X_Y.2.fq.gz	1458.0	0.0
-wgEncodeUwRepliSeqK562G1AlnRep1.chrX_chrY_X_Y.singleton.fq.gz	23097.0	4918.0

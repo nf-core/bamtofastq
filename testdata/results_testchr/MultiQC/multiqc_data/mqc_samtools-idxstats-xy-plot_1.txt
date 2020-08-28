@@ -1,3 +1,0 @@
-Sample	Chromosome X	Chromosome Y
-First_SmallTest_Paired.bam.idxstats	2975.0	246.0
-Second_SmallTest_Paired.bam.idxstats	2953.0	17.0

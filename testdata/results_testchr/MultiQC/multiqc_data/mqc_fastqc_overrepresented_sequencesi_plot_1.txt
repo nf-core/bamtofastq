@@ -1,7 +1,0 @@
-Sample	Top over-represented sequence	Sum of remaining over-represented sequences
-First_SmallTest_Paired.chrX_chrY_X_Y.1.fq.gz	0.19907100199071004	0.0
-First_SmallTest_Paired.chrX_chrY_X_Y.2.fq.gz	0.0	0.0
-JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.chrX_chrY_X_Y.singleton.fq.gz	0.0	0.0
-Second_SmallTest_Paired.chrX_chrY_X_Y.1.fq.gz	0.205761316872428	0.0
-Second_SmallTest_Paired.chrX_chrY_X_Y.2.fq.gz	0.0	0.0
-wgEncodeUwRepliSeqK562G1AlnRep1.chrX_chrY_X_Y.singleton.fq.gz	0.6746385864715331	3.4481527752989476

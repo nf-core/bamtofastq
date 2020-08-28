@@ -1,5 +1,0 @@
-Sample	Unique Reads	Duplicate Reads
-First_SmallTest_Paired.bam	59821.0	1348.0
-JK2782_TGGCCGATCAACGA_L008_R1_001.fastq.gz.tengrand.fq.combined.fq.mapped.bam	9718.0	174.0
-Second_SmallTest_Paired.bam	59821.0	956.0
-wgEncodeUwRepliSeqK562G1AlnRep1.bam	881860.0	36711.0
