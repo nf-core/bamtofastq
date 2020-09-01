@@ -1,4 +1,4 @@
-# nf-core/bamtofastq: Usage
+# qbic-pipelines/bamtofastq: Usage
 
 ## Table of contents
 
