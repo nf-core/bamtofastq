@@ -10,7 +10,7 @@
 [![Install with Singularity](https://img.shields.io/badge/use%20with-singularity-purple.svg)](https://www.sylabs.io/docs/)
 
 <!--[![GitHub Actions CI status](https://github.com/qbic-pipelines/bamtofastq/workflows/nf-core%20CI/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+CI%22)
-[![GitHub Actions Linting status](https://github.com/qbic-pipelines/bamtofastq/workflows/nf-core%20linting/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+linting%22) --> 
+[![GitHub Actions Linting status](https://github.com/qbic-pipelines/bamtofastq/workflows/nf-core%20linting/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+linting%22) -->
 ## Introduction
 
 This pipeline converts (un)mapped `.bam` files into `fq.gz` files.
@@ -33,7 +33,7 @@ nextflow run qbic-pipelines/bamtofastq -profile test,<docker/singularity/conda>
 iv. Start running your own analysis!
 
 ```bash
-nextflow run qbic-pipelines/bamtofastq -profile <docker/singularity/conda> --input '*.bam' 
+nextflow run qbic-pipelines/bamtofastq -profile <docker/singularity/conda> --input '*.bam'
 ```
 
 See [usage docs](docs/usage.md) for all of the available options when running the pipeline.
@@ -59,12 +59,12 @@ This pipeline was created using the [nf-core](https://github.com/nf-core) framew
 Helpful contributors:
 
 * [Gisela Gabernet](https://github.com/ggabernet)
-* [Matilda Åslin](https://github.com/matrulda) 
+* [Matilda Åslin](https://github.com/matrulda)
 
 ### Resources
 
 The individual steps of this pipeline are based of on the following tutorials and resources:
- 
+
  1. [Extracting paired FASTQ read data from a BAM mapping file](http://darencard.net/blog/2017-09-07-extract-fastq-bam/)
  2. [Check if BAM is derived from pair-end or single-end reads](https://www.biostars.org/p/178730/)
 

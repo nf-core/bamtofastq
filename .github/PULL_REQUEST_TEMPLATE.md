@@ -1,4 +1,4 @@
-Many thanks to contributing to nf-core/bamtofastq!
+Many thanks to contributing to qbic-pipelines/bamtofastq!
 
 Please fill in the appropriate checklist below (delete whatever is not relevant). These are the most common things requested on pull requests (PRs).
 

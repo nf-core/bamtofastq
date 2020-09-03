@@ -116,7 +116,7 @@ Please note the following requirements:
 
 ### `--chr` (optional)
 
-Use to only obtain reads mapping to a specific chromosome or region. 
+Use to only obtain reads mapping to a specific chromosome or region.
 > It is important to specify the chromsome or region name **exactly** as set in the bam file. Otherwise no reads may be extracted!
 
 For example:
@@ -125,7 +125,7 @@ For example:
 --chr 'X chrX'
 ```
 
-This extracts reads mapping to `X` as well as `chrX` 
+This extracts reads mapping to `X` as well as `chrX`
 
 ### `--no_read_QC` (optional)
 
