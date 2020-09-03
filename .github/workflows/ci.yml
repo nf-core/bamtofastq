@@ -1,0 +1,48 @@
+name: qbic-pipelines CI
+# This workflow is triggered on pushes and PRs to the repository.
+# It runs the pipeline with the minimal test dataset to check that it completes without any syntax errors.
+on: [push, pull_request]
+
+jobs:
+  test:
+    env:
+      NXF_VER: ${{ matrix.nxf_ver }}
+      NXF_ANSI_LOG: false
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Nextflow versions: check pipeline minimum and current latest
+        nxf_ver: ['20.04.0', '']
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Nextflow
+        run: |
+          wget -qO- get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+      - name: Pull docker image
+        run: |
+          docker pull qbicpipelines/bamtofastq:dev
+          docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.0.0
+      - name: Run test
+        run: nextflow run ${GITHUB_WORKSPACE} -profile test,docker
+
+  profile:
+    env:
+      NXF_ANSI_LOG: false
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        profile: [test_chr]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Nextflow
+        run: |
+          wget -qO- get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+        env:
+          # Only check Nextflow pipeline minimum version
+          NXF_VER: '20.04.0'
+      - name: Pull docker image
+        run: docker pull qbicpipelines/bamtofastq:1.0.0
+      - name: Run ${{ matrix.profile }} test
+        run: nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.profile }},docker
