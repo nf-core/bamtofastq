@@ -43,6 +43,6 @@ jobs:
           # Only check Nextflow pipeline minimum version
           NXF_VER: '20.04.0'
       - name: Pull docker image
-        run: docker pull qbicpipelines/bamtofastq:1.0.0
+        run: docker pull qbicpipelines/bamtofastq:dev
       - name: Run ${{ matrix.profile }} test
         run: nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.profile }},docker
