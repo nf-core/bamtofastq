@@ -9,8 +9,9 @@
 [![Docker](https://img.shields.io/docker/automated/fhanssen/nf-core-bamtofastq.svg)](https://hub.docker.com/r/fhanssen/nf-core-bamtofastq)
 [![Install with Singularity](https://img.shields.io/badge/use%20with-singularity-purple.svg)](https://www.sylabs.io/docs/)
 
-<!--[![GitHub Actions CI status](https://github.com/qbic-pipelines/bamtofastq/workflows/nf-core%20CI/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+CI%22)
-[![GitHub Actions Linting status](https://github.com/qbic-pipelines/bamtofastq/workflows/nf-core%20linting/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+linting%22) -->
+[![GitHub Actions CI status](https://github.com/qbic-pipelines/bamtofastq/workflows/qbic-pipelines%20CI/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+CI%22)
+[![GitHub Actions Linting status](https://github.com/qbic-pipelines/bamtofastq/workflows/qbic-pipelines%20linting/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+linting%22)
+
 ## Introduction
 
 This pipeline converts (un)mapped `.bam` files into `fq.gz` files.
