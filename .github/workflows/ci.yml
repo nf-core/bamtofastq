@@ -22,7 +22,7 @@ jobs:
       - name: Pull docker image
         run: |
           docker pull qbicpipelines/bamtofastq:dev
-          docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.0
+          docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.0.0
       - name: Run test
         run: nextflow run ${GITHUB_WORKSPACE} -profile test,docker
 
@@ -45,6 +45,6 @@ jobs:
       - name: Pull docker image
         run: |
         docker pull qbicpipelines/bamtofastq:dev
-        docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.0
+        docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.0.0
       - name: Run ${{ matrix.profile }} test
         run: nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.profile }},docker
