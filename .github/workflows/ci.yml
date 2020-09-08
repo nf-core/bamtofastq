@@ -12,10 +12,10 @@ jobs:
   test:
     name: Run workflow tests
     # Only run on push if this is the nf-core dev branch (merged PRs)
-    if: {{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'qbic-pipelines/bamtofastq') }}
+    if: ${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'qbic-pipelines/bamtofastq') }}
     runs-on: ubuntu-latest
     env:
-      NXF_VER: {{ matrix.nxf_ver }}
+      NXF_VER: ${{ matrix.nxf_ver }}
       NXF_ANSI_LOG: false
     strategy:
       matrix:
@@ -36,7 +36,7 @@ jobs:
         run: docker build --no-cache . -t qbicpipelines/bamtofastq:dev
 
       - name: Pull docker image
-        if: {{ !env.GIT_DIFF }}
+        if: ${{ !env.GIT_DIFF }}
         run: |
           docker pull qbicpipelines/bamtofastq:dev
           docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.0.0
