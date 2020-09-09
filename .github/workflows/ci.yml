@@ -20,6 +20,7 @@ jobs:
       matrix:
         # Nextflow versions: check pipeline minimum and current latest
         nxf_ver: ['20.04.1', '']
+        config: ['test_chr']
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
@@ -51,4 +52,4 @@ jobs:
           nextflow run ${GITHUB_WORKSPACE} -profile test,docker
       - name: Run pipeline with test data, only obtain reads mapping to chrX and chrY
         run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile test_chr,docker
+          nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.config }},docker
