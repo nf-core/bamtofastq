@@ -30,6 +30,7 @@ jobs:
           echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
           docker tag qbicpipelines/bamtofastq:latest qbicpipelines/bamtofastq:dev
           docker push qbicpipelines/bamtofastq:dev
+          
       - name: Push Docker image to DockerHub (release)
         if: ${{ github.event_name == 'release' }}
         run: |
