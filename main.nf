@@ -220,12 +220,10 @@ process checkIfPairedEnd{
                                                                    bam_files_paired_map_unmap
   set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end // = is not paired end
  
-
+  //Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
+  //all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
   script:
   """
-  # Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
-  # all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
-
   if [ \$({ samtools view -H $bam -@$task.cpus ; samtools view $bam -@$task.cpus | head -n1000; } | samtools view -c -f 1  -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then 
     echo 1 > ${name}.paired.txt
   else
