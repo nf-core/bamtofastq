@@ -11,6 +11,7 @@
 [![GitHub Actions CI status](https://github.com/qbic-pipelines/bamtofastq/workflows/qbic-pipelines%20CI/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+CI%22)
 [![GitHub Actions Linting status](https://github.com/qbic-pipelines/bamtofastq/workflows/qbic-pipelines%20linting/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+linting%22)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4022137.svg)](https://doi.org/10.5281/zenodo.4022137)
 ## Introduction
 
 This pipeline converts (un)mapped `.bam` files into `fq.gz` files.
@@ -77,4 +78,4 @@ For further information or help, don't hesitate to get in touch by opening an is
 ## Citation
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi. -->
-<!-- If you use  nf-core/bamtofastq for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+If you use  qbic-pipelines/bamtofastq for your analysis, please cite it using the following doi: [10.5281/zenodo.4022137](https://doi.org/10.5281/zenodo.4022137) 
