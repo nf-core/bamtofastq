@@ -78,4 +78,4 @@ For further information or help, don't hesitate to get in touch by opening an is
 ## Citation
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi. -->
-If you use  qbic-pipelines/bamtofastq for your analysis, please cite it using the following doi: [10.5281/zenodo.4022137](https://doi.org/10.5281/zenodo.4022137) 
+If you use  qbic-pipelines/bamtofastq for your analysis, please cite it using the following doi: [10.5281/zenodo.4022137](https://doi.org/10.5281/zenodo.4022137)
