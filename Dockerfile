@@ -4,4 +4,4 @@ LABEL authors="Friederike Hanssen" \
 
 COPY environment.yml /
 RUN conda env create -f /environment.yml && conda clean -a
-ENV PATH /opt/conda/envs/qbic-pipelines-bamtofastq-1.0.0/bin:$PATH
+ENV PATH /opt/conda/envs/qbic-pipelines-bamtofastq-1.1.0dev/bin:$PATH
