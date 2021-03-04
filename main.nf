@@ -196,17 +196,14 @@ process get_software_versions {
     """
 }
 
-
-
-
-
 /*
  * If index_files not provided as input
  */
 
 if(!params.index_files){
-	process IdxStatsBAI {	
-		publishDir "${params.outdir}/", mode:'copy' 
+	process IdxBAI {	
+		tag "$name"
+		label 'process_medium' 
 
 		input:
 		set val(name), file(bam) from bam_files_index		
@@ -244,33 +241,32 @@ if(!params.index_files){
 	 	}
 	 }
 		
-	process IdxStats {	
-		publishDir "${params.outdir}/", mode:'copy' 	
-
+	process computeIdxstatsInput {	
+		tag "$name"
+		label 'process_medium'
+		
 		input:
 		set val(name), file(bam) from bam_files_idxstats
 		set val(name), file(bai) from ch_index_files
-		
+				
 		output:
-		file "*.idxstats" into ch_bam_idxstat_mqc
-	
-		
-		script:	
+		file "*.idxstats" into ch_bam_idxstat_mqc		
+		script:
 		"""				
-		samtools idxstats $bam > ${bam}.idxstats		
+		samtools idxstats $bam > ${bam}.idxstats
 		"""
 
 		}
 }
 
 /*
- * If index files provided
+ * If index files provided, skip indexing
  */
 
 else {	
 	// Extract reads mapping to specific chromosome(s)
 	if (params.chr){
-	  process extractReadsMappingToChromosome_index_provided{
+	  process extractReadsMappingToChromosomeBAI{
 	    tag "${name}.${chr_list_joined}"
 	    label 'process_medium'
   
@@ -291,21 +287,20 @@ else {
 	  }
 	
 
-	process IdxStats_index_provided {	
-		publishDir "${params.outdir}/", mode:'copy' 	
+	process computeIdxstatsInputBAI {	
+		tag "$name"
+		label 'process_medium'	
 
 		input:
 		set val(name), file(bam) from bam_files_idxstats
 		set val(name), file(bai) from bai_files_idxstats
 		
 		output:
-		file "*.idxstats" into ch_bam_idxstat_mqc
-	
-		script:	
-		"""				
-		samtools idxstats $bam > ${bam}.idxstats		
+		file "*.idxstats" into ch_bam_idxstat_mqc	
+		script:
 		"""
-
+		samtools idxstats $bam > ${bam}.idxstats
+		"""
 		}
 }
 	
