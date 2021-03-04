@@ -94,6 +94,7 @@ if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
         .into { bam_chr;
                 bam_files_flagstats;
+				bam_files_index;
                 bam_files_idxstats;
                 bam_files_stats;
                 bam_files_fastqc} //else send to first process
@@ -126,7 +127,7 @@ summary['Max Resources']                                              = "$params
 if (workflow.containerEngine) summary['Container']                    = "$workflow.containerEngine - $workflow.container"
 summary['Output dir']                                                 = params.outdir
 if (params.chr) summary['Only reads mapped to chr']                   = params.chr
-if (params.index_files) summary['Indes files available']			  = params.index_files
+if (params.index_files) summary['Index files available']			  = params.index_files
 summary['Read QC']                                                    = params.no_read_QC ? 'No' : 'Yes'
 summary['Launch dir']                                                 = workflow.launchDir
 summary['Working dir']                                                = workflow.workDir
