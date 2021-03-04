@@ -110,7 +110,8 @@ if (params.index_files) {
 	Channel
 	.fromPath(params.index_files, checkIfExists:true)	
 	.map{file -> tuple(file.name.replaceAll(".bai", ''), file)}	
-	.set {bai_files_idxstats;}
+	.into { bai_files_idxstats;
+			bai_files_chr}
 	
 }
 else {
@@ -211,6 +212,7 @@ if(!params.index_files){
 	
 		output:
 		file "*.bai" into ch_index_files
+		file "*.bai" into ch_chr_index_files
 	
 		
 		script:	
@@ -227,7 +229,7 @@ if(!params.index_files){
   
 	    input:
 	    set val(name), file(bam) from bam_chr 
-		set val(name), file(bai) from ch_index_files
+		set val(name), file(bai) from ch_chr_index_files
 
 	    output:
 	    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
@@ -273,7 +275,7 @@ else {
   
 	    input:
 	    set val(name), file(bam) from bam_chr 
-		set val(name), file(bai) from bai_files_idxstats
+		set val(name), file(bai) from bai_files_chr
 
 	    output:
 	    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
