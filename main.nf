@@ -94,7 +94,7 @@ if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
         .into { bam_chr;
                 bam_files_flagstats;
-				bam_files_index;
+		bam_files_index;
                 bam_files_idxstats;
                 bam_files_stats;
                 bam_files_fastqc} //else send to first process
