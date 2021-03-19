@@ -267,7 +267,6 @@ if(!params.index_files){
  * If index files provided, skip indexing
  */
 
-else {	
 	// Extract reads mapping to specific chromosome(s)
 	if (params.chr){
 	  process extractReadsMappingToChromosomeBAI{
