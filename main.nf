@@ -111,7 +111,7 @@ if (params.index_files) {
 	.fromPath(params.index_files, checkIfExists:true)	
 	.map{file -> tuple(file.name.replaceAll(".bai", ''), file)}	
 	.into { bai_files_idxstats;
-			bai_files_chr}
+	  bai_files_chr}
 	
 }
 else {
