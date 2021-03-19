@@ -260,7 +260,7 @@ if(!params.index_files){
 		samtools idxstats $bam > ${bam}.idxstats
 		"""
 
-		}
+	}
 }
 
 /*
