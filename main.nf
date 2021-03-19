@@ -115,8 +115,8 @@ if (params.index_files) {
 	
 }
 else {
-	bai_files_idxstats = Channel.empty();
-	bai_files_chr = Channel.empty();
+	bai_files_idxstats = Channel.empty()
+	bai_files_chr = Channel.empty()
 }
 
 // Header log info
