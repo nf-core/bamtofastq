@@ -286,8 +286,8 @@ if(!params.index_files){
 	    """    
 	    samtools view -hb $bam ${params.chr} -@$task.cpus -o ${name}.${chr_list_joined}.bam
 	    """
-	  	}
 	  }
+    }
 	
 
 	process computeIdxstatsInputBAI {	
