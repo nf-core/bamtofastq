@@ -261,7 +261,7 @@ if(!params.index_files){
 		"""
 
 	}
-}
+} else {
 
 /*
  * If index files provided, skip indexing
