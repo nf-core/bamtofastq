@@ -284,7 +284,7 @@ if(!params.index_files){
 	    //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
 	    chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
 	    """    
-	    samtools view -hb $bam ${params.chr} -@$task.cpus -o ${name}.${chr_list_joined}.bam
+	    samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
 	    """
 	  }
     }
