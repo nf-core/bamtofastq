@@ -229,7 +229,6 @@ if(!params.index_files){
   
 	    input:
 	    set val(name), file(bam), file(bai) from ch_chr_bam_bai
-	file(bai) from ch_dump
 
 	    output:
 	    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
