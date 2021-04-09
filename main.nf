@@ -212,7 +212,7 @@ if(!params.index_files){
 	
 		output:
 		file "${name}.bai" into ch_index_files 
-		file "${name}.bai" into ch_chr_index_files
+		file "${name}.bai" into ch_chr_index_files.dump()
 	
 		
 		script:	
