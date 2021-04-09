@@ -216,7 +216,7 @@ if(!params.index_files){
 		
 		script:	
 		"""		
-		samtools index $bam
+		samtools index $bam "${name}.bai"
 		"""		
 	}
 	// Extract reads mapping to specific chromosome(s)
