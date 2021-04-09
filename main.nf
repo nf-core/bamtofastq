@@ -250,7 +250,7 @@ if(!params.index_files){
 		
 		input:
 		set val(name), file(bam) from bam_files_idxstats
-		set val(name_bai), file(bai) from ch_index_files
+		file(bai) from ch_index_files
 				
 		output:
 		file "*.idxstats" into ch_bam_idxstat_mqc		
