@@ -211,8 +211,7 @@ if(!params.index_files){
 		set val(name), file(bam) from bam_files_index		
 	
 		output:
-		file "${name}.bai" into ch_index_files 
-		file "${name}.bai" into ch_chr_index_files
+		set val(name), file("${name}.bam"), file("${name}.bai") into(ch_bam_bai, ch_chr_bam_bai)
 	
 		
 		script:	
