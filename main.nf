@@ -302,7 +302,7 @@ if(!params.index_files){
 		file "*.idxstats" into ch_bam_idxstat_mqc	
 		script:
 		"""
-		samtools idxstats $bam > ${bam}.idxstats
+		samtools idxstats $bam > "${bam}.idxstats"
 		"""
 		}
 }
