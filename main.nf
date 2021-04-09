@@ -249,7 +249,7 @@ if(!params.index_files){
 		label 'process_medium'
 		
 		input:
-		file(bai) from ch_index_files
+		set val(name), file(bam), file(bai) from ch_bam_bai
 				
 		output:
 		file "*.idxstats" into ch_bam_idxstat_mqc		
