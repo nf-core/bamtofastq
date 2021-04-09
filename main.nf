@@ -113,8 +113,7 @@ if (params.index_files) {
 	.into { bai_files_idxstats;
 	  	bai_files_chr}
 	
-}
-else {
+} else {
 	bai_files_idxstats = Channel.empty()
 	bai_files_chr = Channel.empty()
 }
