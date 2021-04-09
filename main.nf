@@ -228,7 +228,7 @@ if(!params.index_files){
 	    label 'process_medium'
   
 	    input:
-	    set val(name), file(bam) from bam_chr 
+	    set val(name), file(bam), file(bai) from ch_chr_bam_bai
 	file(bai) from ch_dump
 
 	    output:
