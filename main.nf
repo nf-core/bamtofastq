@@ -249,7 +249,6 @@ if(!params.index_files){
 		label 'process_medium'
 		
 		input:
-		set val(name), file(bam) from bam_files_idxstats
 		file(bai) from ch_index_files
 				
 		output:
