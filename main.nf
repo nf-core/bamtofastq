@@ -220,7 +220,7 @@ if(!params.index_files){
 		samtools index $bam > "${name}.bai"
 		"""		
 	}
-    ch_chr_index_files.dump()
+    ch_dump = ch_chr_index_files.dump()
 	// Extract reads mapping to specific chromosome(s)
 	if (params.chr){
 	  process extractReadsMappingToChromosome{
