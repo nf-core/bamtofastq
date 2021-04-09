@@ -217,7 +217,7 @@ if(!params.index_files){
 		
 		script:	
 		"""		
-		samtools index $bam > ${name}.bai	
+		samtools index $bam > "${name}.bai"
 		"""		
 	}
 	
