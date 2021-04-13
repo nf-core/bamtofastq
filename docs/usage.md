@@ -114,6 +114,18 @@ Please note the following requirements:
 1. The path must be enclosed in quotes
 2. The path must have at least one `*` wildcard character
 
+### `--bai`
+Use this to specify the location of your input Bam index files. For example:
+
+```bash
+--bai 'path/to/data/sample_*.bai'
+```
+
+Please note the following requirements:
+
+1. The path must be enclosed in quotes
+2. The path must have at least one `*` wildcard character
+
 ### `--chr` (optional)
 
 Use to only obtain reads mapping to a specific chromosome or region.
