@@ -131,6 +131,7 @@ summary['Output dir']                                                 = params.o
 if (params.chr) summary['Only reads mapped to chr']                   = params.chr
 if (params.index_files) summary['Index files available']    = params.index_files
 summary['Read QC']                                                    = params.no_read_QC ? 'No' : 'Yes'
+summary['Stats']                                                      = params.no_stats ? 'No' : 'Yes'
 summary['Launch dir']                                                 = workflow.launchDir
 summary['Working dir']                                                = workflow.workDir
 summary['Script dir']                                                 = workflow.projectDir
@@ -212,11 +213,11 @@ if(!params.index_files){
     set val(name), file(bam) from bam_files_index
 
     output:
-    set val(name), file("${name}.bam"), file("${name}.bai") into(ch_bam_bai, ch_chr_bam_bai)
+    set val(name), file(bam), file("*.bai") into(ch_bam_bai, ch_chr_bam_bai)
 
     script:
     """
-    samtools index $bam "${name}.bai"
+    samtools index ${bam}
     """
   }
   // Extract reads mapping to specific chromosome(s)
