@@ -4,8 +4,8 @@
                          qbic-pipelines/bamtofastq
 ========================================================================================
  qbic-pipelines/bamtofastq Analysis Pipeline.
-  An open-source analysis pipeline to convert mapped or unmapped single-end or paired-end 
-  reads from bam format to fastq format 
+  An open-source analysis pipeline to convert mapped or unmapped single-end or paired-end
+  reads from bam format to fastq format
  #### Homepage / Documentation
  https://github.com/qbic-pipelines/bamtofastq
 ----------------------------------------------------------------------------------------
@@ -25,8 +25,8 @@ def helpMessage() {
       --input                  [file]  Path to input data, multiple files can be specified by using wildcard characters
       -profile                  [str]  Configuration profile to use. Can use multiple (comma separated)
                                        Available: conda, docker, singularity, awsbatch, test and more.
-   
-    Other options:   
+
+    Other options:
       --outdir                 [file]  The output directory where the results will be saved
       --chr                     [str]  Only use reads mapping to a specific chromosome/region. Has to be specified as in bam: i.e chr1, chr{1..22} (gets all reads mapping to chr1 to 22), 1, "X Y", incorrect naming will lead to a potentially silent error
       --index_files            [file]  Path to bai index files
@@ -80,18 +80,18 @@ ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome/region was specified, then Step 0 is skipped
     Channel
         .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists
-        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
-        .into { bam_files_check; 
+        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file
+        .into { bam_files_check;
                 bam_files_flagstats;
     bam_files_index;
                 bam_files_idxstats;
                 bam_files_stats;
                 bam_files_fastqc } //else send to first process
-        
+
 } else if(params.input && params.chr){ //Checks whether bam file(s) and chromosome(s)/region(s) was specified
      Channel
         .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists
-        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
+        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file
         .into { bam_chr;
                 bam_files_flagstats;
     bam_files_index;
@@ -108,11 +108,11 @@ if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome
 
 if (params.index_files) {
   Channel
-  .fromPath(params.index_files, checkIfExists:true)  
-  .map{file -> tuple(file.name.replaceAll(".bai", ''), file)}  
+  .fromPath(params.index_files, checkIfExists:true)
+  .map{file -> tuple(file.name.replaceAll(".bai", ''), file)}
   .into { bai_files_idxstats;
       bai_files_chr}
-  
+
 } else {
   bai_files_idxstats = Channel.empty()
   bai_files_chr = Channel.empty()
@@ -134,10 +134,10 @@ summary['Launch dir']                                                 = workflow
 summary['Working dir']                                                = workflow.workDir
 summary['Script dir']                                                 = workflow.projectDir
 summary['User']                                                       = workflow.userName
-if (workflow.profile == 'awsbatch') {                 
+if (workflow.profile == 'awsbatch') {
   summary['AWS Region']                                               = params.awsregion
   summary['AWS Queue']                                                = params.awsqueue
-}                 
+}
 summary['Config Profile']                                             = workflow.profile
 if (params.config_profile_description) summary['Config Description']  = params.config_profile_description
 if (params.config_profile_contact)     summary['Config Contact']      = params.config_profile_contact
@@ -203,55 +203,56 @@ process get_software_versions {
  */
 
 if(!params.index_files){
-  process IdxBAI {  
+  process IdxBAI {
     tag "$name"
-    label 'process_medium' 
+    label 'process_medium'
 
     input:
-    set val(name), file(bam) from bam_files_index    
-  
+    set val(name), file(bam) from bam_files_index
+
     output:
     set val(name), file("${name}.bam"), file("${name}.bai") into(ch_bam_bai, ch_chr_bam_bai)
-  
-    
-    script:  
-    """    
+
+
+    script:
+    """
     samtools index $bam "${name}.bai"
-    """    
+    """
   }
   // Extract reads mapping to specific chromosome(s)
   if (params.chr){
     process extractReadsMappingToChromosome{
       tag "${name}.${chr_list_joined}"
       label 'process_medium'
-  
+
       input:
       set val(name), file(bam), file(bai) from ch_chr_bam_bai
 
       output:
       set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
-                    
 
       script:
       //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
       chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
-      """    
+      """
       samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
       """
    }
     }
-    
-  process computeIdxstatsInput {  
+
+  process computeIdxstatsInput {
     tag "$name"
     label 'process_medium'
-    
+
     input:
     set val(name), file(bam), file(bai) from ch_bam_bai
-        
+
+    when(!params.no_stats)
+
     output:
-    file "*.idxstats" into ch_bam_idxstat_mqc    
+    file "*.idxstats" into ch_bam_idxstat_mqc
     script:
-    """        
+    """
     samtools idxstats $bam > "${bam}.idxstats"
     """
 
@@ -267,9 +268,9 @@ if(!params.index_files){
     process extractReadsMappingToChromosomeBAI{
       tag "${name}.${chr_list_joined}"
       label 'process_medium'
-  
+
       input:
-      set val(name), file(bam) from bam_chr 
+      set val(name), file(bam) from bam_chr
       file(bai) from bai_files_chr
 
       output:
@@ -278,30 +279,30 @@ if(!params.index_files){
       script:
       //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
       chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
-      """    
+      """
       samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
       """
     }
     }
-  
 
-  process computeIdxstatsInputBAI {  
+
+  process computeIdxstatsInputBAI {
     tag "$name"
-    label 'process_medium'  
+    label 'process_medium'
 
     input:
     set val(name), file(bam) from bam_files_idxstats
     file(bai) from bai_files_idxstats
-    
+
     output:
-    file "*.idxstats" into ch_bam_idxstat_mqc  
+    file "*.idxstats" into ch_bam_idxstat_mqc
     script:
     """
     samtools idxstats $bam > "${bam}.idxstats"
     """
     }
 }
-  
+
 
 /*
  * STEP 1: Check for paired-end or single-end bam
@@ -318,12 +319,12 @@ process checkIfPairedEnd{
                                                                    bam_files_paired_unmap_map,
                                                                    bam_files_paired_map_unmap
   set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end // = is not paired end
- 
-  //Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for 
-  //all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ . 
+
+  //Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for
+  //all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ .
   script:
   """
-  if [ \$({ samtools view -H $bam -@$task.cpus ; samtools view $bam -@$task.cpus | head -n1000; } | samtools view -c -f 1  -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then 
+  if [ \$({ samtools view -H $bam -@$task.cpus ; samtools view $bam -@$task.cpus | head -n1000; } | samtools view -c -f 1  -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then
     echo 1 > ${name}.paired.txt
   else
     echo 0 > ${name}.single.txt
@@ -391,7 +392,7 @@ process pairedEndMapMap{
   set val(name), file(bam), file(txt) from bam_files_paired_map_map
 
   output:
-  set val(name), file( '*.map_map.bam') into map_map_bam 
+  set val(name), file( '*.map_map.bam') into map_map_bam
 
   when:
   txt.exists()
@@ -409,7 +410,7 @@ process pairedEndUnmapUnmap{
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_unmap
 
   output:
-  set val(name), file('*.unmap_unmap.bam') into unmap_unmap_bam 
+  set val(name), file('*.unmap_unmap.bam') into unmap_unmap_bam
 
   when:
   txt.exists()
@@ -427,7 +428,7 @@ process pairedEndUnmapMap{
   set val(name), file(bam), file(txt) from bam_files_paired_unmap_map
 
   output:
-  set val(name), file( '*.unmap_map.bam') into unmap_map_bam 
+  set val(name), file( '*.unmap_map.bam') into unmap_map_bam
 
   when:
   txt.exists()
@@ -445,7 +446,7 @@ process pairedEndMapUnmap{
   set val(name), file(bam), file(txt) from bam_files_paired_map_unmap
 
   output:
-  set val(name), file( '*.map_unmap.bam') into map_unmap_bam 
+  set val(name), file( '*.map_unmap.bam') into map_unmap_bam
 
   when:
   txt.exists()
@@ -467,7 +468,7 @@ process mergeUnmapped{
   set val(name), file(unmap_unmap), file (map_unmap),  file(unmap_map) from all_unmapped_bam
 
   output:
-  set val(name), file('*.merged_unmapped.bam') into merged_unmapped 
+  set val(name), file('*.merged_unmapped.bam') into merged_unmapped
 
   script:
   """
@@ -495,7 +496,7 @@ process sortExtractMapped{
 process sortExtractUnmapped{
   label 'process_medium'
   tag "$name"
- 
+
   input:
   set val(name), file(all_unmapped) from merged_unmapped
 
@@ -529,12 +530,12 @@ process joinMappedAndUnmappedFastq{
 
   output:
   set file('*1.fq.gz'), file('*2.fq.gz') into read_qc
-  
+
 
   script:
   """
   cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq.gz
-  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq.gz  
+  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq.gz
   """
 }
 
@@ -559,7 +560,7 @@ process pairedEndReadsQC{
 
 
 /*
- * STEP 2b: Handle single-end bams 
+ * STEP 2b: Handle single-end bams
  */
 process sortExtractSingleEnd{
     tag "$name"
@@ -573,7 +574,7 @@ process sortExtractSingleEnd{
 
     input:
     set val(name), file(bam), file(txt) from bam_file_single_end
-    
+
     output:
     set val(name), file ('*.singleton.fq.gz') into single_end_reads
 
@@ -585,19 +586,19 @@ process sortExtractSingleEnd{
     samtools collate -O -@$task.cpus $bam . \
      | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
     """
- } 
+ }
 
 process singleEndReadQC{
     tag "$name"
     label 'process_medium'
-  
+
 
     input:
     set val(name), file(reads) from single_end_reads
-    
+
     output:
     file "*.{zip,html}" into ch_fastqc_reports_mqc_se
-    
+
     when:
     !params.no_read_QC
 
@@ -606,7 +607,7 @@ process singleEndReadQC{
     fastqc --quiet --threads $task.cpus ${reads}
     """
 
-} 
+}
 
 /*
  * STEP 3 - Output Description HTML
@@ -643,7 +644,7 @@ process multiqc {
     file stats from ch_bam_stats_mqc.collect()
     file idxstats from ch_bam_idxstat_mqc.collect()
     file fastqc_bam from ch_fastqc_reports_mqc_input_bam.collect().ifEmpty([])
-    file fastqc_se from ch_fastqc_reports_mqc_se.collect().ifEmpty([]) 
+    file fastqc_se from ch_fastqc_reports_mqc_se.collect().ifEmpty([])
     file fastqc_pe from ch_fastqc_reports_mqc_pe.collect().ifEmpty([])
 
     output:
@@ -655,7 +656,7 @@ process multiqc {
     rtitle = custom_runName ? "--title \"$custom_runName\"" : ''
     rfilename = custom_runName ? "--filename " + custom_runName.replaceAll('\\W','_').replaceAll('_+','_') + "_multiqc_report" : ''
     """
-    multiqc -f -s $rtitle $rfilename $multiqc_config . 
+    multiqc -f -s $rtitle $rfilename $multiqc_config .
     """
 
 }
