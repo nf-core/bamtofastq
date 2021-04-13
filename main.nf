@@ -83,7 +83,7 @@ if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
         .into { bam_files_check; 
                 bam_files_flagstats;
-		bam_files_index;
+    bam_files_index;
                 bam_files_idxstats;
                 bam_files_stats;
                 bam_files_fastqc } //else send to first process
@@ -94,7 +94,7 @@ if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome
         .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file 
         .into { bam_chr;
                 bam_files_flagstats;
-		bam_files_index;
+    bam_files_index;
                 bam_files_idxstats;
                 bam_files_stats;
                 bam_files_fastqc} //else send to first process
@@ -107,15 +107,15 @@ if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome
  */
 
 if (params.index_files) {
-	Channel
-	.fromPath(params.index_files, checkIfExists:true)	
-	.map{file -> tuple(file.name.replaceAll(".bai", ''), file)}	
-	.into { bai_files_idxstats;
-	  	bai_files_chr}
-	
+  Channel
+  .fromPath(params.index_files, checkIfExists:true)  
+  .map{file -> tuple(file.name.replaceAll(".bai", ''), file)}  
+  .into { bai_files_idxstats;
+      bai_files_chr}
+  
 } else {
-	bai_files_idxstats = Channel.empty()
-	bai_files_chr = Channel.empty()
+  bai_files_idxstats = Channel.empty()
+  bai_files_chr = Channel.empty()
 }
 
 // Header log info
@@ -128,7 +128,7 @@ summary['Max Resources']                                              = "$params
 if (workflow.containerEngine) summary['Container']                    = "$workflow.containerEngine - $workflow.container"
 summary['Output dir']                                                 = params.outdir
 if (params.chr) summary['Only reads mapped to chr']                   = params.chr
-if (params.index_files) summary['Index files available']		= params.index_files
+if (params.index_files) summary['Index files available']    = params.index_files
 summary['Read QC']                                                    = params.no_read_QC ? 'No' : 'Yes'
 summary['Launch dir']                                                 = workflow.launchDir
 summary['Working dir']                                                = workflow.workDir
@@ -203,105 +203,105 @@ process get_software_versions {
  */
 
 if(!params.index_files){
-	process IdxBAI {	
-		tag "$name"
-		label 'process_medium' 
+  process IdxBAI {  
+    tag "$name"
+    label 'process_medium' 
 
-		input:
-		set val(name), file(bam) from bam_files_index		
-	
-		output:
-		set val(name), file("${name}.bam"), file("${name}.bai") into(ch_bam_bai, ch_chr_bam_bai)
-	
-		
-		script:	
-		"""		
-		samtools index $bam "${name}.bai"
-		"""		
-	}
-	// Extract reads mapping to specific chromosome(s)
-	if (params.chr){
-	  process extractReadsMappingToChromosome{
-	    tag "${name}.${chr_list_joined}"
-	    label 'process_medium'
+    input:
+    set val(name), file(bam) from bam_files_index    
   
-	    input:
-	    set val(name), file(bam), file(bai) from ch_chr_bam_bai
+    output:
+    set val(name), file("${name}.bam"), file("${name}.bai") into(ch_bam_bai, ch_chr_bam_bai)
+  
+    
+    script:  
+    """    
+    samtools index $bam "${name}.bai"
+    """    
+  }
+  // Extract reads mapping to specific chromosome(s)
+  if (params.chr){
+    process extractReadsMappingToChromosome{
+      tag "${name}.${chr_list_joined}"
+      label 'process_medium'
+  
+      input:
+      set val(name), file(bam), file(bai) from ch_chr_bam_bai
 
-	    output:
-	    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
-		                
+      output:
+      set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
+                    
 
-	    script:
-	    //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
-	    chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
-	    """    
-	    samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
-	    """
-	 }
+      script:
+      //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
+      chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
+      """    
+      samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
+      """
+   }
     }
-		
-	process computeIdxstatsInput {	
-		tag "$name"
-		label 'process_medium'
-		
-		input:
-		set val(name), file(bam), file(bai) from ch_bam_bai
-				
-		output:
-		file "*.idxstats" into ch_bam_idxstat_mqc		
-		script:
-		"""				
-		samtools idxstats $bam > "${bam}.idxstats"
-		"""
+    
+  process computeIdxstatsInput {  
+    tag "$name"
+    label 'process_medium'
+    
+    input:
+    set val(name), file(bam), file(bai) from ch_bam_bai
+        
+    output:
+    file "*.idxstats" into ch_bam_idxstat_mqc    
+    script:
+    """        
+    samtools idxstats $bam > "${bam}.idxstats"
+    """
 
-	}
+  }
 } else {
 
 /*
  * If index files provided, skip indexing
  */
 
-	// Extract reads mapping to specific chromosome(s)
-	if (params.chr){
-	  process extractReadsMappingToChromosomeBAI{
-	    tag "${name}.${chr_list_joined}"
-	    label 'process_medium'
+  // Extract reads mapping to specific chromosome(s)
+  if (params.chr){
+    process extractReadsMappingToChromosomeBAI{
+      tag "${name}.${chr_list_joined}"
+      label 'process_medium'
   
-	    input:
-	    set val(name), file(bam) from bam_chr 
-	    file(bai) from bai_files_chr
+      input:
+      set val(name), file(bam) from bam_chr 
+      file(bai) from bai_files_chr
 
-	    output:
-	    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
+      output:
+      set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
 
-	    script:
-	    //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
-	    chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
-	    """    
-	    samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
-	    """
-	  }
+      script:
+      //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
+      chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
+      """    
+      samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
+      """
     }
-	
+    }
+  
 
-	process computeIdxstatsInputBAI {	
-		tag "$name"
-		label 'process_medium'	
+  process computeIdxstatsInputBAI {  
+    tag "$name"
+    label 'process_medium'  
 
-		input:
-		set val(name), file(bam) from bam_files_idxstats
-		file(bai) from bai_files_idxstats
-		
-		output:
-		file "*.idxstats" into ch_bam_idxstat_mqc	
-		script:
-		"""
-		samtools idxstats $bam > "${bam}.idxstats"
-		"""
-		}
+    input:
+    set val(name), file(bam) from bam_files_idxstats
+    file(bai) from bai_files_idxstats
+    
+    output:
+    file "*.idxstats" into ch_bam_idxstat_mqc  
+    script:
+    """
+    samtools idxstats $bam > "${bam}.idxstats"
+    """
+    }
 }
-	
+  
 
 /*
  * STEP 1: Check for paired-end or single-end bam
