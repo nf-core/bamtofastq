@@ -102,11 +102,11 @@ If `-profile` is not specified at all the pipeline will be run locally and expec
   * A profile with a complete configuration for automated testing
   * Includes links to test data so needs no other parameters
 
-### `--bam`
+### `--input`
 Use this to specify the location of your input Bam files. For example:
 
 ```bash
---bam 'path/to/data/sample_*.bam'
+--input 'path/to/data/sample_*.bam'
 ```
 
 Please note the following requirements:
