@@ -213,7 +213,6 @@ if(!params.index_files){
     output:
     set val(name), file("${name}.bam"), file("${name}.bai") into(ch_bam_bai, ch_chr_bam_bai)
 
-
     script:
     """
     samtools index $bam "${name}.bai"
@@ -247,10 +246,12 @@ if(!params.index_files){
     input:
     set val(name), file(bam), file(bai) from ch_bam_bai
 
-    when(!params.no_stats)
-
     output:
     file "*.idxstats" into ch_bam_idxstat_mqc
+
+    when:
+    !params.no_stats
+
     script:
     """
     samtools idxstats $bam > "${bam}.idxstats"
@@ -296,6 +297,10 @@ if(!params.index_files){
 
     output:
     file "*.idxstats" into ch_bam_idxstat_mqc
+
+    when:
+    !params.no_stats
+
     script:
     """
     samtools idxstats $bam > "${bam}.idxstats"
@@ -342,6 +347,9 @@ process computeFlagstatInput{
   output:
   file "*.flagstat" into ch_bam_flagstat_mqc
 
+  when:
+  !params.no_stats
+
   script:
   """
   samtools flagstat -@$task.cpus $bam > ${bam}.flagstat
@@ -360,6 +368,9 @@ process computeStatsInput{
   output:
   file "*.stats" into ch_bam_stats_mqc
 
+  when:
+  !params.no_stats
+
   script:
   """
   samtools stats -@$task.cpus $bam > ${bam}.stats
@@ -375,6 +386,9 @@ process computeFastQCInput{
 
   output:
   file "*.{zip,html}" into ch_fastqc_reports_mqc_input_bam
+
+  when:
+  !params.no_stats
 
   script:
   """
@@ -550,7 +564,7 @@ process pairedEndReadsQC{
     file "*.{zip,html}" into ch_fastqc_reports_mqc_pe
 
     when:
-    !params.no_read_QC
+    !params.no_read_QC && !params.no_stats
 
     script:
     """
@@ -600,7 +614,7 @@ process singleEndReadQC{
     file "*.{zip,html}" into ch_fastqc_reports_mqc_se
 
     when:
-    !params.no_read_QC
+    !params.no_read_QC && !params.no_stats
 
     script:
     """

@@ -118,12 +118,12 @@ Please note the following requirements:
 1. The path must be enclosed in quotes
 2. The path must have at least one `*` wildcard character
 
-### `--bai`
+### `--index_files`
 
 Use this to specify the location of your input Bam index files. For example:
 
 ```bash
---bai 'path/to/data/sample_*.bai'
+--index_files 'path/to/data/sample_*.bai'
 ```
 
 Please note the following requirements:
@@ -150,6 +150,16 @@ Use to skip `FastQC` on obtained reads. This is useful, when the reads are used 
 
 ```bash
 --no_read_QC
+```
+
+### `--no_stats` (optional)
+
+Use to skip `FastQC` on both input bam and output reads, as well as all `samtools flagstat`, `samtools idxstats`, and `samtools stats`. This is useful for large datasets, since the quality metrics processes require a significant amount of time and resources.
+
+:exclamation: Use this at own risk. You won't be able to quickly sanity check the results.
+
+```bash
+--no_stats
 ```
 
 ## Job resources
