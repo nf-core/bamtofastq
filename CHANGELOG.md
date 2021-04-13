@@ -3,8 +3,8 @@
 ## dev
 
 - [#21](https://github.com/qbic-pipelines/bamtofastq/21) Allows bam index as input file
-- [#](https://github.com/qbic-pipelines/bamtofastq/) Fix documentation: `--bam` is `--input` now
-- [#](https://github.com/qbic-pipelines/bamtofastq/) Make stats computation optional with parameter `--no_stats`. Use at own risk.
+- [#23](https://github.com/qbic-pipelines/bamtofastq/23) Fix documentation: `--bam` is `--input` now
+- [#23](https://github.com/qbic-pipelines/bamtofastq/23) Make stats computation optional with parameter `--no_stats`. Use at own risk.
 
 ## v1.0.0 - Ada Lovelace
 
