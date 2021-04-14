@@ -20,7 +20,7 @@ jobs:
       matrix:
         # Nextflow versions: check pipeline minimum and current latest
         nxf_ver: ['20.04.1', '']
-        config: ['test_chr']
+        config: ['test_chr','test_bai']
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
