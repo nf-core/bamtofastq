@@ -5,7 +5,7 @@
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A520.04.1-brightgreen.svg)](https://www.nextflow.io/)
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg)](http://bioconda.github.io/)
-[![Docker](https://img.shields.io/docker/automated/qbicpipelines/bamtofastq.svg)](https://hub.docker.com/r/fhanssen/nf-core-bamtofastq)
+[![Docker](https://img.shields.io/docker/automated/qbicpipelines/bamtofastq.svg)](https://hub.docker.com/r/qbicpipelines/bamtofastq)
 [![Install with Singularity](https://img.shields.io/badge/use%20with-singularity-purple.svg)](https://www.sylabs.io/docs/)
 
 [![GitHub Actions CI status](https://github.com/qbic-pipelines/bamtofastq/workflows/qbic-pipelines%20CI/badge.svg)](https://github.com/qbic-pipelines/bamtofastq/actions?query=workflow%3A%22qbic-pipelines+CI%22)
