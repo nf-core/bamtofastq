@@ -1,3 +1,4 @@
+TEST
 # ![qbic-pipelines/bamtofastq](docs/images/qbic-pipelines-bamtofastq_logo.png)
 
 > **An open-source pipeline converting (un)mapped single-end or paired-end bam files to fastq.gz**.
