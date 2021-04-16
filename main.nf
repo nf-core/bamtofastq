@@ -82,11 +82,21 @@ ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 if(params.index_files){ //Index files are provided
 
   Channel.fromFilePairs(params.input, flat:true, checkIfExists:true) { file -> file.name.replaceAll(/.bam|.bai$/,'') }
+    .map { name, file1, file2 ->
+          //Ensure second element in ma will be bam, and third bai
+           if(file2.extension.toString() == 'bai'){
+             bam = file1
+             bai = file2
+           }else{
+             bam = file2
+             bai = file1
+           }
+          [name, bam, bai]}       // Map: [ name, name.bam, name.bam.bai ]
     .into { ch_idxstats;
             ch_flagstats;
             ch_stats;
             ch_input_fastqc;
-            ch_processing }                                        // Map: [ name, name.bam, name.bam.bai ]
+            ch_processing }
 
 } else if(!params.index_files) { //Index files need to be computed
 
