@@ -122,10 +122,10 @@ Please note the following requirements:
 
 ### `--index_files`
 
-Use this to specify the location of your input Bam index files. For example:
+Use this to indicate that bam index files are present alongside the input bam files. `--input` then has to contain a regex with a wildcard parameter to allow for both inputs. For example:
 
 ```bash
---index_files 'path/to/data/sample_*.bai'
+--index_files --input 'path/to/data/sample_*.{bam,bai}'
 ```
 
 Please note the following requirements:

@@ -29,7 +29,7 @@ def helpMessage() {
     Other options:
       --outdir                 [file]  The output directory where the results will be saved
       --chr                     [str]  Only use reads mapping to a specific chromosome/region. Has to be specified as in bam: i.e chr1, chr{1..22} (gets all reads mapping to chr1 to 22), 1, "X Y", incorrect naming will lead to a potentially silent error
-      --index_files            [file]  Path to bai index files
+      --index_files            [bool]  Index files are provided
       --no_read_QC             [bool]  If specified, no quality control will be performed on extracted reads. Useful, if this is done anyways in the subsequent workflow
       --no_stats               [bool]  If specified, skips all quality control and stats computation, including `FastQC` on both input bam and output reads, `samtools flagstat`, `samtools idxstats`, and `samtools stats`
       --email                   [str]  Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
@@ -74,49 +74,29 @@ if ( workflow.profile == 'awsbatch') {
 ch_multiqc_config = file("$baseDir/assets/multiqc_config.yaml", checkIfExists: true)
 ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 
-/*
- * Create a channel for input bam files
- */
-
-if(params.input && !params.chr) { //Checks whether bam file(s) and no chromosome/region was specified, then Step 0 is skipped
-    Channel
-        .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists
-        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file
-        .into { bam_files_check;
-                bam_files_flagstats;
-    bam_files_index;
-                bam_files_idxstats;
-                bam_files_stats;
-                bam_files_fastqc } //else send to first process
-
-} else if(params.input && params.chr){ //Checks whether bam file(s) and chromosome(s)/region(s) was specified
-     Channel
-        .fromPath(params.input, checkIfExists: true) //checks whether the specified file exists
-        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // map bam file name w/o bam to file
-        .into { bam_chr;
-                bam_files_flagstats;
-    bam_files_index;
-                bam_files_idxstats;
-                bam_files_stats;
-                bam_files_fastqc} //else send to first process
-}else{
-     exit 1, "Parameter 'params.input' was not specified!\n"
-}
 
 /*
- * Create a channel for input bai files
+ * Create a channel for input files
  */
 
-if (params.index_files) {
+if(params.index_files){ //Index files are provided
+
+  Channel.fromFilePairs(params.input, flat:true, checkIfExists:true) { file -> file.name.replaceAll(/.bam|.bai$/,'') }
+    .into { ch_idxstats;
+            ch_flagstats;
+            ch_stats;
+            ch_input_fastqc;
+            ch_processing }                                        // Map: [ name, name.bam, name.bam.bai ]
+
+} else if(!params.index_files) { //Index files need to be computed
+
   Channel
-  .fromPath(params.index_files, checkIfExists:true)
-  .map{file -> tuple(file.name.replaceAll(".bai", ''), file)}
-  .into { bai_files_idxstats;
-      bai_files_chr}
+        .fromPath(params.input, checkIfExists: true)
+        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // Map: [name, name.bam] (map bam file name w/o bam to file)
+        .into { bam_files_index }
 
-} else {
-  bai_files_idxstats = Channel.empty()
-  bai_files_chr = Channel.empty()
+}else{
+      exit 1, "Parameter 'params.input' was not specified!\n"
 }
 
 // Header log info
@@ -200,12 +180,12 @@ process get_software_versions {
     """
 }
 
-/*
- * If index_files not provided as input
- */
 
+/*
+ * Step 0: If index_files not provided as input compute them first
+ */
 if(!params.index_files){
-  process IdxBAI {
+  process IndexBAM {
     tag "$name"
     label 'process_medium'
 
@@ -213,101 +193,125 @@ if(!params.index_files){
     set val(name), file(bam) from bam_files_index
 
     output:
-    set val(name), file(bam), file("*.bai") into(ch_bam_bai, ch_chr_bam_bai)
+    set val(name), file(bam), file("*.bai") into (ch_idxstats, ch_flagstats, ch_stats, ch_input_fastqc, ch_processing)
+
+    when:
+    !params.index_files //redundant, since the input channel only exists, if no indices are provided
 
     script:
     """
     samtools index ${bam}
     """
   }
-  // Extract reads mapping to specific chromosome(s)
-  if (params.chr){
-    process extractReadsMappingToChromosome{
-      tag "${name}.${chr_list_joined}"
-      label 'process_medium'
+}
 
-      input:
-      set val(name), file(bam), file(bai) from ch_chr_bam_bai
-
-      output:
-      set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
-
-      script:
-      //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
-      chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
-      """
-      samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
-      """
-    }
-  }
-
-  process computeIdxstatsInput {
-    tag "$name"
-    label 'process_medium'
-
-    input:
-    set val(name), file(bam), file(bai) from ch_bam_bai
-
-    output:
-    file "*.idxstats" into ch_bam_idxstat_mqc
-
-    when:
-    !params.no_stats
-
-    script:
-    """
-    samtools idxstats $bam > "${bam}.idxstats"
-    """
-
-  }
-} else {
 
 /*
- * If index files provided, skip indexing
+ * Step 0: Compute statistics on the input bam files
  */
+process computeIdxstatsInput {
+  tag "$name"
+  label 'process_medium'
 
-  // Extract reads mapping to specific chromosome(s)
-  if (params.chr){
-    process extractReadsMappingToChromosomeBAI{
-      tag "${name}.${chr_list_joined}"
-      label 'process_medium'
+  input:
+  set val(name), file(bam), file(bai) from ch_idxstats
 
-      input:
-      set val(name), file(bam) from bam_chr
-      file(bai) from bai_files_chr
+  output:
+  file "*.idxstats" into ch_bam_idxstat_mqc
 
-      output:
-      set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam") into bam_files_check
+  when:
+  !params.no_stats
 
-      script:
-      //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
-      chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
-      """
-      samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
-      """
-    }
-  }
+  script:
+  """
+  samtools idxstats $bam > "${bam}.idxstats"
+  """
+}
 
 
-  process computeIdxstatsInputBAI {
-    tag "$name"
+process computeFlagstatInput{
+  tag "$name"
+  label 'process_medium'
+
+  input:
+  set val(name), file(bam), file(bai) from ch_flagstats
+
+  output:
+  file "*.flagstat" into ch_bam_flagstat_mqc
+
+  when:
+  !params.no_stats
+
+  script:
+  """
+  samtools flagstat -@$task.cpus ${bam} > ${bam}.flagstat
+  """
+}
+
+
+process computeStatsInput{
+
+  tag "$name"
+  label 'process_medium'
+
+  input:
+  set val(name), file(bam), file(bai) from ch_stats
+
+  output:
+  file "*.stats" into ch_bam_stats_mqc
+
+  when:
+  !params.no_stats
+
+  script:
+  """
+  samtools stats -@$task.cpus ${bam} > ${bam}.stats
+  """
+}
+
+
+process computeFastQCInput{
+  tag "$name"
+  label 'process_medium'
+
+  input:
+  set val(name), file(bam), file(bai) from ch_input_fastqc
+
+  output:
+  file "*.{zip,html}" into ch_fastqc_reports_mqc_input_bam
+
+  when:
+  !params.no_stats
+
+  script:
+  """
+  fastqc --quiet --threads $task.cpus ${bam}
+  """
+}
+
+
+// Extract reads mapping to specific chromosome(s)
+if (params.chr){
+  process extractReadsMappingToChromosome{
+    tag "${name}.${chr_list_joined}"
     label 'process_medium'
 
     input:
-    set val(name), file(bam) from bam_files_idxstats
-    file(bai) from bai_files_idxstats
+    set val(name), file(bam), file(bai) from ch_processing
 
     output:
-    file "*.idxstats" into ch_bam_idxstat_mqc
-
-    when:
-    !params.no_stats
+    set val("${name}.${chr_list_joined}"), file("${name}.${chr_list_joined}.bam"), file("${name}.${chr_list_joined}.bam.bai") into bam_files_check
 
     script:
+    //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
+    chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
     """
-    samtools idxstats $bam > "${bam}.idxstats"
+    samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
+    samtools index "${name}.${chr_list_joined}.bam"
     """
   }
+} else{
+  bam_files_check = ch_processing
 }
 
 
@@ -318,14 +322,14 @@ process checkIfPairedEnd{
   tag "$name"
   label 'process_low'
   input:
-  set val(name), file(bam) from bam_files_check
+  set val(name), file(bam), file(bai) from bam_files_check
 
   output:
-  set val(name), file(bam), file('*paired.txt') optional true into bam_files_paired_map_map,
+  set val(name), file(bam), file(bai), file('*paired.txt') optional true into bam_files_paired_map_map,
                                                                    bam_files_paired_unmap_unmap,
                                                                    bam_files_paired_unmap_map,
                                                                    bam_files_paired_map_unmap
-  set val(name), file(bam), file('*single.txt') optional true into bam_file_single_end // = is not paired end
+  set val(name), file(bam), file(bai), file('*single.txt') optional true into bam_file_single_end // = is not paired end
 
   //Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for
   //all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ .
@@ -339,64 +343,6 @@ process checkIfPairedEnd{
   """
 }
 
-process computeFlagstatInput{
-  tag "$name"
-  label 'process_medium'
-
-  input:
-  set val(name), file(bam) from bam_files_flagstats
-
-  output:
-  file "*.flagstat" into ch_bam_flagstat_mqc
-
-  when:
-  !params.no_stats
-
-  script:
-  """
-  samtools flagstat -@$task.cpus $bam > ${bam}.flagstat
-  """
-}
-
-
-process computeStatsInput{
-
-  tag "$name"
-  label 'process_medium'
-
-  input:
-  set val(name), file(bam) from bam_files_stats
-
-  output:
-  file "*.stats" into ch_bam_stats_mqc
-
-  when:
-  !params.no_stats
-
-  script:
-  """
-  samtools stats -@$task.cpus $bam > ${bam}.stats
-  """
-}
-
-process computeFastQCInput{
-  tag "$name"
-  label 'process_medium'
-
-  input:
-  set val(name), file(bam) from bam_files_fastqc
-
-  output:
-  file "*.{zip,html}" into ch_fastqc_reports_mqc_input_bam
-
-  when:
-  !params.no_stats
-
-  script:
-  """
-  fastqc --quiet --threads $task.cpus $bam
-  """
-}
 
 /*
  * Step 2a: Handle paired-end bams
@@ -405,7 +351,7 @@ process pairedEndMapMap{
   tag "$name"
   label 'process_low'
   input:
-  set val(name), file(bam), file(txt) from bam_files_paired_map_map
+  set val(name), file(bam), file(bai), file(txt) from bam_files_paired_map_map
 
   output:
   set val(name), file( '*.map_map.bam') into map_map_bam
@@ -423,7 +369,7 @@ process pairedEndUnmapUnmap{
   tag "$name"
   label 'process_low'
   input:
-  set val(name), file(bam), file(txt) from bam_files_paired_unmap_unmap
+  set val(name), file(bam), file(bai), file(txt) from bam_files_paired_unmap_unmap
 
   output:
   set val(name), file('*.unmap_unmap.bam') into unmap_unmap_bam
@@ -441,7 +387,7 @@ process pairedEndUnmapMap{
   tag "$name"
   label 'process_low'
   input:
-  set val(name), file(bam), file(txt) from bam_files_paired_unmap_map
+  set val(name), file(bam), file(bai), file(txt) from bam_files_paired_unmap_map
 
   output:
   set val(name), file( '*.unmap_map.bam') into unmap_map_bam
@@ -459,7 +405,7 @@ process pairedEndMapUnmap{
   tag "$name"
   label 'process_low'
   input:
-  set val(name), file(bam), file(txt) from bam_files_paired_map_unmap
+  set val(name), file(bam), file(bai), file(txt) from bam_files_paired_map_unmap
 
   output:
   set val(name), file( '*.map_unmap.bam') into map_unmap_bam
@@ -555,6 +501,7 @@ process joinMappedAndUnmappedFastq{
   """
 }
 
+
 process pairedEndReadsQC{
     label 'process_medium'
     tag "$read1"
@@ -589,7 +536,7 @@ process sortExtractSingleEnd{
         }
 
     input:
-    set val(name), file(bam), file(txt) from bam_file_single_end
+    set val(name), file(bam), file(bai), file(txt) from bam_file_single_end
 
     output:
     set val(name), file ('*.singleton.fq.gz') into single_end_reads
@@ -603,6 +550,7 @@ process sortExtractSingleEnd{
      | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
     """
  }
+
 
 process singleEndReadQC{
     tag "$name"
