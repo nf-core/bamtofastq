@@ -78,6 +78,18 @@ ch_output_docs = file("$baseDir/docs/output.md", checkIfExists: true)
 /*
  * Create a channel for input files
  */
+if (params.input_paths){
+
+   Channel
+      .from( params.input_paths )
+      .map { row -> [ row[0], file(row[1][0]), file(row[1][1])] }
+       .into{ ch_idxstats;
+            ch_flagstats;
+            ch_stats;
+            ch_input_fastqc;
+            ch_processing;
+       }
+} else {
 
 if(params.index_files){ //Index files are provided
 
@@ -108,6 +120,7 @@ if(params.index_files){ //Index files are provided
 }else{
       exit 1, "Parameter 'params.input' was not specified!\n"
 }
+ }
 
 // Header log info
 log.info nfcoreHeader()
