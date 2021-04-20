@@ -83,44 +83,44 @@ if (params.input_paths){
    Channel
       .from( params.input_paths )
       .map { row -> [ row[0], file(row[1][0]), file(row[1][1])] }
-       .into{ ch_idxstats;
-            ch_flagstats;
-            ch_stats;
-            ch_input_fastqc;
-            ch_processing;
+      .into{ ch_idxstats;
+             ch_flagstats;
+             ch_stats;
+             ch_input_fastqc;
+             ch_processing;
        }
 } else {
 
-if(params.index_files){ //Index files are provided
+  if(params.index_files){ //Index files are provided
 
-  Channel.fromFilePairs(params.input, flat:true, checkIfExists:true) { file -> file.name.replaceAll(/.bam|.bai$/,'') }
-    .map { name, file1, file2 ->
-          //Ensure second element in ma will be bam, and third bai
-           if(file2.extension.toString() == 'bai'){
-             bam = file1
-             bai = file2
-           }else{
-             bam = file2
-             bai = file1
-           }
-          [name, bam, bai]}       // Map: [ name, name.bam, name.bam.bai ]
-    .into { ch_idxstats;
-            ch_flagstats;
-            ch_stats;
-            ch_input_fastqc;
-            ch_processing }
+    Channel.fromFilePairs(params.input, flat:true, checkIfExists:true) { file -> file.name.replaceAll(/.bam|.bai$/,'') }
+      .map { name, file1, file2 ->
+            //Ensure second element in ma will be bam, and third bai
+             if(file2.extension.toString() == 'bai'){
+               bam = file1
+               bai = file2
+             }else{
+               bam = file2
+               bai = file1
+             }
+            [name, bam, bai]}       // Map: [ name, name.bam, name.bam.bai ]
+      .into { ch_idxstats;
+              ch_flagstats;
+              ch_stats;
+              ch_input_fastqc;
+              ch_processing }
 
-} else if(!params.index_files) { //Index files need to be computed
+  } else if(!params.index_files) { //Index files need to be computed
 
-  Channel
-        .fromPath(params.input, checkIfExists: true)
-        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // Map: [name, name.bam] (map bam file name w/o bam to file)
-        .into { bam_files_index }
+    Channel
+          .fromPath(params.input, checkIfExists: true)
+          .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // Map: [name, name.bam] (map bam file name w/o bam to file)
+          .set { bam_files_index }
 
-}else{
-      exit 1, "Parameter 'params.input' was not specified!\n"
+  }else{
+        exit 1, "Parameter 'params.input' was not specified!\n"
+  }
 }
- }
 
 // Header log info
 log.info nfcoreHeader()
