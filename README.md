@@ -61,6 +61,7 @@ Helpful contributors:
 
 * [Gisela Gabernet](https://github.com/ggabernet)
 * [Matilda Åslin](https://github.com/matrulda)
+* [Susanne Jodoin](https://github.com/SusiJo)
 
 ### Resources
 
