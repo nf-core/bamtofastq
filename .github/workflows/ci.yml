@@ -20,26 +20,26 @@ jobs:
       matrix:
         # Nextflow versions: check pipeline minimum and current latest
         nxf_ver: ['20.04.1', '']
-        config: ['test_chr']
+        config: ['test_chr','test_bai']
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
 
       - name: Check if Dockerfile or Conda environment changed
-        uses: technote-space/get-diff-action@v1
+        uses: technote-space/get-diff-action@v4
         with:
-          PREFIX_FILTER: |
+          FILES: |
             Dockerfile
             environment.yml
       - name: Build new docker image
-        if: env.GIT_DIFF
-        run: docker build --no-cache . -t qbicpipelines/bamtofastq:1.0.0
+        if: env.MATCHED_FILES
+        run: docker build --no-cache . -t qbicpipelines/bamtofastq:1.1.0
 
       - name: Pull docker image
-        if: ${{ !env.GIT_DIFF }}
+        if: ${{ !env.MATCHED_FILES }}
         run: |
           docker pull qbicpipelines/bamtofastq:dev
-          docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.0.0
+          docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.1.0
       - name: Install Nextflow
         run: |
           wget -qO- get.nextflow.io | bash
