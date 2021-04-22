@@ -1,6 +1,6 @@
 # nf-core/bamtofastq: Changelog
 
-## dev
+## v1.1.0 -  Katherine Johnson
 
 - [#21](https://github.com/qbic-pipelines/bamtofastq/21) Allows bam indices as additional input files
 - [#23](https://github.com/qbic-pipelines/bamtofastq/23) Fix documentation: `--bam` is `--input` now
