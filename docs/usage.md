@@ -15,6 +15,7 @@
   * [`--index_files`](#--index_files)
   * [`--chr`](#--chr)
   * [`--no_read_QC`](#--no_read_QC)
+  * [`--samtools_collate_fast`](#--samtools_collate_fast)
   * [`--no_stats`](#--no_stats)
 * [Job resources](#job-resources)
   * [Automatic resubmission](#automatic-resubmission)
@@ -153,6 +154,10 @@ Use to skip `FastQC` on obtained reads. This is useful, when the reads are used 
 ```bash
 --no_read_QC
 ```
+
+### `--samtools_collate_fast` (optional)
+
+Use to specify the fast mode for the `samtools collate` command in the process `sortExtractMapped`.
 
 ### `--no_stats` (optional)
 

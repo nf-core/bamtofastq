@@ -349,9 +349,9 @@ process checkIfPairedEnd{
 
   output:
   set val(name), file(bam), file(bai), file('*paired.txt') optional true into bam_files_paired_map_map,
-                                                                   bam_files_paired_unmap_unmap,
-                                                                   bam_files_paired_unmap_map,
-                                                                   bam_files_paired_map_unmap
+                                                                              bam_files_paired_unmap_unmap,
+                                                                              bam_files_paired_unmap_map,
+                                                                              bam_files_paired_map_unmap
   set val(name), file(bam), file(bai), file('*single.txt') optional true into bam_file_single_end // = is not paired end
 
   //Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for
@@ -443,8 +443,8 @@ process pairedEndMapUnmap{
 }
 
 unmap_unmap_bam.join(map_unmap_bam, remainder: true)
-               .join(unmap_map_bam, remainder: true)
-               .set{ all_unmapped_bam }
+                .join(unmap_map_bam, remainder: true)
+                .set{ all_unmapped_bam }
 
 process mergeUnmapped{
   tag "$name"
@@ -489,9 +489,10 @@ process sortExtractUnmapped{
   set val(name), file('*_unmapped.fq.gz') into reads_unmapped
 
   script:
+  def collate_fast = params.samtools_collate_fast ? "-f -r 100000" : ""
   """
-  samtools collate -O -@$task.cpus $all_unmapped . \
-     | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
+  samtools collate -O -@$task.cpus $collate_fast $all_unmapped . \
+      | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
   """
 }
 
@@ -519,8 +520,10 @@ process joinMappedAndUnmappedFastq{
 
   script:
   """
-  cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq.gz
-  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq.gz
+  cat $unmapped_fq1 >> $mapped_fq1
+  mv $mapped_fq1 ${name}.1.fq.gz
+  cat $unmapped_fq2 > $mapped_fq2
+  mv $mapped_fq2 ${name}.2.fq.gz
   """
 }
 
@@ -568,9 +571,10 @@ process sortExtractSingleEnd{
     txt.exists()
 
     script:
+    def collate_fast = params.samtools_collate_fast ? "-f -r 100000" : ""
     """
-    samtools collate -O -@$task.cpus $bam . \
-     | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
+    samtools collate -O -@$task.cpus $collate_fast $bam . \
+      | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
     """
  }
 
