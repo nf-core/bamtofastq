@@ -1,5 +1,9 @@
 # nf-core/bamtofastq: Changelog
 
+## v1.1.1 - Katherine Johnson faster
+
+- [#31](https://github.com/qbic-pipelines/bamtofastq/pull/31) Add option `--samtools-collate-fast` and improve speed of cat.
+
 ## v1.1.0 -  Katherine Johnson
 
 - [#21](https://github.com/qbic-pipelines/bamtofastq/21) Allows bam indices as additional input files
