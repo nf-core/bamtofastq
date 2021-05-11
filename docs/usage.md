@@ -157,7 +157,7 @@ Use to skip `FastQC` on obtained reads. This is useful, when the reads are used 
 
 ### `--samtools_collate_fast` (optional)
 
-Use to specify the fast mode for the `samtools collate` command in the process `sortExtractMapped`.
+Use to specify the fast mode for the `samtools collate` command in the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`.
 
 ### `--no_stats` (optional)
 
