@@ -3,6 +3,7 @@
 ## v1.1.1 - Katherine Johnson faster
 
 - [#31](https://github.com/qbic-pipelines/bamtofastq/pull/31) Add option `--samtools-collate-fast` and improve speed of cat.
+- [#32](https://github.com/qbic-pipelines/bamtofastq/pull/32) Added `--samtools-collate-fast` to sortExtractMapped and changed cat command to append.
 
 ## v1.1.0 -  Katherine Johnson
 
