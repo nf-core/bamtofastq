@@ -473,8 +473,9 @@ process sortExtractMapped{
   set val(name), file('*_mapped.fq.gz') into reads_mapped
 
   script:
+  def collate_fast = params.samtools_collate_fast ? "-f -r 100000" : ""
   """
-  samtools collate -O -@$task.cpus $all_map_bam . \
+  samtools collate -O -@$task.cpus $collate_fast $all_map_bam . \
     | samtools fastq -1 ${name}_R1_mapped.fq.gz -2 ${name}_R2_mapped.fq.gz -s ${name}_mapped_singletons.fq.gz -N -@$task.cpus
   """
 }
