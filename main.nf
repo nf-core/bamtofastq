@@ -522,7 +522,7 @@ process joinMappedAndUnmappedFastq{
   """
   cat $unmapped_fq1 >> $mapped_fq1
   mv $mapped_fq1 ${name}.1.fq.gz
-  cat $unmapped_fq2 > $mapped_fq2
+  cat $unmapped_fq2 >> $mapped_fq2
   mv $mapped_fq2 ${name}.2.fq.gz
   """
 }
