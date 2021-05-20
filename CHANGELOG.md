@@ -4,6 +4,7 @@
 
 - [#31](https://github.com/qbic-pipelines/bamtofastq/pull/31) Add option `--samtools-collate-fast` and improve speed of cat.
 - [#32](https://github.com/qbic-pipelines/bamtofastq/pull/32) Added `--samtools-collate-fast` to sortExtractMapped and changed cat command to append.
+- [#33](https://github.com/qbic-pipelines/bamtofastq/pull/33) Added flag `reads_in_memory` to specify how many reads shall be stored in memory.
 
 ## v1.1.0 -  Katherine Johnson
 
