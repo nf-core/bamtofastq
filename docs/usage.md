@@ -158,11 +158,11 @@ Use to skip `FastQC` on obtained reads. This is useful, when the reads are used 
 
 ### `--samtools_collate_fast` (optional)
 
-Use to specify the fast mode for the `samtools collate` command in the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`.
+Use to specify the fast mode for the `samtools collate` command in the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`. This option relies on the samtools command line flags `-f -r INT` and will output primary alignments only. For full documentation of this mode please refer to the [samtools documentation](http://www.htslib.org/doc/samtools-collate.html#OPTIONS).
 
 ### `--reads_in_memory` (optional)
 
-Only relevant in combination with `--samtools_collate_fast` [default = '100000']. This is useful for speeding up the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`.
+Only relevant in combination with `--samtools_collate_fast`. It specifies how many alignment reads are kept in memory [default = '100000']. This is useful for speeding up the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`.
 
 Example:
 
