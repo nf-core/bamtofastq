@@ -162,7 +162,7 @@ Use to specify the fast mode for the `samtools collate` command in the processes
 
 ### `--reads_in_memory` (optional)
 
-Only relevant in combination with `--samtools_collate_fast`. This is useful for speeding up the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`.
+Only relevant in combination with `--samtools_collate_fast` [default = '100000']. This is useful for speeding up the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`.
 
 Example:
 
