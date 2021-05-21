@@ -167,7 +167,7 @@ Only relevant in combination with `--samtools_collate_fast`. This is useful for 
 Example:
 
 ```bash
---samtools_collate_fast --reads_in_memory '100000'
+--samtools_collate_fast --reads_in_memory '1000000'
 ```
 
 ### `--no_stats` (optional)

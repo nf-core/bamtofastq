@@ -31,7 +31,7 @@ def helpMessage() {
       --chr                     [str]  Only use reads mapping to a specific chromosome/region. Has to be specified as in bam: i.e chr1, chr{1..22} (gets all reads mapping to chr1 to 22), 1, "X Y", incorrect naming will lead to a potentially silent error
       --index_files            [bool]  Index files are provided
       --samtools_collate_fast  [bool]  Uses fast mode for samtools collate in `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`
-      --reads_in_memory         [str]  Reads to store in memory [default = '10000']. Only relevant for use with `--samtools_collate_fast`.
+      --reads_in_memory         [str]  Reads to store in memory [default = '100000']. Only relevant for use with `--samtools_collate_fast`.
       --no_read_QC             [bool]  If specified, no quality control will be performed on extracted reads. Useful, if this is done anyways in the subsequent workflow
       --no_stats               [bool]  If specified, skips all quality control and stats computation, including `FastQC` on both input bam and output reads, `samtools flagstat`, `samtools idxstats`, and `samtools stats`
       --email                   [str]  Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
@@ -473,9 +473,8 @@ process sortExtractMapped{
   output:
   set val(name), file('*_mapped.fq.gz') into reads_mapped
 
-  script:
-  def rim = params.reads_in_memory ? params.reads_in_memory : "10000"
-  def collate_fast = params.samtools_collate_fast ? "-f -r " + "${rim}" : ""
+  script:  
+  def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
   samtools collate -O -@$task.cpus $collate_fast $all_map_bam . \
     | samtools fastq -1 ${name}_R1_mapped.fq.gz -2 ${name}_R2_mapped.fq.gz -s ${name}_mapped_singletons.fq.gz -N -@$task.cpus
@@ -492,9 +491,8 @@ process sortExtractUnmapped{
   output:
   set val(name), file('*_unmapped.fq.gz') into reads_unmapped
 
-  script:
-  def rim = params.reads_in_memory ? params.reads_in_memory : "10000"
-  def collate_fast = params.samtools_collate_fast ? "-f -r " + "${rim}" : ""
+  script:  
+  def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
   samtools collate -O -@$task.cpus $collate_fast $all_unmapped . \
       | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
@@ -575,9 +573,8 @@ process sortExtractSingleEnd{
     when:
     txt.exists()
 
-    script:
-    def rim = params.reads_in_memory ? params.reads_in_memory : "10000"
-    def collate_fast = params.samtools_collate_fast ? "-f -r " + "${rim}" : ""
+    script:    
+    def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
     """
     samtools collate -O -@$task.cpus $collate_fast $bam . \
       | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
