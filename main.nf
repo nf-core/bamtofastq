@@ -386,7 +386,7 @@ process pairedEndMapMap{
 
   script:
   """
-  samtools view -b -f1 -F12 $bam -@$task.cpus -o ${name}.map_map.bam
+  samtools view -b1 -f1 -F12 $bam -@$task.cpus -o ${name}.map_map.bam
   """
 }
 
@@ -404,7 +404,7 @@ process pairedEndUnmapUnmap{
 
   script:
   """
-  samtools view -b -f12 -F256 $bam -@${task.cpus} -o ${name}.unmap_unmap.bam
+  samtools view -b1 -f12 -F256 $bam -@${task.cpus} -o ${name}.unmap_unmap.bam
   """
 }
 
@@ -422,7 +422,7 @@ process pairedEndUnmapMap{
 
   script:
   """
-  samtools view -b -f4 -F264 $bam -@${task.cpus} -o ${name}.unmap_map.bam
+  samtools view -b1 -f4 -F264 $bam -@${task.cpus} -o ${name}.unmap_map.bam
   """
 }
 
@@ -440,7 +440,7 @@ process pairedEndMapUnmap{
 
   script:
   """
-  samtools view -b -f8 -F260 $bam  -@${task.cpus} -o ${name}.map_unmap.bam
+  samtools view -b1 -f8 -F260 $bam  -@${task.cpus} -o ${name}.map_unmap.bam
   """
 }
 
