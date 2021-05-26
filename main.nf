@@ -388,7 +388,7 @@ process pairedEndMapMap{
 
   script:
   """
-  samtools view -b1 -f1 -F12 $bam -@8 -o ${name}.map_map.bam   
+  samtools view -b1 -f1 -F12 $bam -@$task.cpus -o ${name}.map_map.bam   
   """
 }
 
@@ -406,7 +406,7 @@ process pairedEndUnmapUnmap{
 
   script:
   """
-  samtools view -b1 -f12 -F256 $bam -@8 -o ${name}.unmap_unmap.bam
+  samtools view -b1 -f12 -F256 $bam -@$task.cpus -o ${name}.unmap_unmap.bam
   """
 }
 
@@ -424,7 +424,7 @@ process pairedEndUnmapMap{
 
   script:
   """
-  samtools view -b1 -f4 -F264 $bam -@8 -o ${name}.unmap_map.bam
+  samtools view -b1 -f4 -F264 $bam -@$task.cpus -o ${name}.unmap_map.bam
   """
 }
 
@@ -461,7 +461,7 @@ process mergeUnmapped{
 
   script:
   """
-  samtools merge ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@8
+  samtools merge ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@$task.cpus
   """
 }
 
@@ -496,7 +496,7 @@ process sortExtractUnmapped{
   script:  
   def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
-  samtools collate -O -@8 $collate_fast $all_unmapped . \
+  samtools collate -O -@$task.cpus $collate_fast $all_unmapped . \
       | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@8
   """
 }
