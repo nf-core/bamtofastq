@@ -442,7 +442,7 @@ process pairedEndMapUnmap{
 
   script:
   """
-  samtools view -b1 -f8 -F260 $bam  -@$task.cpus -o ${name}.map_unmap.bam
+  samtools view -b1 -f8 -F260 $bam  -@ $task.cpus -o ${name}.map_unmap.bam
   """
 }
 
