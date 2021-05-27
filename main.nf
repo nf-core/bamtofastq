@@ -227,7 +227,7 @@ if(!params.index_files){
 
     script:
     """
-    samtools index ${bam}
+    samtools index -@ $task.cpus ${bam}
     """
   }
 }
