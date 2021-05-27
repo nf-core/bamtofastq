@@ -271,7 +271,7 @@ process computeFlagstatInput{
 
   script:
   """
-  samtools flagstat -@$task.cpus ${bam} > ${bam}.flagstat
+  samtools flagstat -@ $task.cpus ${bam} > ${bam}.flagstat
   """
 }
 
@@ -292,7 +292,7 @@ process computeStatsInput{
 
   script:
   """
-  samtools stats -@$task.cpus ${bam} > ${bam}.stats
+  samtools stats -@ $task.cpus ${bam} > ${bam}.stats
   """
 }
 
@@ -333,7 +333,7 @@ if (params.chr){
     //If multiple chr were specified, then join space separated list for naming: chr1 chr2 -> chr1_chr2, also resolve region specification with format chr:start-end
     chr_list_joined = params.chr.split(' |-|:').size() > 1 ? params.chr.split(' |-|:').join('_') : params.chr
     """
-    samtools view -hb $bam ${params.chr} -@$task.cpus -o "${name}.${chr_list_joined}.bam"
+    samtools view -hb $bam ${params.chr} -@ $task.cpus -o "${name}.${chr_list_joined}.bam"
     samtools index "${name}.${chr_list_joined}.bam"
     """
   }
@@ -362,7 +362,7 @@ process checkIfPairedEnd{
   //all, the flag for paired-end is set. Compare: https://www.biostars.org/p/178730/ .
   script:
   """
-  if [ \$({ samtools view -H $bam -@$task.cpus ; samtools view $bam -@$task.cpus | head -n1000; } | samtools view -c -f 1  -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then
+  if [ \$({ samtools view -H $bam -@ $task.cpus ; samtools view $bam -@ $task.cpus | head -n1000; } | samtools view -c -f 1  -@ $task.cpus | awk '{print \$1/1000}') = "1" ]; then
     echo 1 > ${name}.paired.txt
   else
     echo 0 > ${name}.single.txt
@@ -388,7 +388,7 @@ process pairedEndMapMap{
 
   script:
   """
-  samtools view -b1 -f1 -F12 $bam -@$task.cpus -o ${name}.map_map.bam   
+  samtools view -b1 -f1 -F12 $bam -@ $task.cpus -o ${name}.map_map.bam   
   """
 }
 
@@ -406,7 +406,7 @@ process pairedEndUnmapUnmap{
 
   script:
   """
-  samtools view -b1 -f12 -F256 $bam -@$task.cpus -o ${name}.unmap_unmap.bam
+  samtools view -b1 -f12 -F256 $bam -@ $task.cpus -o ${name}.unmap_unmap.bam
   """
 }
 
@@ -424,7 +424,7 @@ process pairedEndUnmapMap{
 
   script:
   """
-  samtools view -b1 -f4 -F264 $bam -@$task.cpus -o ${name}.unmap_map.bam
+  samtools view -b1 -f4 -F264 $bam -@ $task.cpus -o ${name}.unmap_map.bam
   """
 }
 
@@ -461,7 +461,7 @@ process mergeUnmapped{
 
   script:
   """
-  samtools merge ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@$task.cpus
+  samtools merge ${name}.merged_unmapped.bam $unmap_unmap $map_unmap $unmap_map  -@ $task.cpus
   """
 }
 
@@ -478,8 +478,8 @@ process sortExtractMapped{
   script:  
   def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
-  samtools collate -O -@$task.cpus $collate_fast $all_map_bam . \
-    | samtools fastq -1 ${name}_R1_mapped.fq.gz -2 ${name}_R2_mapped.fq.gz -s ${name}_mapped_singletons.fq.gz -N -@$task.cpus
+  samtools collate -O -@ $task.cpus $collate_fast $all_map_bam . \
+    | samtools fastq -1 ${name}_R1_mapped.fq.gz -2 ${name}_R2_mapped.fq.gz -s ${name}_mapped_singletons.fq.gz -N -@ $task.cpus
   """
 }
 
@@ -496,8 +496,8 @@ process sortExtractUnmapped{
   script:  
   def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
-  samtools collate -O -@$task.cpus $collate_fast $all_unmapped . \
-      | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@8
+  samtools collate -O -@ $task.cpus $collate_fast $all_unmapped . \
+      | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@ $task.cpus
   """
 }
 
@@ -578,8 +578,8 @@ process sortExtractSingleEnd{
     script:    
     def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
     """
-    samtools collate -O -@$task.cpus $collate_fast $bam . \
-      | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
+    samtools collate -O -@ $task.cpus $collate_fast $bam . \
+      | samtools fastq -0 ${name}.singleton.fq.gz -N -@ $task.cpus
     """
  }
 
