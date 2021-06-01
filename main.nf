@@ -388,7 +388,7 @@ process pairedEndMapMap{
 
   script:
   """
-  samtools view -b1 -f1 -F12 $bam -@$task.cpus -o ${name}.map_map.bam   
+  samtools view -b1 -f1 -F12 $bam -@$task.cpus -o ${name}.map_map.bam
   """
 }
 
