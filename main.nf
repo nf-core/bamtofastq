@@ -29,7 +29,9 @@ def helpMessage() {
     Other options:
       --outdir                 [file]  The output directory where the results will be saved
       --chr                     [str]  Only use reads mapping to a specific chromosome/region. Has to be specified as in bam: i.e chr1, chr{1..22} (gets all reads mapping to chr1 to 22), 1, "X Y", incorrect naming will lead to a potentially silent error
-      --index_files            [bool]  Index files are provided
+      --index_files            [bool]  Index files are provided (incompatible with cram_files)
+      --cram_files             [bool]  CRAM files (and not BAM files) are provided (incompatible with index_files)
+      --reference_fasta        [file]  Reference genome FASTA file used for CRAM compression (can be omitted if the reference in the CRAM header is available)
       --no_read_QC             [bool]  If specified, no quality control will be performed on extracted reads. Useful, if this is done anyways in the subsequent workflow
       --no_stats               [bool]  If specified, skips all quality control and stats computation, including `FastQC` on both input bam and output reads, `samtools flagstat`, `samtools idxstats`, and `samtools stats`
       --email                   [str]  Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
@@ -93,6 +95,10 @@ if (params.input_paths){
 
   if(params.index_files){ //Index files are provided
 
+    if (params.cram_files) {
+          exit 1, "Parameter 'params.cram_files' isn't compatible with 'params.index_files'!\n"
+    }
+
     Channel.fromFilePairs(params.input, flat:true, checkIfExists:true) { file -> file.name.replaceAll(/.bam|.bai$/,'') }
       .map { name, file1, file2 ->
             //Ensure second element in ma will be bam, and third bai
@@ -112,10 +118,21 @@ if (params.input_paths){
 
   } else if(!params.index_files) { //Index files need to be computed
 
-    Channel
-          .fromPath(params.input, checkIfExists: true)
-          .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // Map: [name, name.bam] (map bam file name w/o bam to file)
-          .set { bam_files_index }
+    if (params.cram_files) {
+
+      Channel
+        .fromPath( params.input, checkIfExists: true)
+        .map { file -> tuple(file.name.replaceAll(".cram", ''), file) } // Map: [name, name.cram] (map cram file name w/o cram to file)
+        .set { ch_cram_files }
+
+    } else {
+
+      Channel
+        .fromPath(params.input, checkIfExists: true)
+        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // Map: [name, name.bam] (map bam file name w/o bam to file)
+        .set { bam_files_index }
+
+    }
 
   }else{
         exit 1, "Parameter 'params.input' was not specified!\n"
@@ -201,6 +218,53 @@ process get_software_versions {
     multiqc --version > v_multiqc.txt
     scrape_software_versions.py &> software_versions_mqc.yaml
     """
+}
+
+/*
+ * Generate BAM files if input files are CRAM files
+ */
+
+if ( params.cram_files ) {
+
+  if ( params.reference_fasta ) {
+
+    process cramToBamWithReference {
+      tag "$name"
+      label 'process_medium'
+
+      input:
+      set val(name), file(cram) from ch_cram_files
+      path fasta from params.reference_fasta
+
+      output:
+      set val("$name"), file("${name}.bam") into bam_files_index
+
+      script:
+      """
+      samtools view -b -@${task.cpus} -T ${fasta} ${cram} -o ${name}.bam
+      """
+    }
+
+  } else {
+
+    process cramToBamWithoutReference {
+      tag "$name"
+      label 'process_medium'
+
+      input:
+      set val(name), file(cram) from ch_cram_files
+
+      output:
+      set val("$name"), file("${name}.bam") into bam_files_index
+
+      script:
+      """
+      samtools view -b -@${task.cpus} ${cram} -o ${name}.bam
+      """
+    }
+
+  }
+
 }
 
 
