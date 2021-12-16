@@ -120,6 +120,8 @@ if (params.input_paths){
 
     if (params.cram_files) {
 
+      ch_reference_fasta = params.reference_fasta ? Channel.value(file(params.reference_fasta)) : "null"
+
       Channel
         .fromPath( params.input, checkIfExists: true)
         .map { file -> tuple(file.name.replaceAll(".cram", ''), file) } // Map: [name, name.cram] (map cram file name w/o cram to file)
@@ -226,44 +228,23 @@ process get_software_versions {
 
 if ( params.cram_files ) {
 
-  if ( params.reference_fasta ) {
-
-    process cramToBamWithReference {
+  process cramToBamWithReference {
       tag "$name"
       label 'process_medium'
 
       input:
       set val(name), file(cram) from ch_cram_files
-      path fasta from params.reference_fasta
+      file fasta from ch_reference_fasta
 
       output:
       set val("$name"), file("${name}.bam") into bam_files_index
 
       script:
+      refOptions = params.reference_fasta ? "-T ${fasta}" : ""
       """
-      samtools view -b -@${task.cpus} -T ${fasta} ${cram} -o ${name}.bam
-      """
-    }
-
-  } else {
-
-    process cramToBamWithoutReference {
-      tag "$name"
-      label 'process_medium'
-
-      input:
-      set val(name), file(cram) from ch_cram_files
-
-      output:
-      set val("$name"), file("${name}.bam") into bam_files_index
-
-      script:
-      """
-      samtools view -b -@${task.cpus} ${cram} -o ${name}.bam
+      samtools view -b -@${task.cpus} ${refOptions} ${cram} -o ${name}.bam
       """
     }
-
-  }
 
 }
 
