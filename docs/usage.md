@@ -15,6 +15,8 @@
   * [`--index_files`](#--index_files)
   * [`--chr`](#--chr)
   * [`--no_read_QC`](#--no_read_QC)
+  * [`--samtools_collate_fast`](#--samtools_collate_fast)
+  * [`--reads_in_memory`](#--reads_in_memory)
   * [`--no_stats`](#--no_stats)
 * [Job resources](#job-resources)
   * [Automatic resubmission](#automatic-resubmission)
@@ -136,7 +138,7 @@ Please note the following requirements:
 ### `--chr` (optional)
 
 Use to only obtain reads mapping to a specific chromosome or region.
-> It is important to specify the chromsome or region name **exactly** as set in the bam file. Otherwise no reads may be extracted!
+> It is important to specify the chromosome or region name **exactly** as set in the bam file. Otherwise no reads may be extracted!
 
 For example:
 
@@ -152,6 +154,20 @@ Use to skip `FastQC` on obtained reads. This is useful, when the reads are used 
 
 ```bash
 --no_read_QC
+```
+
+### `--samtools_collate_fast` (optional)
+
+Use to specify the fast mode for the `samtools collate` command in the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`. This option relies on the samtools command line flags `-f -r INT` and will output primary alignments only. For full documentation of this mode please refer to the [samtools documentation](http://www.htslib.org/doc/samtools-collate.html#OPTIONS).
+
+### `--reads_in_memory` (optional)
+
+Only relevant in combination with `--samtools_collate_fast`. It specifies how many alignment reads are kept in memory [default = '100000']. This is useful for speeding up the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`.
+
+Example:
+
+```bash
+--samtools_collate_fast --reads_in_memory '1000000'
 ```
 
 ### `--no_stats` (optional)

@@ -32,6 +32,8 @@ def helpMessage() {
       --index_files            [bool]  Index files are provided (incompatible with cram_files)
       --cram_files             [bool]  CRAM files (and not BAM files) are provided (incompatible with index_files)
       --reference_fasta        [file]  Reference genome FASTA file used for CRAM compression (can be omitted if the reference in the CRAM header is available)
+      --samtools_collate_fast  [bool]  Uses fast mode for samtools collate in `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`
+      --reads_in_memory         [str]  Reads to store in memory [default = '100000']. Only relevant for use with `--samtools_collate_fast`.
       --no_read_QC             [bool]  If specified, no quality control will be performed on extracted reads. Useful, if this is done anyways in the subsequent workflow
       --no_stats               [bool]  If specified, skips all quality control and stats computation, including `FastQC` on both input bam and output reads, `samtools flagstat`, `samtools idxstats`, and `samtools stats`
       --email                   [str]  Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
@@ -394,9 +396,9 @@ process checkIfPairedEnd{
 
   output:
   set val(name), file(bam), file(bai), file('*paired.txt') optional true into bam_files_paired_map_map,
-                                                                   bam_files_paired_unmap_unmap,
-                                                                   bam_files_paired_unmap_map,
-                                                                   bam_files_paired_map_unmap
+                                                                              bam_files_paired_unmap_unmap,
+                                                                              bam_files_paired_unmap_map,
+                                                                              bam_files_paired_map_unmap
   set val(name), file(bam), file(bai), file('*single.txt') optional true into bam_file_single_end // = is not paired end
 
   //Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for
@@ -488,8 +490,8 @@ process pairedEndMapUnmap{
 }
 
 unmap_unmap_bam.join(map_unmap_bam, remainder: true)
-               .join(unmap_map_bam, remainder: true)
-               .set{ all_unmapped_bam }
+                .join(unmap_map_bam, remainder: true)
+                .set{ all_unmapped_bam }
 
 process mergeUnmapped{
   tag "$name"
@@ -516,9 +518,10 @@ process sortExtractMapped{
   output:
   set val(name), file('*_mapped.fq.gz') into reads_mapped
 
-  script:
+  script:  
+  def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
-  samtools collate -O -@$task.cpus $all_map_bam . \
+  samtools collate -O -@$task.cpus $collate_fast $all_map_bam . \
     | samtools fastq -1 ${name}_R1_mapped.fq.gz -2 ${name}_R2_mapped.fq.gz -s ${name}_mapped_singletons.fq.gz -N -@$task.cpus
   """
 }
@@ -533,10 +536,11 @@ process sortExtractUnmapped{
   output:
   set val(name), file('*_unmapped.fq.gz') into reads_unmapped
 
-  script:
+  script:  
+  def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
-  samtools collate -O -@$task.cpus $all_unmapped . \
-     | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
+  samtools collate -O -@$task.cpus $collate_fast $all_unmapped . \
+      | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
   """
 }
 
@@ -564,8 +568,10 @@ process joinMappedAndUnmappedFastq{
 
   script:
   """
-  cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq.gz
-  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq.gz
+  cat $unmapped_fq1 >> $mapped_fq1
+  mv $mapped_fq1 ${name}.1.fq.gz
+  cat $unmapped_fq2 >> $mapped_fq2
+  mv $mapped_fq2 ${name}.2.fq.gz
   """
 }
 
@@ -612,10 +618,11 @@ process sortExtractSingleEnd{
     when:
     txt.exists()
 
-    script:
+    script:    
+    def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
     """
-    samtools collate -O -@$task.cpus $bam . \
-     | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
+    samtools collate -O -@$task.cpus $collate_fast $bam . \
+      | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
     """
  }
 
