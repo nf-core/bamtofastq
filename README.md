@@ -1,6 +1,6 @@
 # ![qbic-pipelines/bamtofastq](docs/images/qbic-pipelines-bamtofastq_logo.png)
 
-> **An open-source pipeline converting (un)mapped single-end or paired-end bam files to fastq.gz**.
+> **An open-source pipeline converting (un)mapped single-end or paired-end bam/cram files to fastq.gz**.
 
 [![Nextflow](https://img.shields.io/badge/nextflow-%E2%89%A520.04.1-brightgreen.svg)](https://www.nextflow.io/)
 
@@ -14,8 +14,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4022137.svg)](https://doi.org/10.5281/zenodo.4022137)
 ## Introduction
 
-This pipeline converts (un)mapped `.bam` files into `fq.gz` files.
-Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam files it is possible to only convert reads mapping to a specific region or chromosome. The obtained FastQ files can then be used to further process with other pipelines.
+This pipeline converts (un)mapped `.bam` files (or `.cram` files with the `--cram_files` option) into `fq.gz` files.
+Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam/cram files it is possible to only convert reads mapping to a specific region or chromosome. The obtained FastQ files can then be used to further process with other pipelines.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It comes with docker containers making installation trivial and results highly reproducible.
 
@@ -62,6 +62,7 @@ Helpful contributors:
 * [Gisela Gabernet](https://github.com/ggabernet)
 * [Matilda Åslin](https://github.com/matrulda)
 * [Susanne Jodoin](https://github.com/SusiJo)
+* [Bruno Grande](https://github.com/BrunoGrandePhd)
 
 ### Resources
 

@@ -4,41 +4,44 @@
 
 <!-- Install Atom plugin markdown-toc-auto for this ToC to auto-update on save -->
 <!-- TOC START min:2 max:3 link:true asterisk:true update:true -->
-* [Table of contents](#table-of-contents)
-* [Introduction](#introduction)
-* [Running the pipeline](#running-the-pipeline)
-  * [Updating the pipeline](#updating-the-pipeline)
-  * [Reproducibility](#reproducibility)
-* [Main arguments](#main-arguments)
-  * [`-profile`](#-profile)
-  * [`--input`](#--input)
-  * [`--index_files`](#--index_files)
-  * [`--chr`](#--chr)
-  * [`--no_read_QC`](#--no_read_QC)
-  * [`--samtools_collate_fast`](#--samtools_collate_fast)
-  * [`--reads_in_memory`](#--reads_in_memory)
-  * [`--no_stats`](#--no_stats)
-* [Job resources](#job-resources)
-  * [Automatic resubmission](#automatic-resubmission)
-  * [Custom resource requests](#custom-resource-requests)
-* [AWS Batch specific parameters](#aws-batch-specific-parameters)
-  * [`--awsqueue`](#--awsqueue)
-  * [`--awsregion`](#--awsregion)
-* [Other command line parameters](#other-command-line-parameters)
-  * [`--outdir`](#--outdir)
-  * [`--email`](#--email)
-  * [`--email_on_fail`](#--email_on_fail)
-  * [`-name`](#-name)
-  * [`-resume`](#-resume)
-  * [`-c`](#-c)
-  * [`--custom_config_version`](#--custom_config_version)
-  * [`--custom_config_base`](#--custom_config_base)
-  * [`--max_memory`](#--max_memory)
-  * [`--max_time`](#--max_time)
-  * [`--max_cpus`](#--max_cpus)
-  * [`--plaintext_email`](#--plaintext_email)
-  * [`--monochrome_logs`](#--monochrome_logs)
-  * [`--multiqc_config`](#--multiqc_config)
+- [qbic-pipelines/bamtofastq: Usage](#qbic-pipelinesbamtofastq-usage)
+  - [Table of contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Running the pipeline](#running-the-pipeline)
+    - [Updating the pipeline](#updating-the-pipeline)
+    - [Reproducibility](#reproducibility)
+  - [Main arguments](#main-arguments)
+    - [`-profile`](#-profile)
+    - [`--input`](#--input)
+    - [`--index_files`](#--index_files)
+    - [`--cram_files`](#--cram_files)
+    - [`--reference_fasta`](#--reference_fasta)
+    - [`--chr` (optional)](#--chr-optional)
+    - [`--no_read_QC` (optional)](#--no_read_qc-optional)
+    - [`--samtools_collate_fast` (optional)](#--samtools_collate_fast-optional)
+    - [`--reads_in_memory` (optional)](#--reads_in_memory-optional)
+    - [`--no_stats` (optional)](#--no_stats-optional)
+  - [Job resources](#job-resources)
+    - [Automatic resubmission](#automatic-resubmission)
+    - [Custom resource requests](#custom-resource-requests)
+  - [AWS Batch specific parameters](#aws-batch-specific-parameters)
+    - [`--awsqueue`](#--awsqueue)
+    - [`--awsregion`](#--awsregion)
+  - [Other command line parameters](#other-command-line-parameters)
+    - [`--outdir`](#--outdir)
+    - [`--email`](#--email)
+    - [`--email_on_fail`](#--email_on_fail)
+    - [`-name`](#-name)
+    - [`-resume`](#-resume)
+    - [`-c`](#-c)
+    - [`--custom_config_version`](#--custom_config_version)
+    - [`--custom_config_base`](#--custom_config_base)
+    - [`--max_memory`](#--max_memory)
+    - [`--max_time`](#--max_time)
+    - [`--max_cpus`](#--max_cpus)
+    - [`--plaintext_email`](#--plaintext_email)
+    - [`--monochrome_logs`](#--monochrome_logs)
+    - [`--multiqc_config`](#--multiqc_config)
 <!-- TOC END -->
 
 ## Introduction
@@ -111,7 +114,7 @@ If `-profile` is not specified at all the pipeline will be run locally and expec
 
 ### `--input`
 
-Use this to specify the location of your input Bam files. For example:
+Use this to specify the location of your input Bam files (or CRAM files if used with [`--cram_files`](#--cram_files)). For example:
 
 ```bash
 --input 'path/to/data/sample_*.bam'
@@ -120,7 +123,7 @@ Use this to specify the location of your input Bam files. For example:
 Please note the following requirements:
 
 1. The path must be enclosed in quotes
-2. The path must have at least one `*` wildcard character
+2. The path must have at least one `*`/`**` wildcard character
 
 ### `--index_files`
 
@@ -134,6 +137,30 @@ Please note the following requirements:
 
 1. The path must be enclosed in quotes
 2. The path must have at least one `*` wildcard character
+
+### `--cram_files`
+
+Use this to indicate that **all** of the files listed in `--input` are CRAM files instead of BAM files. This enabled a step at the beginning of the workflow that converts each CRAM file to BAM format on the fly. Note that this option is incompatible with [`--index_files`](#--index_files). For example:
+
+```bash
+--cram_files --input 'path/to/data/sample_*.cram'
+```
+
+While the above command is valid, it will only work if the reference genome FASTA file listed in the CRAM header is available (_e.g._ via HTTP/FTP or on the local file system). Otherwise, you will need to use the [`--reference_fasta` option](#--reference_fasta). You can check which reference FASTA file is indicated in the CRAM header with the following command:
+
+```bash
+samtools view -H path/to/sample.cram | grep '@SQ'
+```
+
+Unfortunately, at the time of writing, FastQC [doesn't support](https://github.com/s-andrews/FastQC/issues/54) CRAM files as input. Hence, a benefit of converting CRAM files to BAM format as opposed to converting directly to FASTQ format is that you can perform QC before the final conversion.
+
+### `--reference_fasta`
+
+Use this option to indicate which reference genome FASTA file to use when decompressing CRAM files. This is useful if the FASTA file indicated in the CRAM header (see [`--cram_files`](#--cram_files) for more information). For example:
+
+```bash
+--cram_files --input 'path/to/data/sample_*.cram' --reference_fasta 'ftp://ftp.broadinstitute.org/pub/seq/references/Homo_sapiens_assembly19.fasta'
+```
 
 ### `--chr` (optional)
 

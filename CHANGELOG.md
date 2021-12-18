@@ -1,5 +1,9 @@
 # nf-core/bamtofastq: Changelog
 
+## v1.2.0 - Marie Curie
+
+- [#36](https://github.com/qbic-pipelines/bamtofastq/pull/36) Add options `--cram_files` and `--reference_fasta` to add support for CRAM files.
+
 ## v1.1.1 - Katherine Johnson faster
 
 - [#31](https://github.com/qbic-pipelines/bamtofastq/pull/31) Add option `--samtools_collate_fast` and improve speed of cat.
