@@ -1,6 +1,6 @@
 # nf-core/bamtofastq: Changelog
 
-## v1.2.0 - Marie Curie
+## v1.2.0 - Anna Winlock
 
 - [#36](https://github.com/qbic-pipelines/bamtofastq/pull/36) Add options `--cram_files` and `--reference_fasta` to add support for CRAM files.
 
