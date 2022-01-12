@@ -98,7 +98,7 @@ if (params.input_paths){
   if(params.index_files){ //Index files are provided
 
     if (params.cram_files) {
-          exit 1, "Parameter 'params.cram_files' isn't compatible with 'params.index_files'!\n"
+          exit 1, "Parameter 'params.cram_files' isn't compatible with '--index_files'!\n"
     }
 
     Channel.fromFilePairs(params.input, flat:true, checkIfExists:true) { file -> file.name.replaceAll(/.bam|.bai$/,'') }
