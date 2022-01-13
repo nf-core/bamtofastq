@@ -29,7 +29,11 @@ def helpMessage() {
     Other options:
       --outdir                 [file]  The output directory where the results will be saved
       --chr                     [str]  Only use reads mapping to a specific chromosome/region. Has to be specified as in bam: i.e chr1, chr{1..22} (gets all reads mapping to chr1 to 22), 1, "X Y", incorrect naming will lead to a potentially silent error
-      --index_files            [bool]  Index files are provided
+      --index_files            [bool]  Index files are provided (incompatible with cram_files)
+      --cram_files             [bool]  CRAM files (and not BAM files) are provided (incompatible with index_files)
+      --reference_fasta        [file]  Reference genome FASTA file used for CRAM compression (can be omitted if the reference in the CRAM header is available)
+      --samtools_collate_fast  [bool]  Uses fast mode for samtools collate in `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`
+      --reads_in_memory         [str]  Reads to store in memory [default = '100000']. Only relevant for use with `--samtools_collate_fast`.
       --no_read_QC             [bool]  If specified, no quality control will be performed on extracted reads. Useful, if this is done anyways in the subsequent workflow
       --no_stats               [bool]  If specified, skips all quality control and stats computation, including `FastQC` on both input bam and output reads, `samtools flagstat`, `samtools idxstats`, and `samtools stats`
       --email                   [str]  Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits
@@ -93,6 +97,10 @@ if (params.input_paths){
 
   if(params.index_files){ //Index files are provided
 
+    if (params.cram_files) {
+          exit 1, "Parameter 'params.cram_files' isn't compatible with '--index_files'!\n"
+    }
+
     Channel.fromFilePairs(params.input, flat:true, checkIfExists:true) { file -> file.name.replaceAll(/.bam|.bai$/,'') }
       .map { name, file1, file2 ->
             //Ensure second element in ma will be bam, and third bai
@@ -112,10 +120,23 @@ if (params.input_paths){
 
   } else if(!params.index_files) { //Index files need to be computed
 
-    Channel
-          .fromPath(params.input, checkIfExists: true)
-          .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // Map: [name, name.bam] (map bam file name w/o bam to file)
-          .set { bam_files_index }
+    if (params.cram_files) {
+
+      ch_reference_fasta = params.reference_fasta ? Channel.value(file(params.reference_fasta)) : "null"
+
+      Channel
+        .fromPath( params.input, checkIfExists: true)
+        .map { file -> tuple(file.name.replaceAll(".cram", ''), file) } // Map: [name, name.cram] (map cram file name w/o cram to file)
+        .set { ch_cram_files }
+
+    } else {
+
+      Channel
+        .fromPath(params.input, checkIfExists: true)
+        .map { file -> tuple(file.name.replaceAll(".bam",''), file) } // Map: [name, name.bam] (map bam file name w/o bam to file)
+        .set { bam_files_index }
+
+    }
 
   }else{
         exit 1, "Parameter 'params.input' was not specified!\n"
@@ -201,6 +222,32 @@ process get_software_versions {
     multiqc --version > v_multiqc.txt
     scrape_software_versions.py &> software_versions_mqc.yaml
     """
+}
+
+/*
+ * Generate BAM files if input files are CRAM files
+ */
+
+if ( params.cram_files ) {
+
+  process cramToBamWithReference {
+      tag "$name"
+      label 'process_medium'
+
+      input:
+      set val(name), file(cram) from ch_cram_files
+      file fasta from ch_reference_fasta
+
+      output:
+      set val("$name"), file("${name}.bam") into bam_files_index
+
+      script:
+      refOptions = params.reference_fasta ? "-T ${fasta}" : ""
+      """
+      samtools view -b -@${task.cpus} ${refOptions} ${cram} -o ${name}.bam
+      """
+    }
+
 }
 
 
@@ -349,9 +396,9 @@ process checkIfPairedEnd{
 
   output:
   set val(name), file(bam), file(bai), file('*paired.txt') optional true into bam_files_paired_map_map,
-                                                                   bam_files_paired_unmap_unmap,
-                                                                   bam_files_paired_unmap_map,
-                                                                   bam_files_paired_map_unmap
+                                                                              bam_files_paired_unmap_unmap,
+                                                                              bam_files_paired_unmap_map,
+                                                                              bam_files_paired_map_unmap
   set val(name), file(bam), file(bai), file('*single.txt') optional true into bam_file_single_end // = is not paired end
 
   //Take samtools header + the first 1000 reads (to safe time, otherwise also all can be used) and check whether for
@@ -443,8 +490,8 @@ process pairedEndMapUnmap{
 }
 
 unmap_unmap_bam.join(map_unmap_bam, remainder: true)
-               .join(unmap_map_bam, remainder: true)
-               .set{ all_unmapped_bam }
+                .join(unmap_map_bam, remainder: true)
+                .set{ all_unmapped_bam }
 
 process mergeUnmapped{
   tag "$name"
@@ -471,9 +518,10 @@ process sortExtractMapped{
   output:
   set val(name), file('*_mapped.fq.gz') into reads_mapped
 
-  script:
+  script:  
+  def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
-  samtools collate -O -@$task.cpus $all_map_bam . \
+  samtools collate -O -@$task.cpus $collate_fast $all_map_bam . \
     | samtools fastq -1 ${name}_R1_mapped.fq.gz -2 ${name}_R2_mapped.fq.gz -s ${name}_mapped_singletons.fq.gz -N -@$task.cpus
   """
 }
@@ -488,10 +536,11 @@ process sortExtractUnmapped{
   output:
   set val(name), file('*_unmapped.fq.gz') into reads_unmapped
 
-  script:
+  script:  
+  def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
   """
-  samtools collate -O -@$task.cpus $all_unmapped . \
-     | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
+  samtools collate -O -@$task.cpus $collate_fast $all_unmapped . \
+      | samtools fastq -1 ${name}_R1_unmapped.fq.gz -2 ${name}_R2_unmapped.fq.gz -s ${name}_unmapped_singletons.fq.gz -N -@$task.cpus
   """
 }
 
@@ -519,8 +568,10 @@ process joinMappedAndUnmappedFastq{
 
   script:
   """
-  cat $mapped_fq1 $unmapped_fq1 > ${name}.1.fq.gz
-  cat $mapped_fq2 $unmapped_fq2 > ${name}.2.fq.gz
+  cat $unmapped_fq1 >> $mapped_fq1
+  mv $mapped_fq1 ${name}.1.fq.gz
+  cat $unmapped_fq2 >> $mapped_fq2
+  mv $mapped_fq2 ${name}.2.fq.gz
   """
 }
 
@@ -567,10 +618,11 @@ process sortExtractSingleEnd{
     when:
     txt.exists()
 
-    script:
+    script:    
+    def collate_fast = params.samtools_collate_fast ? "-f -r " + params.reads_in_memory : ""
     """
-    samtools collate -O -@$task.cpus $bam . \
-     | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
+    samtools collate -O -@$task.cpus $collate_fast $bam . \
+      | samtools fastq -0 ${name}.singleton.fq.gz -N -@$task.cpus
     """
  }
 

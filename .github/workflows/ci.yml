@@ -20,7 +20,7 @@ jobs:
       matrix:
         # Nextflow versions: check pipeline minimum and current latest
         nxf_ver: ['20.04.1', '']
-        config: ['test_chr','test_bai']
+        config: ['test_chr','test_bai','test_cram']
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
@@ -33,13 +33,13 @@ jobs:
             environment.yml
       - name: Build new docker image
         if: env.MATCHED_FILES
-        run: docker build --no-cache . -t qbicpipelines/bamtofastq:1.1.0
+        run: docker build --no-cache . -t qbicpipelines/bamtofastq:1.2.0
 
       - name: Pull docker image
         if: ${{ !env.MATCHED_FILES }}
         run: |
-          docker pull qbicpipelines/bamtofastq:dev
-          docker tag qbicpipelines/bamtofastq:dev qbicpipelines/bamtofastq:1.1.0
+          docker pull qbicpipelines/bamtofastq:1.2.0
+          docker tag qbicpipelines/bamtofastq:1.2.0 qbicpipelines/bamtofastq:1.2.0
       - name: Install Nextflow
         run: |
           wget -qO- get.nextflow.io | bash
