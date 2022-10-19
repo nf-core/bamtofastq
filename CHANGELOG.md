@@ -1,5 +1,18 @@
 # nf-core/bamtofastq: Changelog
 
+
+## v2.0.0dev - [date]
+
+Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.re/) template.
+
+### `Added`
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
+
 ## v1.1.1 - Katherine Johnson faster
 
 - [#31](https://github.com/qbic-pipelines/bamtofastq/pull/31) Add option `--samtools_collate_fast` and improve speed of cat.
