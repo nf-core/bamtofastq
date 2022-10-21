@@ -175,6 +175,7 @@ Use this option to indicate which reference genome FASTA file to use when decomp
 ### `--chr` (optional)
 
 Use to only obtain reads mapping to a specific chromosome or region.
+
 > It is important to specify the chromosome or region name **exactly** as set in the bam file. Otherwise no reads may be extracted!
 
 For example:
@@ -339,6 +340,7 @@ Set to disable colourful command line output and live life in monochrome.
 ### `--multiqc_config`
 
 Specify a path to a custom MultiQC configuration file.
+
 ### `-resume`
 
 Specify this when restarting a pipeline. Nextflow will use cached results from any pipeline steps where the inputs are the same, continuing from where it got to previously. For input to be considered the same, not only the names must be identical but the files' contents as well. For more info about this parameter, see [this blog post](https://www.nextflow.io/blog/2019/demystifying-nextflow-resume.html).

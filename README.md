@@ -80,8 +80,8 @@ We thank the following people for their extensive assistance in the development 
 
 The individual steps of this pipeline are based of on the following tutorials and resources:
 
- 1. [Extracting paired FASTQ read data from a BAM mapping file](http://darencard.net/blog/2017-09-07-extract-fastq-bam/)
- 2. [Check if BAM is derived from pair-end or single-end reads](https://www.biostars.org/p/178730/)
+1.  [Extracting paired FASTQ read data from a BAM mapping file](http://darencard.net/blog/2017-09-07-extract-fastq-bam/)
+2.  [Check if BAM is derived from pair-end or single-end reads](https://www.biostars.org/p/178730/)
 
 ## Contributions and Support
 
@@ -93,7 +93,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
 
-If you use  nf-core/bamtofastq for your analysis, please cite it using the following doi: [10.5281/zenodo.4022137](https://doi.org/10.5281/zenodo.4022137)
+If you use nf-core/bamtofastq for your analysis, please cite it using the following doi: [10.5281/zenodo.4022137](https://doi.org/10.5281/zenodo.4022137)
 
 <!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 

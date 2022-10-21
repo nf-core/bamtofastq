@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        config: ['test_chr','test_bai']
+        config: ["test_chr", "test_bai"]
         # Nextflow versions
         include:
           # Test pipeline minimum Nextflow version
