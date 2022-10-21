@@ -1,5 +1,17 @@
 # nf-core/bamtofastq: Changelog
 
+## v2.0.0dev - [date]
+
+Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.re/) template.
+
+### `Added`
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
+
 ## v1.2.0 - Anna Winlock
 
 - [#36](https://github.com/qbic-pipelines/bamtofastq/pull/36) Add options `--cram_files` and `--reference_fasta` to add support for CRAM files.
