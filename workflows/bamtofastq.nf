@@ -157,6 +157,10 @@ def extract_csv(csv_file) {
                 log.error('The sample sheet should specify a sample_id for each row.\n' + row.toString())
                 System.exit(1)
             }
+            if ( !row.mapped ) {  // This also handles the case where the lane is left as an empty string
+                log.error('The sample sheet should specify a mapped file for each row.\n' + row.toString())
+                System.exit(1)
+            }
             if (!row.file_type) {  // This also handles the case where the lane is left as an empty string
                 log.error('The sample sheet should specify a file_type for each row, valid values are bam/cram.\n' + row.toString())
                 System.exit(1)
@@ -164,10 +168,13 @@ def extract_csv(csv_file) {
                 log.error('The file_type for the row below is neither "bam" nor "cram". Please correct this.\n' + row.toString() )
                 System.exit(1)
             }
-            if ( !row.mapped ) {  // This also handles the case where the lane is left as an empty string
-                log.error('The sample sheet should specify a mapped file for each row.\n' + row.toString())
-                System.exit(1)
-            }
+            // check again if this works
+            //print(row.file_type)
+            //print(file(row.mapped).getExtension().toString())
+            //if (row.file_type != file(row.mapped).getExtension().toString()){
+            //    log.error('The file extension does not fit the specified file_type.\n' + row.toString() )
+            //    System.exit(1)
+            //}
 
             // init meta map
             def meta = [:]
