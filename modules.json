@@ -11,11 +11,11 @@
                     },
                     "custom/dumpsoftwareversions": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "8022c68e7403eecbd8ba9c49496f69f8c49d50f0"
                     },
                     "fastqc": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "3dd73937b084b547f9272bc901e0f120a7913fd8"
                     },
                     "multiqc": {
                         "branch": "master",
@@ -23,31 +23,31 @@
                     },
                     "samtools/collatefastq": {
                         "branch": "master",
-                        "git_sha": "1f3f03be37ae893e6e68469e29d3461519e274de"
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
                     },
                     "samtools/flagstat": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
                     },
                     "samtools/idxstats": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
                     },
                     "samtools/index": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
                     },
                     "samtools/merge": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
                     },
                     "samtools/stats": {
                         "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
                     },
                     "samtools/view": {
                         "branch": "master",
-                        "git_sha": "202683bfc98ddecdd456ea73268e330bca2e5c5a"
+                        "git_sha": "cf5b9c30a2adacc581793afb79fae5f5b50bed01"
                     }
                 }
             }
