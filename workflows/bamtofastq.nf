@@ -80,14 +80,14 @@ workflow BAMTOFASTQ {
     //
     // SUBWORKFLOW: Alignment to FastQ
     //
-
     ch_input.view()
-
     ALIGNMENT_TO_FASTQ (
         ch_input,
         fasta,
         fasta_fai
     )
+
+    ch_versions = ch_versions.mix(ALIGNMENT_TO_FASTQ.out.versions)
 
     //
     // MODULE: Run FastQC
@@ -96,6 +96,7 @@ workflow BAMTOFASTQ {
     //    INPUT_CHECK.out.reads
     //)
     //ch_versions = ch_versions.mix(FASTQC.out.versions.first())
+
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
@@ -115,6 +116,7 @@ workflow BAMTOFASTQ {
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
     //ch_multiqc_files = ch_multiqc_files.mix(FASTQC.out.zip.collect{it[1]}.ifEmpty([]))
+
 
     MULTIQC (
         ch_multiqc_files.collect(),

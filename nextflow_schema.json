@@ -42,6 +42,64 @@
                 }
             }
         },
+        "main_options": {
+            "title": "Main options",
+            "type": "object",
+            "description": "Most common options used for the pipeline",
+            "default": "",
+            "properties": {
+                "cram_files": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-clock",
+                    "description": "",
+                    "help_text": ""
+                },
+                "chr": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-clock",
+                    "description": "",
+                    "help_text": ""
+                },
+                "index_files": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-clock",
+                    "description": "",
+                    "help_text": ""
+                },
+                "no_read_QC": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-clock",
+                    "description": "",
+                    "help_text": ""
+                },
+                "no_read_QC": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-clock",
+                    "description": "",
+                    "help_text": ""
+                },
+                "no_stats": {
+                    "type": "boolean",
+                    "default": false,
+                    "fa_icon": "fas fa-clock",
+                    "description": "",
+                    "help_text": ""
+                },
+                "reads_in_memory": {
+                    "type": "integer",
+                    "default": 100000,
+                    "fa_icon": "fas fa-clock",
+                    "description": "",
+                    "help_text": ""
+                }
+            }
+        },
+
         "reference_genome_options": {
             "title": "Reference genome options",
             "type": "object",

@@ -56,34 +56,40 @@ workflow ALIGNMENT_TO_FASTQ {
                 interleave)
 
     // Collate & convert mapped
-    // COLLATE_FASTQ_MAP(SAMTOOLS_VIEW_MAP_MAP.out.bam, fasta.map{ it -> [[id:it[0].baseName], it] }, interleave)
+    COLLATE_FASTQ_MAP(SAMTOOLS_VIEW_MAP_MAP.out.bam, fasta.map{ it ->
+                def new_id = ""
+                if(it) {
+                    new_id = it[0].baseName
+                }
+                [[id:new_id], it] },
+                interleave)
 
-    // // join Mapped & unmapped fastq
-    // reads_to_concat = COLLATE_FASTQ_MAP.out.fastq
-    //                 .join(COLLATE_FASTQ_UNMAP.out.fastq)
-    //                 .map{ meta, mapped_reads, unmapped_reads ->
-    //                     [meta, [
-    //                         mapped_reads[0],
-    //                         mapped_reads[1],
-    //                         unmapped_reads[0],
-    //                         unmapped_reads[1]]
-    //                     ]
-    //                 }
+    // Join Mapped & unmapped fastq
+    reads_to_concat = COLLATE_FASTQ_MAP.out.fastq
+        .join(COLLATE_FASTQ_UNMAP.out.fastq)
+        .map{ meta, mapped_reads, unmapped_reads ->
+            [meta, [
+            mapped_reads[0],
+            mapped_reads[1],
+            unmapped_reads[0],
+            unmapped_reads[1]]
+            ]
+        }
 
-    // // Concatenate Mapped_R1 with Unmapped_R1 and Mapped_R2 with Unmapped_R2
-    // CAT_FASTQ(reads_to_concat)
+    // Concatenate Mapped_R1 with Unmapped_R1 and Mapped_R2 with Unmapped_R2
+    CAT_FASTQ(reads_to_concat)
 
-    // // Gather versions of all tools used
-    // ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
-    // ch_versions = ch_versions.mix(COLLATE_FASTQ_MAP.out.versions)
-    // ch_versions = ch_versions.mix(COLLATE_FASTQ_UNMAP.out.versions)
-    // ch_versions = ch_versions.mix(SAMTOOLS_MERGE_UNMAP.out.versions)
-    // ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_MAP.out.versions)
-    // ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_UNMAP.out.versions)
-    // ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_MAP.out.versions)
-    // ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_UNMAP.out.versions)
+    // Gather versions of all tools used
+    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
+    ch_versions = ch_versions.mix(COLLATE_FASTQ_MAP.out.versions)
+    ch_versions = ch_versions.mix(COLLATE_FASTQ_UNMAP.out.versions)
+    ch_versions = ch_versions.mix(SAMTOOLS_MERGE_UNMAP.out.versions)
+    ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_MAP.out.versions)
+    ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_UNMAP.out.versions)
+    ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_MAP.out.versions)
+    ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_UNMAP.out.versions)
 
     emit:
-    //reads       = CAT_FASTQ.out.reads
+    reads       = CAT_FASTQ.out.reads
     versions    = ch_versions
 }
