@@ -17,6 +17,12 @@ for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true
 // Check mandatory parameters
 if (params.input) { ch_input = extract_csv(file(params.input, checkIfExists: true)) } else { exit 1, 'Input samplesheet not specified!' }
 
+
+// Initialize file channels based on params
+fasta              = params.fasta              ? Channel.fromPath(params.fasta).collect()                    : Channel.value([])
+//TODO: compute fai if not provided
+fasta_fai          = params.fasta_fai          ? Channel.fromPath(params.fasta_fai).collect()                : Channel.value([])
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
@@ -77,9 +83,11 @@ workflow BAMTOFASTQ {
 
     ch_input.view()
 
-    //ALIGNMENT_TO_FASTQ (
-    //
-    //)
+    ALIGNMENT_TO_FASTQ (
+        ch_input,
+        fasta,
+        fasta_fai
+    )
 
     //
     // MODULE: Run FastQC
@@ -164,17 +172,16 @@ def extract_csv(csv_file) {
             if (!row.file_type) {  // This also handles the case where the lane is left as an empty string
                 log.error('The sample sheet should specify a file_type for each row, valid values are bam/cram.\n' + row.toString())
                 System.exit(1)
-            } else if (!(row.file_type == "bam" || row.file_type == "cram")) {
+            }
+            if (!(row.file_type == "bam" || row.file_type == "cram")) {
                 log.error('The file_type for the row below is neither "bam" nor "cram". Please correct this.\n' + row.toString() )
                 System.exit(1)
             }
-            // check again if this works
-            //print(row.file_type)
-            //print(file(row.mapped).getExtension().toString())
-            //if (row.file_type != file(row.mapped).getExtension().toString()){
-            //    log.error('The file extension does not fit the specified file_type.\n' + row.toString() )
-            //    System.exit(1)
-            //}
+            if (row.file_type != file(row.mapped).getExtension().toString()) {
+                log.error('The file extension does not fit the specified file_type.\n' + row.toString() )
+                System.exit(1)
+            }
+
 
             // init meta map
             def meta = [:]

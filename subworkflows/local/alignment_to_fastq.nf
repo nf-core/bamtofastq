@@ -18,20 +18,21 @@ workflow ALIGNMENT_TO_FASTQ {
     fasta_fai
 
     main:
+
     ch_versions = Channel.empty()
     // Index File if not PROVIDED -> this also requires updates to samtools view possibly URGH
 
     // MAP - MAP
-    SAMTOOLS_VIEW_MAP_MAP(input, fasta)
+    SAMTOOLS_VIEW_MAP_MAP(input, fasta, [])
 
     // UNMAP - UNMAP
-    SAMTOOLS_VIEW_UNMAP_UNMAP(input, fasta)
+    SAMTOOLS_VIEW_UNMAP_UNMAP(input, fasta, [])
 
     // UNMAP - MAP
-    SAMTOOLS_VIEW_UNMAP_MAP(input, fasta)
+    SAMTOOLS_VIEW_UNMAP_MAP(input, fasta, [])
 
     // MAP - UNMAP
-    SAMTOOLS_VIEW_MAP_UNMAP(input, fasta)
+    SAMTOOLS_VIEW_MAP_UNMAP(input, fasta, [])
 
     // Merge UNMAP
     all_unmapped_bam = SAMTOOLS_VIEW_UNMAP_UNMAP.out.bam
@@ -43,42 +44,46 @@ workflow ALIGNMENT_TO_FASTQ {
 
     SAMTOOLS_MERGE_UNMAP(all_unmapped_bam, fasta, fasta_fai)
 
+    def interleave = false
+
     // Collate & convert unmapped
-    COLLATE_FASTQ_UNMAP(SAMTOOLS_MERGE_UNMAP.out.bam)
+    COLLATE_FASTQ_UNMAP(SAMTOOLS_MERGE_UNMAP.out.bam, fasta.map{ it ->
+                def new_id = ""
+                if(it) {
+                    new_id = it[0].baseName
+                }
+                [[id:new_id], it] },
+                interleave)
 
     // Collate & convert mapped
-    COLLATE_FASTQ_MAP(SAMTOOLS_VIEW_MAP_MAP.out.bam)
+    // COLLATE_FASTQ_MAP(SAMTOOLS_VIEW_MAP_MAP.out.bam, fasta.map{ it -> [[id:it[0].baseName], it] }, interleave)
 
-    // join Mapped & unmapped fastq
-    unmapped_reads = COLLATE_FASTQ_UNMAP.out.reads
-        .map{ meta, reads_R1_R2, reads_other, reads_singleton ->
-            [meta, reads_R1_R2]
-        }
+    // // join Mapped & unmapped fastq
+    // reads_to_concat = COLLATE_FASTQ_MAP.out.fastq
+    //                 .join(COLLATE_FASTQ_UNMAP.out.fastq)
+    //                 .map{ meta, mapped_reads, unmapped_reads ->
+    //                     [meta, [
+    //                         mapped_reads[0],
+    //                         mapped_reads[1],
+    //                         unmapped_reads[0],
+    //                         unmapped_reads[1]]
+    //                     ]
+    //                 }
 
-    mapped_reads = COLLATE_FASTQ_MAP.out.reads
-        .map{ meta, reads_R1_R2, reads_other, reads_singleton ->
-            [meta, reads_R1_R2]
-        }
+    // // Concatenate Mapped_R1 with Unmapped_R1 and Mapped_R2 with Unmapped_R2
+    // CAT_FASTQ(reads_to_concat)
 
-    reads_to_concat = mapped_reads.join(unmapped_reads)
-        .map{ meta, mapped_reads, unmapped_reads ->
-            [meta, [mapped_reads[0], mapped_reads[1], unmapped_reads[0], unmapped_reads[1]]]
-        }
-
-    // Concatenate Mapped_R1 with Unmapped_R1 and Mapped_R2 with Unmapped_R2
-    CAT_FASTQ(reads_to_concat)
-
-    // Gather versions of all tools used
-    ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
-    ch_versions = ch_versions.mix(COLLATE_FASTQ_MAP.out.versions)
-    ch_versions = ch_versions.mix(COLLATE_FASTQ_UNMAP.out.versions)
-    ch_versions = ch_versions.mix(SAMTOOLS_MERGE_UNMAP.out.versions)
-    ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_MAP.out.versions)
-    ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_UNMAP.out.versions)
-    ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_MAP.out.versions)
-    ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_UNMAP.out.versions)
+    // // Gather versions of all tools used
+    // ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
+    // ch_versions = ch_versions.mix(COLLATE_FASTQ_MAP.out.versions)
+    // ch_versions = ch_versions.mix(COLLATE_FASTQ_UNMAP.out.versions)
+    // ch_versions = ch_versions.mix(SAMTOOLS_MERGE_UNMAP.out.versions)
+    // ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_MAP.out.versions)
+    // ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_UNMAP.out.versions)
+    // ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_MAP.out.versions)
+    // ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_UNMAP.out.versions)
 
     emit:
-    reads       = CAT_FASTQ.out.reads
+    //reads       = CAT_FASTQ.out.reads
     versions    = ch_versions
 }
