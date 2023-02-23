@@ -56,8 +56,8 @@
                     "help_text": ""
                 },
                 "chr": {
-                    "type": "boolean",
-                    "default": false,
+                    "type": "string",
+                    "default": null,
                     "fa_icon": "fas fa-clock",
                     "description": "",
                     "help_text": ""

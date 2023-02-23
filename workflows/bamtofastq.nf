@@ -102,6 +102,7 @@ workflow BAMTOFASTQ {
         SAMTOOLS_CHR_INDEX(samtools_chr_out)
         ch_input = samtools_chr_out.join(Channel.empty().mix(SAMTOOLS_CHR_INDEX.out.bai,
                                                             SAMTOOLS_CHR_INDEX.out.crai))
+        //ch_input.dump(tag:"chr input")
 
         ch_versions = ch_versions.mix(SAMTOOLS_CHR.out.versions)
         ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
@@ -110,7 +111,7 @@ workflow BAMTOFASTQ {
     //
     // SUBWORKFLOW: Alignment to FastQ
     //
-    // ch_input.view()
+    //ch_input.dump(tag:"aln input")
     ALIGNMENT_TO_FASTQ (
         ch_input,
         fasta,
