@@ -54,15 +54,19 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC                      } from '../modules/nf-core/fastqc/main'
-include { MULTIQC                     } from '../modules/nf-core/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { FASTQC                               } from '../modules/nf-core/fastqc/main'
+include { SAMTOOLS_VIEW as SAMTOOLS_CHR        } from '../modules/nf-core/samtools/view/main'
+include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX } from '../modules/nf-core/samtools/index/main'
+
+include { MULTIQC                       } from '../modules/nf-core/multiqc/main'
+include { CUSTOM_DUMPSOFTWAREVERSIONS   } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
 //
 // SUBWORKFLOWS: Installed directly from subworkflows/local
 //
 
 include { ALIGNMENT_TO_FASTQ          } from '../subworkflows/local/alignment_to_fastq'
+include { PRE_QC                      } from '../subworkflows/local/pre_qc'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,10 +81,36 @@ workflow BAMTOFASTQ {
 
     ch_versions = Channel.empty()
 
+    // Pre conversion QC
+
+    PRE_QC(
+        ch_input,
+        fasta
+    )
+
+    ch_versions = ch_versions.mix(PRE_QC.out.versions)
+
+    // Check for single or paired end
+
+    // Extract only reads mapping to a chromosome
+    if (params.chr) {
+
+        SAMTOOLS_CHR(ch_input, fasta, [])
+
+        samtools_chr_out = Channel.empty().mix(SAMTOOLS_CHR.out.bam,
+                                                SAMTOOLS_CHR.out.cram)
+        SAMTOOLS_CHR_INDEX(samtools_chr_out)
+        ch_input = samtools_chr_out.join(Channel.empty().mix(SAMTOOLS_CHR_INDEX.out.bai,
+                                                            SAMTOOLS_CHR_INDEX.out.crai))
+
+        ch_versions = ch_versions.mix(SAMTOOLS_CHR.out.versions)
+        ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
+
+    }
     //
     // SUBWORKFLOW: Alignment to FastQ
     //
-    ch_input.view()
+    // ch_input.view()
     ALIGNMENT_TO_FASTQ (
         ch_input,
         fasta,
@@ -89,14 +119,8 @@ workflow BAMTOFASTQ {
 
     ch_versions = ch_versions.mix(ALIGNMENT_TO_FASTQ.out.versions)
 
-    //
-    // MODULE: Run FastQC
-    //
-    //FASTQC (
-    //    INPUT_CHECK.out.reads
-    //)
-    //ch_versions = ch_versions.mix(FASTQC.out.versions.first())
 
+    // Post conversion QC
 
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
