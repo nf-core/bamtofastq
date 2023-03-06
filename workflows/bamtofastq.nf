@@ -104,6 +104,16 @@ workflow BAMTOFASTQ {
                                                             SAMTOOLS_CHR_INDEX.out.crai))
         //ch_input.dump(tag:"chr input")
 
+        // Add chr names to id
+        ch_input = ch_input.map{ it ->
+                new_id = it[1].baseName
+                [[
+                    id : new_id,
+                    filetype : it[0].filetype
+                ],
+                it[1],
+                it[2]] }
+
         ch_versions = ch_versions.mix(SAMTOOLS_CHR.out.versions)
         ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
 
@@ -112,6 +122,9 @@ workflow BAMTOFASTQ {
     // SUBWORKFLOW: Alignment to FastQ
     //
     //ch_input.dump(tag:"aln input")
+
+
+
     ALIGNMENT_TO_FASTQ (
         ch_input,
         fasta,
