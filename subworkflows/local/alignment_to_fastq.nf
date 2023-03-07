@@ -10,6 +10,7 @@ include { SAMTOOLS_MERGE as SAMTOOLS_MERGE_UNMAP       } from '../../modules/nf-
 include { SAMTOOLS_COLLATEFASTQ as COLLATE_FASTQ_UNMAP } from '../../modules/nf-core/samtools/collatefastq/main'
 include { SAMTOOLS_COLLATEFASTQ as COLLATE_FASTQ_MAP   } from '../../modules/nf-core/samtools/collatefastq/main'
 include { CAT_FASTQ                                    } from '../../modules/nf-core/cat/fastq/main'
+include { FASTQC  as  FASTQC_POST                      } from '../../modules/nf-core/fastqc/main'
 
 workflow ALIGNMENT_TO_FASTQ {
     take:
@@ -79,6 +80,9 @@ workflow ALIGNMENT_TO_FASTQ {
     // Concatenate Mapped_R1 with Unmapped_R1 and Mapped_R2 with Unmapped_R2
     CAT_FASTQ(reads_to_concat)
 
+    // QC of converted reads
+    FASTQC_POST(CAT_FASTQ.out.reads)
+
     // Gather versions of all tools used
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
     ch_versions = ch_versions.mix(COLLATE_FASTQ_MAP.out.versions)
@@ -88,8 +92,11 @@ workflow ALIGNMENT_TO_FASTQ {
     ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_UNMAP.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_MAP.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_UNMAP.out.versions)
+    ch_versions = ch_versions.mix(FASTQC_POST.out.versions)
 
     emit:
-    reads       = CAT_FASTQ.out.reads
-    versions    = ch_versions
+    reads            = CAT_FASTQ.out.reads
+    fastqc_post_zip  = FASTQC_POST.out.zip
+    fastqc_post_html = FASTQC_POST.out.html
+    versions         = ch_versions
 }
