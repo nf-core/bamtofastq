@@ -54,7 +54,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC  as  FASTQC_POST              } from '../modules/nf-core/fastqc/main'
+include { FASTQC  as  FASTQC_POST_CONVERSION   } from '../modules/nf-core/fastqc/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR        } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_PE         } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX } from '../modules/nf-core/samtools/index/main'
@@ -68,8 +68,9 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS   } from '../modules/nf-core/custom/dumpso
 // SUBWORKFLOWS: Installed directly from subworkflows/local
 //
 
+include { PRE_CONVERSION_QC           } from '../subworkflows/local/pre_conversion_qc'
 include { ALIGNMENT_TO_FASTQ          } from '../subworkflows/local/alignment_to_fastq'
-include { PRE_QC                      } from '../subworkflows/local/pre_qc'
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -84,14 +85,14 @@ workflow BAMTOFASTQ {
 
     ch_versions = Channel.empty()
 
-    // SUBWORKFLOW: Pre conversion QC
+    // SUBWORKFLOW: Pre conversion QC and stats
 
-    PRE_QC(
+    PRE_CONVERSION_QC(
         ch_input,
         fasta
     )
 
-    ch_versions = ch_versions.mix(PRE_QC.out.versions)
+    ch_versions = ch_versions.mix(PRE_CONVERSION_QC.out.versions)
 
     // Extract only reads mapping to a chromosome
     if (params.chr) {
@@ -160,9 +161,9 @@ workflow BAMTOFASTQ {
     // MODULE: FastQC - Post conversion QC
     ch_reads_post_qc = Channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_singleton, ALIGNMENT_TO_FASTQ.out.reads)
 
-    FASTQC_POST(ch_reads_post_qc)
+    FASTQC_POST_CONVERSION(ch_reads_post_qc)
 
-    ch_versions = ch_versions.mix(FASTQC_POST.out.versions)
+    ch_versions = ch_versions.mix(FASTQC_POST_CONVERSION.out.versions)
 
     //  MODULE: Software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
@@ -182,11 +183,11 @@ workflow BAMTOFASTQ {
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml'))
     ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
-    ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.flagstat.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.idxstats.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.stats.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.fastqc_zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(FASTQC_POST.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(PRE_CONVERSION_QC.out.flagstat.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(PRE_CONVERSION_QC.out.idxstats.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(PRE_CONVERSION_QC.out.stats.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(PRE_CONVERSION_QC.out.zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC_POST_CONVERSION.out.zip.collect{it[1]}.ifEmpty([]))
 
 
     MULTIQC (
