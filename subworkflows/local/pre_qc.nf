@@ -44,10 +44,10 @@ workflow PRE_QC {
     ch_versions = ch_versions.mix(FASTQC_PRE.out.versions)
 
     emit:
-    flagstat        = SAMTOOLS_FLAGSTAT.out.flagstat
-    idxstats        = SAMTOOLS_IDXSTATS.out.idxstats
-    stats           = SAMTOOLS_STATS.out.stats
-    fastqc_pre_zip  = FASTQC_PRE.out.zip
-    fastqc_pre_html = FASTQC_PRE.out.html
-    versions        = ch_versions
+    flagstat    = SAMTOOLS_FLAGSTAT.out.flagstat
+    idxstats    = SAMTOOLS_IDXSTATS.out.idxstats
+    stats       = SAMTOOLS_STATS.out.stats
+    fastqc_zip  = FASTQC_PRE.out.zip
+    fastqc_html = FASTQC_PRE.out.html
+    versions    = ch_versions
 }

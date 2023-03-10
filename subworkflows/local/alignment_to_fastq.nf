@@ -10,7 +10,6 @@ include { SAMTOOLS_MERGE as SAMTOOLS_MERGE_UNMAP       } from '../../modules/nf-
 include { SAMTOOLS_COLLATEFASTQ as COLLATE_FASTQ_UNMAP } from '../../modules/nf-core/samtools/collatefastq/main'
 include { SAMTOOLS_COLLATEFASTQ as COLLATE_FASTQ_MAP   } from '../../modules/nf-core/samtools/collatefastq/main'
 include { CAT_FASTQ                                    } from '../../modules/nf-core/cat/fastq/main'
-include { FASTQC  as  FASTQC_POST                      } from '../../modules/nf-core/fastqc/main'
 
 workflow ALIGNMENT_TO_FASTQ {
     take:
@@ -35,7 +34,7 @@ workflow ALIGNMENT_TO_FASTQ {
     // MAP - UNMAP
     SAMTOOLS_VIEW_MAP_UNMAP(input, fasta, [])
 
-    // Merge UNMAP
+    // Channel for merging UNMAPPED BAM
     all_unmapped_bam = SAMTOOLS_VIEW_UNMAP_UNMAP.out.bam
         .join(SAMTOOLS_VIEW_UNMAP_MAP.out.bam, remainder: true)
         .join(SAMTOOLS_VIEW_MAP_UNMAP.out.bam, remainder: true)
@@ -43,12 +42,24 @@ workflow ALIGNMENT_TO_FASTQ {
             [meta, [unmap_unmap, unmap_map, map_unmap]]
         }
 
-    SAMTOOLS_MERGE_UNMAP(all_unmapped_bam, fasta, fasta_fai)
+    // Channel for merging UNMAPPED CRAM
+    all_unmapped_cram = SAMTOOLS_VIEW_UNMAP_UNMAP.out.cram
+        .join(SAMTOOLS_VIEW_UNMAP_MAP.out.cram, remainder: true)
+        .join(SAMTOOLS_VIEW_MAP_UNMAP.out.cram, remainder: true)
+        .map{ meta, unmap_unmap, unmap_map, map_unmap ->
+            [meta, [unmap_unmap, unmap_map, map_unmap]]
+        }
+
+    // Combine UNMAPPED channels
+    ch_unmapped_bam_cram = Channel.empty().mix(all_unmapped_bam,all_unmapped_cram)
+
+    // MERGE UNMAP
+    SAMTOOLS_MERGE_UNMAP(ch_unmapped_bam_cram, fasta, fasta_fai)
 
     def interleave = false
 
-    // Collate & convert unmapped
-    COLLATE_FASTQ_UNMAP(SAMTOOLS_MERGE_UNMAP.out.bam, fasta.map{ it ->
+    // SortExtractUnmapped: Collate & convert unmapped
+    COLLATE_FASTQ_UNMAP(SAMTOOLS_MERGE_UNMAP.out.cram.mix(SAMTOOLS_MERGE_UNMAP.out.bam), fasta.map{ it ->
                 def new_id = ""
                 if(it) {
                     new_id = it[0].baseName
@@ -56,8 +67,8 @@ workflow ALIGNMENT_TO_FASTQ {
                 [[id:new_id], it] },
                 interleave)
 
-    // Collate & convert mapped
-    COLLATE_FASTQ_MAP(SAMTOOLS_VIEW_MAP_MAP.out.bam, fasta.map{ it ->
+    // /SortExtractMapped: Collate & convert mapped
+    COLLATE_FASTQ_MAP(SAMTOOLS_VIEW_MAP_MAP.out.cram.mix(SAMTOOLS_VIEW_MAP_MAP.out.bam), fasta.map{ it ->
                 def new_id = ""
                 if(it) {
                     new_id = it[0].baseName
@@ -65,7 +76,7 @@ workflow ALIGNMENT_TO_FASTQ {
                 [[id:new_id], it] },
                 interleave)
 
-    // Join Mapped & unmapped fastq
+    // Channel for joining mapped & unmapped fastq
     reads_to_concat = COLLATE_FASTQ_MAP.out.fastq
         .join(COLLATE_FASTQ_UNMAP.out.fastq)
         .map{ meta, mapped_reads, unmapped_reads ->
@@ -80,9 +91,6 @@ workflow ALIGNMENT_TO_FASTQ {
     // Concatenate Mapped_R1 with Unmapped_R1 and Mapped_R2 with Unmapped_R2
     CAT_FASTQ(reads_to_concat)
 
-    // QC of converted reads
-    FASTQC_POST(CAT_FASTQ.out.reads)
-
     // Gather versions of all tools used
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions)
     ch_versions = ch_versions.mix(COLLATE_FASTQ_MAP.out.versions)
@@ -92,11 +100,8 @@ workflow ALIGNMENT_TO_FASTQ {
     ch_versions = ch_versions.mix(SAMTOOLS_VIEW_MAP_UNMAP.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_MAP.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_VIEW_UNMAP_UNMAP.out.versions)
-    ch_versions = ch_versions.mix(FASTQC_POST.out.versions)
 
     emit:
     reads            = CAT_FASTQ.out.reads
-    fastqc_post_zip  = FASTQC_POST.out.zip
-    fastqc_post_html = FASTQC_POST.out.html
     versions         = ch_versions
 }

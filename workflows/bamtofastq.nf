@@ -54,9 +54,12 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC                               } from '../modules/nf-core/fastqc/main'
+include { FASTQC  as  FASTQC_POST              } from '../modules/nf-core/fastqc/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR        } from '../modules/nf-core/samtools/view/main'
+include { SAMTOOLS_VIEW as SAMTOOLS_PE         } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX } from '../modules/nf-core/samtools/index/main'
+include { CHECK_IF_PAIRED_END                  } from '../modules/local/check_paired_end'
+include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq/main'
 
 include { MULTIQC                       } from '../modules/nf-core/multiqc/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS   } from '../modules/nf-core/custom/dumpsoftwareversions/main'
@@ -81,7 +84,7 @@ workflow BAMTOFASTQ {
 
     ch_versions = Channel.empty()
 
-    // Pre conversion QC
+    // SUBWORKFLOW: Pre conversion QC
 
     PRE_QC(
         ch_input,
@@ -89,8 +92,6 @@ workflow BAMTOFASTQ {
     )
 
     ch_versions = ch_versions.mix(PRE_QC.out.versions)
-
-    // Check for single or paired end
 
     // Extract only reads mapping to a chromosome
     if (params.chr) {
@@ -102,7 +103,7 @@ workflow BAMTOFASTQ {
         SAMTOOLS_CHR_INDEX(samtools_chr_out)
         ch_input = samtools_chr_out.join(Channel.empty().mix(SAMTOOLS_CHR_INDEX.out.bai,
                                                             SAMTOOLS_CHR_INDEX.out.crai))
-        //ch_input.dump(tag:"chr input")
+
 
         // Add chr names to id
         ch_input = ch_input.map{ it ->
@@ -118,15 +119,37 @@ workflow BAMTOFASTQ {
         ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
 
     }
-    //
-    // SUBWORKFLOW: Alignment to FastQ
-    //
-    //ch_input.dump(tag:"aln input")
 
+    // MODULE: Check if SINLGE or PAIRED-END
 
+    CHECK_IF_PAIRED_END(ch_input, fasta)
+
+    ch_paired_end = ch_input.join(CHECK_IF_PAIRED_END.out.paired_end)
+    ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
+
+    ch_versions = ch_versions.mix(CHECK_IF_PAIRED_END.out.versions)
+
+    // MODULE: SINGLE-END Alignment to FastQ
+    def interleave = false
+
+    SAMTOOLS_COLLATEFASTQ_SINGLE_END(
+        ch_single_end.map{it -> [it[0], it[1]]}, // meta, bam
+        fasta.map{ it ->                         // meta, fasta
+            def new_id = ""
+            if(it) {
+                new_id = it[0].baseName
+            }
+            [[id:new_id], it] },
+        interleave)
+
+    ch_versions = ch_versions.mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.versions)
+
+    //
+    // SUBWORKFLOW: PAIRED-END Alignment to FastQ
+    //
 
     ALIGNMENT_TO_FASTQ (
-        ch_input,
+        ch_paired_end.map{it -> [it[0], it[1], it[2]]}, // meta, file, index
         fasta,
         fasta_fai
     )
@@ -134,8 +157,14 @@ workflow BAMTOFASTQ {
     ch_versions = ch_versions.mix(ALIGNMENT_TO_FASTQ.out.versions)
 
 
-    // Post conversion QC
+    // MODULE: FastQC - Post conversion QC
+    ch_reads_post_qc = Channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_singleton, ALIGNMENT_TO_FASTQ.out.reads)
 
+    FASTQC_POST(ch_reads_post_qc)
+
+    ch_versions = ch_versions.mix(FASTQC_POST.out.versions)
+
+    //  MODULE: Software versions
     CUSTOM_DUMPSOFTWAREVERSIONS (
         ch_versions.unique().collectFile(name: 'collated_versions.yml')
     )
@@ -156,8 +185,8 @@ workflow BAMTOFASTQ {
     ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.flagstat.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.idxstats.collect{it[1]}.ifEmpty([]))
     ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.stats.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.fastqc_pre_zip.collect{it[1]}.ifEmpty([]))
-    ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.fastqc_post_zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(PRE_QC.out.fastqc_zip.collect{it[1]}.ifEmpty([]))
+    ch_multiqc_files = ch_multiqc_files.mix(FASTQC_POST.out.zip.collect{it[1]}.ifEmpty([]))
 
 
     MULTIQC (
