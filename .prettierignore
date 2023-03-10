@@ -8,4 +8,4 @@ results/
 testing/
 testing*
 *.pyc
-testdata/*
+testdata/**

@@ -13,6 +13,7 @@ indent_size = 2
 
 # These files are edited and tested upstream in nf-core/modules
 [/modules/nf-core/**]
+[/testdata/**]
 charset = unset
 end_of_line = unset
 insert_final_newline = unset
