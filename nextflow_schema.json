@@ -48,23 +48,9 @@
             "description": "Most common options used for the pipeline",
             "default": "",
             "properties": {
-                "cram_files": {
-                    "type": "boolean",
-                    "default": false,
-                    "fa_icon": "fas fa-clock",
-                    "description": "",
-                    "help_text": ""
-                },
                 "chr": {
                     "type": "string",
                     "default": null,
-                    "fa_icon": "fas fa-clock",
-                    "description": "",
-                    "help_text": ""
-                },
-                "index_files": {
-                    "type": "boolean",
-                    "default": false,
                     "fa_icon": "fas fa-clock",
                     "description": "",
                     "help_text": ""
@@ -119,7 +105,7 @@
                     "type": "string",
                     "format": "file-path",
                     "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
+                    "pattern": "^\\S+\\.fn?a(sta).fai?(\\.gz)?$",
                     "description": "Path to FASTA FAI genome index file.",
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
                     "fa_icon": "far fa-file-code"
