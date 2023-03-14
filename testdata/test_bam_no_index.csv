@@ -1,0 +1,4 @@
+sample_id,mapped,index,file_type
+test1,/home-link/afijo01/repos/bamtofastq/testdata/First_SmallTest_Paired.bam,,bam
+test2,/home-link/afijo01/repos/bamtofastq/testdata/Second_SmallTest_Paired.bam,,bam
+test3,/home-link/afijo01/repos/bamtofastq/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.bam,,bam
