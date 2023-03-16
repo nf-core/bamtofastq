@@ -33,18 +33,18 @@ workflow PREPARE_INDICES {
     }
 
     // INDEX FASTA
-    // fasta_fai = []
-    // if(params.fasta && !params.fasta_fai){
-    //     SAMTOOLS_FAIDX(fasta.map{ it -> [[id:it[0].baseName], it] })
-    //     ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
-    //     fasta_fai   = SAMTOOLS_FAIDX.out.fai.map{ meta, fai -> [fai] }
+    fasta_fai = []
+    if(params.fasta && !params.fasta_fai){
+        SAMTOOLS_FAIDX(fasta.map{ it -> [[id:it[0].baseName], it] })
+        ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
+        fasta_fai   = SAMTOOLS_FAIDX.out.fai.map{ meta, fai -> [fai] }
 
-    // }
+    }
 
 
     // Gather versions of all tools used       
     emit:   
     ch_input    = ch_out
-    //fasta_fai   = fasta_fai
+    fasta_fai   = fasta_fai
     versions    = ch_versions
 }
