@@ -9,7 +9,6 @@ def summary_params = NfcoreSchema.paramsSummaryMap(workflow, params)
 // Validate input parameters
 WorkflowBamtofastq.initialise(params, log)
 
-// TODO nf-core: Add all file path parameters for the pipeline to the list below
 // Check input path parameters to see if they exist
 def checkPathParamList = [
     params.chr,
@@ -17,10 +16,6 @@ def checkPathParamList = [
     params.fasta_fai,
     params.input,
     params.multiqc_config,
-    params.no_read_QC,
-    params.no_stats,
-    //params.reads_in_memory,
-    params.samtools_collate_fast
     ]
 
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
@@ -35,28 +30,16 @@ fasta_fai          = params.fasta_fai          ? Channel.fromPath(params.fasta_f
 
 // Initialize value based on input
 index_provided = ch_input.map{it -> it[2]} == [] ? true : false
-//cram_input     = ch_input.map{it -> it[0].filetype} == "cram" ? true : false //
 
 // Initialize value channels based on params
 chr                     = params.chr                    ?: Channel.empty()
-no_read_QC              = params.no_read_QC             ?: Channel.empty()
-no_stats                = params.no_stats               ?: Channel.empty()
-//reads_in_memory         = params.reads_in_memory        ?: Channel.empty()
-samtools_collate_fast   = params.samtools_collate_fast  ?: Channel.empty()
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ERROR MESSAGES AND WARNINGS 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-// if (cram_input && !params.fasta){
-//     log.error "Cram input requires a fasta reference."
-//     exit 1
-// } 
 
 
-/*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CONFIG FILES
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -176,7 +159,7 @@ workflow BAMTOFASTQ {
 
     ch_versions = ch_versions.mix(CHECK_IF_PAIRED_END.out.versions)
 
-    // MODULE: SINGLE-END Alignment to FastQ
+    // MODULE: SINGLE-END Alignment to FastQ (SortExtractSingleEnd)
     def interleave = false
 
     SAMTOOLS_COLLATEFASTQ_SINGLE_END(
