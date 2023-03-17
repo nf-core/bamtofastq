@@ -6,14 +6,13 @@ This document describes the output produced by the pipeline. Most of the plots a
 
 The directories listed below will be created in the results directory after the pipeline has finished. All paths are relative to the top-level results directory.
 
-<!-- TODO nf-core: Write this documentation describing your workflow's output -->
 
 ## Pipeline overview
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
 - [FastQC](#fastqc) - Raw read QC
-- [Samtools](#samtools) - collate, extract reads and compute bam stats
+- [Samtools](#samtools) - collate, extract reads and compute bam/cram stats
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -23,8 +22,10 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <summary>Output files</summary>
 
 - `fastqc/`
-  - `*_fastqc.html`: FastQC report containing quality metrics.
-  - `*_fastqc.zip`: Zip archive containing the FastQC report, tab-delimited data file and plot images.
+  - `*.pre_conversion_fastqc.html`: FastQC report containing quality metrics before of input BAM files (Not available for CRAM input).
+  - `*.pre_conversion_fastqc.zip`: Zip archive containing the FastQC report of the input BAM file, tab-delimited data file and plot images.
+  - `*.post_conversion_fastqc.html`: FastQC report containing quality metrics before of converted fastq reads.
+  - `*.post_conversion_fastqc.zip`: Zip archive containing the FastQC report of the converted fastq reads, tab-delimited data file and plot images.
 
 </details>
 
@@ -44,13 +45,13 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <summary>Output files</summary>
 
 - `samtools/`
-  - `*.fastq.gz`: converted and gzipped fastq output
+  - `*.*stats?`: samtools statistics files
 
 </details>
 
-[Samtools](https://www.htslib.org) is used to extract reads from the bam files and to compute some bam statistics.
+[Samtools](https://www.htslib.org) is used to extract reads from the bam files and to compute some BAM/CRAM statistics.
 
-The extracted reads are written to fastq files in `results/reads`.
+The converted and gzipped fastq output reads are written to the directory `results/reads/*.f(ast)?q.gz`.
 
 ### MultiQC
 

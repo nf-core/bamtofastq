@@ -16,39 +16,22 @@ You will need to create a samplesheet with information about the samples you wou
 --input '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
-
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
 
 ```console
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+sample_id,mapped,index,file_type
+test1,First_SmallTest_Paired.cram,First_SmallTest_Paired.cram.crai,cram
+test2,Second_SmallTest_Paired.cram,Second_SmallTest_Paired.cram.crai,cram
 ```
 
 | Column    | Description                                                                                                                                                                            |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| `sample`  | Custom sample name. |
+| `mapped` | Full path to input BAM/CRAM file. File has to have the extension ".bam" or ".cram".                                                             |
+| `index` | If available provide full path to input BAI/CRAI index file. File has to have the extension ".bam.bai" or ".cram.crai".                                                             |
+| `filetype` | For input BAM files the filetype hast to be "bam" and for input CRAM files, the filetype needs to be "cram".                                                             |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -57,7 +40,7 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/bamtofastq --input '*bam' --outdir <OUTDIR>  -profile docker
+nextflow run nf-core/bamtofastq --input 'samplesheet.csv' --outdir <OUTDIR>  -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -122,61 +105,35 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
   - A profile with a complete configuration for automated testing
   - Includes links to test data so needs no other parameters
 
+
 ### `--input`
 
-Use this to specify the location of your input Bam files (or CRAM files if used with [`--cram_files`](#--cram_files)). For example:
+Use this to specify the location of your input BAM/CRAM files. For example:
 
 ```bash
---input 'path/to/data/sample_*.bam'
+--input 'path/to/samplesheet.csv'
 ```
 
-Please note the following requirements:
 
-1. The path must be enclosed in quotes
-2. The path must have at least one `*`/`**` wildcard character
+### `--fasta`
 
-### `--index_files`
-
-Use this to indicate that bam index files are present alongside the input bam files. `--input` then has to contain a regex with a wildcard parameter to allow for both inputs. For example:
+Use this option to indicate which reference genome FASTA file to use when decompressing CRAM files. It will only work if the reference genome FASTA file listed in the CRAM header is available (_e.g._ via HTTP/FTP or on the local file system). Otherwise, you will need to use the [`--fasta`](#--fasta) option. You can check which reference FASTA file is indicated in the CRAM header with the following command:
 
 ```bash
---index_files --input 'path/to/data/sample_*.{bam,bai}'
+samtools view -H path/to/sample.cram | grep '@SQ'. 
 ```
 
-Please note the following requirements:
-
-1. The path must be enclosed in quotes
-2. The path must have at least one `*` wildcard character
-
-### `--cram_files`
-
-Use this to indicate that **all** of the files listed in `--input` are CRAM files instead of BAM files. This enabled a step at the beginning of the workflow that converts each CRAM file to BAM format on the fly. Note that this option is incompatible with [`--index_files`](#--index_files). For example:
+To specify a reference genome FASTA you can follow the command below:
 
 ```bash
---cram_files --input 'path/to/data/sample_*.cram'
-```
-
-While the above command is valid, it will only work if the reference genome FASTA file listed in the CRAM header is available (_e.g._ via HTTP/FTP or on the local file system). Otherwise, you will need to use the [`--reference_fasta` option](#--reference_fasta). You can check which reference FASTA file is indicated in the CRAM header with the following command:
-
-```bash
-samtools view -H path/to/sample.cram | grep '@SQ'
-```
-
-Unfortunately, at the time of writing, FastQC [doesn't support](https://github.com/s-andrews/FastQC/issues/54) CRAM files as input. Hence, a benefit of converting CRAM files to BAM format as opposed to converting directly to FASTQ format is that you can perform QC before the final conversion.
-
-### `--reference_fasta`
-
-Use this option to indicate which reference genome FASTA file to use when decompressing CRAM files. This is useful if the FASTA file indicated in the CRAM header (see [`--cram_files`](#--cram_files) for more information). For example:
-
-```bash
---cram_files --input 'path/to/data/sample_*.cram' --reference_fasta 'ftp://ftp.broadinstitute.org/pub/seq/references/Homo_sapiens_assembly19.fasta'
+--input 'path/to/samplesheet.csv' --fasta 'ftp://ftp.broadinstitute.org/pub/seq/references/Homo_sapiens_assembly19.fasta'
 ```
 
 ### `--chr` (optional)
 
 Use to only obtain reads mapping to a specific chromosome or region.
 
-> It is important to specify the chromosome or region name **exactly** as set in the bam file. Otherwise no reads may be extracted!
+> It is important to specify the chromosome or region name **exactly** as set in the bam/cram file. Otherwise no reads may be extracted!
 
 For example:
 
@@ -196,11 +153,11 @@ Use to skip `FastQC` on obtained reads. This is useful, when the reads are used 
 
 ### `--samtools_collate_fast` (optional)
 
-Use to specify the fast mode for the `samtools collate` command in the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`. This option relies on the samtools command line flags `-f -r INT` and will output primary alignments only. For full documentation of this mode please refer to the [samtools documentation](http://www.htslib.org/doc/samtools-collate.html#OPTIONS).
+Use to specify the fast mode for the `samtools collate` command in the processes `COLLATE_FASTQ_MAP`, `COLLATE_FASTQ_UNMAP` and `SAMTOOLS_COLLATEFASTQ_SINGLE_END`. This option relies on the samtools command line flags `-f -r INT` and will output primary alignments only. For full documentation of this mode please refer to the [samtools documentation](http://www.htslib.org/doc/samtools-collate.html#OPTIONS).
 
 ### `--reads_in_memory` (optional)
 
-Only relevant in combination with `--samtools_collate_fast`. It specifies how many alignment reads are kept in memory [default = '100000']. This is useful for speeding up the processes `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`.
+Only relevant in combination with `--samtools_collate_fast`. It specifies how many alignment reads are kept in memory [default = '100000']. This is useful for speeding up the processes `COLLATE_FASTQ_MAP`, `COLLATE_FASTQ_UNMAP` and `SAMTOOLS_COLLATEFASTQ_SINGLE_END`.
 
 Example:
 
@@ -210,7 +167,7 @@ Example:
 
 ### `--no_stats` (optional)
 
-Use to skip `FastQC` on both input bam and output reads, as well as all `samtools flagstat`, `samtools idxstats`, and `samtools stats`. This is useful for large datasets, since the quality metrics processes require a significant amount of time and resources.
+Use to skip `FastQC` on both input bam/cram and output reads, as well as all processes that compute statistics `samtools flagstat`, `samtools idxstats`, and `samtools stats`. This is useful for large datasets, since the quality metrics processes require a significant amount of time and resources.
 
 :exclamation: Use this at own risk. You won't be able to quickly sanity check the results.
 
