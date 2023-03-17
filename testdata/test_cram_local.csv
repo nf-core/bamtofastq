@@ -1,4 +1,4 @@
 sample_id,mapped,index,file_type
-test1,$PWD/testdata/First_SmallTest_Paired.cram,$PWD/testdata/First_SmallTest_Paired.cram.crai,cram
-test2,$PWD/testdata/Second_SmallTest_Paired.cram,$PWD/testdata/Second_SmallTest_Paired.cram.crai,cram
-test3,$PWD/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram,$PWD/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram.crai,cram
+test1,/home/afijo01/repos/bamtofastq/testdata/First_SmallTest_Paired.cram,/home/afijo01/repos/bamtofastq/testdata/First_SmallTest_Paired.cram.crai,cram
+test2,/home/afijo01/repos/bamtofastq/testdata/Second_SmallTest_Paired.cram,/home/afijo01/repos/bamtofastq/testdata/Second_SmallTest_Paired.cram.crai,cram
+test3,/home/afijo01/repos/bamtofastq/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram,/home/afijo01/repos/bamtofastq/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram.crai,cram
