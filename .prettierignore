@@ -1,5 +1,6 @@
 email_template.html
 adaptivecard.json
+slackreport.json
 .nextflow*
 work/
 data/
@@ -9,3 +10,4 @@ testing/
 testing*
 *.pyc
 testdata/**
+bin/
