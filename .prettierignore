@@ -9,5 +9,5 @@ results/
 testing/
 testing*
 *.pyc
-testdata/**
 bin/
+testdata/**
