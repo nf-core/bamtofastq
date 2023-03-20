@@ -11,7 +11,6 @@ WorkflowBamtofastq.initialise(params, log)
 
 // Check input path parameters to see if they exist
 def checkPathParamList = [
-    params.chr,
     params.fasta,
     params.fasta_fai,
     params.input,
