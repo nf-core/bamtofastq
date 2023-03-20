@@ -1,4 +1,4 @@
 sample_id,mapped,index,file_type
-test1,https://raw.githubusercontent.com/qbic-pipelines/bamtofastq/master/testdata/First_SmallTest_Paired.cram,https://raw.githubusercontent.com/qbic-pipelines/bamtofastq/master/testdata/First_SmallTest_Paired.cram.crai,cram
-test2,https://raw.githubusercontent.com/qbic-pipelines/bamtofastq/master/testdata/Second_SmallTest_Paired.cram,https://raw.githubusercontent.com/qbic-pipelines/bamtofastq/master/testdata/Second_SmallTest_Paired.cram.crai,cram
-test3,https://raw.githubusercontent.com/qbic-pipelines/bamtofastq/master/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram,https://raw.githubusercontent.com/qbic-pipelines/bamtofastq/master/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram.crai,cram
+test1,https://github.com/SusiJo/bamtofastq/raw/dls2_new/testdata/First_SmallTest_Paired.cram,https://github.com/SusiJo/bamtofastq/raw/dls2_new/testdata/First_SmallTest_Paired.cram.crai,cram
+test2,https://github.com/SusiJo/bamtofastq/raw/dls2_new/testdata/Second_SmallTest_Paired.cram,https://github.com/SusiJo/bamtofastq/raw/dls2_new/testdata/Second_SmallTest_Paired.cram.crai,cram
+test3,https://github.com/SusiJo/bamtofastq/raw/dls2_new/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram,https://github.com/SusiJo/bamtofastq/raw/dls2_new/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram.crai,cram

@@ -26,10 +26,10 @@ By default, the pipeline currently performs the following steps:
 
 1. Quality control (QC) of input (bam) files ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
 2. Check if input files are single or paired-end ([`Samtools`](https://www.htslib.org/)).
-4. Compute statistics on input files ([`Samtools`](https://www.htslib.org/)).
-5. Convert to fastq reads ([`Samtools`](https://www.htslib.org/)).
-6. QC of converted fastq reads ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
-7. Summarize QC and statistics before and after format conversion ([`MultiQC`](http://multiqc.info/)).
+3. Compute statistics on input files ([`Samtools`](https://www.htslib.org/)).
+4. Convert to fastq reads ([`Samtools`](https://www.htslib.org/)).
+5. QC of converted fastq reads ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
+6. Summarize QC and statistics before and after format conversion ([`MultiQC`](http://multiqc.info/)).
 
 ## Quick Start
 

@@ -26,12 +26,12 @@ test1,First_SmallTest_Paired.cram,First_SmallTest_Paired.cram.crai,cram
 test2,Second_SmallTest_Paired.cram,Second_SmallTest_Paired.cram.crai,cram
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. |
-| `mapped` | Full path to input BAM/CRAM file. File has to have the extension ".bam" or ".cram".                                                             |
-| `index` | If available provide full path to input BAI/CRAI index file. File has to have the extension ".bam.bai" or ".cram.crai".                                                             |
-| `filetype` | For input BAM files the filetype hast to be "bam" and for input CRAM files, the filetype needs to be "cram".                                                             |
+| Column     | Description                                                                                                             |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `sample`   | Custom sample name.                                                                                                     |
+| `mapped`   | Full path to input BAM/CRAM file. File has to have the extension ".bam" or ".cram".                                     |
+| `index`    | If available provide full path to input BAI/CRAI index file. File has to have the extension ".bam.bai" or ".cram.crai". |
+| `filetype` | For input BAM files the filetype hast to be "bam" and for input CRAM files, the filetype needs to be "cram".            |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -132,7 +132,6 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `conda`
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
 
-
 ### `--input`
 
 Use this to specify the location of your input BAM/CRAM files. For example:
@@ -141,13 +140,12 @@ Use this to specify the location of your input BAM/CRAM files. For example:
 --input 'path/to/samplesheet.csv'
 ```
 
-
 ### `--fasta`
 
 Use this option to indicate which reference genome FASTA file to use when decompressing CRAM files. It will only work if the reference genome FASTA file listed in the CRAM header is available (_e.g._ via HTTP/FTP or on the local file system). Otherwise, you will need to use the [`--fasta`](#--fasta) option. You can check which reference FASTA file is indicated in the CRAM header with the following command:
 
 ```bash
-samtools view -H path/to/sample.cram | grep '@SQ'. 
+samtools view -H path/to/sample.cram | grep '@SQ'.
 ```
 
 To specify a reference genome FASTA you can follow the command below:
