@@ -1,4 +1,4 @@
-name: qbic-pipelines CI
+name: nf-core CI
 # This workflow runs the pipeline with the minimal test dataset to check that it completes without any syntax errors
 on:
   push:
@@ -8,48 +8,66 @@ on:
   release:
     types: [published]
 
+env:
+  NXF_ANSI_LOG: false
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
+
 jobs:
   test:
-    name: Run workflow tests
-    # Only run on push if this is the qbic-pipelines dev branch (merged PRs)
+    name: Run pipeline with test data
+    # Only run on push if this is the nf-core dev branch (merged PRs)
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/bamtofastq') }}"
     runs-on: ubuntu-latest
-    env:
-      NXF_VER: ${{ matrix.nxf_ver }}
-      NXF_ANSI_LOG: false
     strategy:
       matrix:
-        # Nextflow versions: check pipeline minimum and current latest
-        nxf_ver: ['20.04.1', '']
-        config: ['test_chr','test_bai','test_cram']
+        NXF_VER:
+          - "22.10.1"
+          - "latest-everything"
+    steps:
+      - name: Check out pipeline code
+        uses: actions/checkout@v3
+
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v1
+        with:
+          version: "${{ matrix.NXF_VER }}"
+
+      - name: Run pipeline with test data
+        run: |
+          nextflow run ${GITHUB_WORKSPACE} -profile test,docker --outdir ./results
+  test_profiles:
+    name: Run pipeline with test data
+    # Only run on push if this is the nf-core dev branch (merged PRs)
+    if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/bamtofastq') }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        config: ["test", "test_cram", "test_chr", "test_no_bai", "test_no_crai"]
+        # Nextflow versions
+        include:
+          # Test pipeline minimum Nextflow version
+          - NXF_VER: "21.10.3"
+            NXF_EDGE: ""
+          # Test latest edge release of Nextflow
+          - NXF_VER: ""
+            NXF_EDGE: "1"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@v2
 
-      - name: Check if Dockerfile or Conda environment changed
-        uses: technote-space/get-diff-action@v4
-        with:
-          FILES: |
-            Dockerfile
-            environment.yml
-      - name: Build new docker image
-        if: env.MATCHED_FILES
-        run: docker build --no-cache . -t qbicpipelines/bamtofastq:1.2.0
-
-      - name: Pull docker image
-        if: ${{ !env.MATCHED_FILES }}
-        run: |
-          docker pull qbicpipelines/bamtofastq:1.2.0
-          docker tag qbicpipelines/bamtofastq:1.2.0 qbicpipelines/bamtofastq:1.2.0
       - name: Install Nextflow
+        env:
+          NXF_VER: ${{ matrix.NXF_VER }}
+          # Uncomment only if the edge release is more recent than the latest stable release
+          # See https://github.com/nextflow-io/nextflow/issues/2467
+          # NXF_EDGE: ${{ matrix.NXF_EDGE }}
         run: |
           wget -qO- get.nextflow.io | bash
           sudo mv nextflow /usr/local/bin/
+
       - name: Run pipeline with test data
-        # TODO nf-core: You can customise CI pipeline run tests as required
-        # For example: adding multiple test runs with different parameters
-        # Remember that you can parallelise this by using strategy.matrix
         run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile test,docker
-      - name: Run pipeline with test data, only obtain reads mapping to chrX and chrY
-        run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.config }},docker
+          nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.config }},docker --outdir ./results
