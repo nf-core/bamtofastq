@@ -1,5 +1,17 @@
 # nf-core/bamtofastq: Changelog
 
+## v2.0.0dev - [date]
+
+Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.re/) template.
+
+### `Added`
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
+
 ## v1.2.0 - Anna Winlock
 
 - [#36](https://github.com/qbic-pipelines/bamtofastq/pull/36) Add options `--cram_files` and `--reference_fasta` to add support for CRAM files.
@@ -7,7 +19,7 @@
 - [#32](https://github.com/qbic-pipelines/bamtofastq/pull/32) Added `--samtools_collate_fast` to sortExtractMapped and changed cat command to append.
 - [#33](https://github.com/qbic-pipelines/bamtofastq/pull/33) Added flag `--reads_in_memory` to specify how many reads shall be stored in memory.
 
-## v1.1.0 -  Katherine Johnson
+## v1.1.0 - Katherine Johnson
 
 - [#21](https://github.com/qbic-pipelines/bamtofastq/21) Allows bam indices as additional input files
 - [#23](https://github.com/qbic-pipelines/bamtofastq/23) Fix documentation: `--bam` is `--input` now
