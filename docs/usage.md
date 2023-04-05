@@ -29,9 +29,9 @@ test2,Second_SmallTest_Paired.cram,Second_SmallTest_Paired.cram.crai,cram
 | Column     | Description                                                                                                             |
 | ---------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `sample`   | Custom sample name.                                                                                                     |
-| `mapped`   | Full path to input BAM/CRAM file. File has to have the extension ".bam" or ".cram".                                     |
-| `index`    | If available provide full path to input BAI/CRAI index file. File has to have the extension ".bam.bai" or ".cram.crai". |
-| `filetype` | For input BAM files the filetype hast to be "bam" and for input CRAM files, the filetype needs to be "cram".            |
+| `mapped`   | Absolute path to input BAM/CRAM file. Allowed file extensions: ".bam" or ".cram".                                       |
+| `index`    | If available, provide full path to input BAI/CRAI index file. File extensions must be ".bam.bai" or ".cram.crai".       |
+| `filetype` | Type of input file. Options: "bam" or "cram".                                                                           |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -142,7 +142,8 @@ Use this to specify the location of your input BAM/CRAM files. For example:
 
 ### `--fasta`
 
-Use this option to indicate which reference genome FASTA file to use when decompressing CRAM files. It will only work if the reference genome FASTA file listed in the CRAM header is available (_e.g._ via HTTP/FTP or on the local file system). Otherwise, you will need to use the [`--fasta`](#--fasta) option. You can check which reference FASTA file is indicated in the CRAM header with the following command:
+When converting a CRAM file the fasta file specified in the CRAM header should be used to decompress the file. If that file is not available, you will need to specify an alternative path using the [`--fasta`](#--fasta) option.
+You can check which reference FASTA file should be used by inspecting the CRAM file with the following command:
 
 ```bash
 samtools view -H path/to/sample.cram | grep '@SQ'.

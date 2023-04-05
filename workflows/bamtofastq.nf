@@ -127,11 +127,11 @@ workflow BAMTOFASTQ {
 
         SAMTOOLS_CHR(ch_input, fasta, [])
 
-        samtools_chr_out = Channel.empty().mix(SAMTOOLS_CHR.out.bam,
+        samtools_chr_out = Channel.empty().mix( SAMTOOLS_CHR.out.bam,
                                                 SAMTOOLS_CHR.out.cram)
         SAMTOOLS_CHR_INDEX(samtools_chr_out)
-        ch_input = samtools_chr_out.join(Channel.empty().mix(SAMTOOLS_CHR_INDEX.out.bai,
-                                                            SAMTOOLS_CHR_INDEX.out.crai))
+        ch_input = samtools_chr_out.join(Channel.empty().mix(   SAMTOOLS_CHR_INDEX.out.bai,
+                                                                SAMTOOLS_CHR_INDEX.out.crai ))
 
 
         // Add chr names to id
@@ -256,31 +256,25 @@ def extract_csv(csv_file) {
         def line, numberOfLinesInSampleSheet = 0;
         while ((line = reader.readLine()) != null) {numberOfLinesInSampleSheet++}
         if (numberOfLinesInSampleSheet < 2) {
-            log.error "Samplesheet had less than two lines. The sample sheet must be a csv file with a header, so at least two lines."
-            System.exit(1)
+            error("Samplesheet had less than two lines. The sample sheet must be a csv file with a header, so at least two lines.")
         }
     }
     Channel.from(csv_file).splitCsv(header: true)
         .map{ row ->
             if ( !row.sample_id ) {  // This also handles the case where the lane is left as an empty string
-                log.error('The sample sheet should specify a sample_id for each row.\n' + row.toString())
-                System.exit(1)
+                error('The sample sheet should specify a sample_id for each row.\n' + row.toString())
             }
             if ( !row.mapped ) {  // This also handles the case where the lane is left as an empty string
-                log.error('The sample sheet should specify a mapped file for each row.\n' + row.toString())
-                System.exit(1)
+                error('The sample sheet should specify a mapped file for each row.\n' + row.toString())
             }
             if (!row.file_type) {  // This also handles the case where the lane is left as an empty string
-                log.error('The sample sheet should specify a file_type for each row, valid values are bam/cram.\n' + row.toString())
-                System.exit(1)
+                error('The sample sheet should specify a file_type for each row, valid values are bam/cram.\n' + row.toString())
             }
             if (!(row.file_type == "bam" || row.file_type == "cram")) {
-                log.error('The file_type for the row below is neither "bam" nor "cram". Please correct this.\n' + row.toString() )
-                System.exit(1)
+                error('The file_type for the row below is neither "bam" nor "cram". Please correct this.\n' + row.toString() )
             }
             if (row.file_type != file(row.mapped).getExtension().toString()) {
-                log.error('The file extension does not fit the specified file_type.\n' + row.toString() )
-                System.exit(1)
+                error('The file extension does not fit the specified file_type.\n' + row.toString() )
             }
 
 
