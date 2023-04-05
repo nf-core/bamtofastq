@@ -6,4 +6,4 @@ blanks-around-headers: false
 blanks-around-lists: false
 header-increment: false
 no-duplicate-header:
-    siblings_only: true
+  siblings_only: true
