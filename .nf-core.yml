@@ -1,5 +1,6 @@
 repository_type: pipeline
 lint:
   files_unchanged:
+    - .github/workflows/branch.yml
     - lib/NfcoreSchema.groovy
   template_strings: False
