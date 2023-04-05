@@ -26,12 +26,12 @@ test1,First_SmallTest_Paired.cram,First_SmallTest_Paired.cram.crai,cram
 test2,Second_SmallTest_Paired.cram,Second_SmallTest_Paired.cram.crai,cram
 ```
 
-| Column     | Description                                                                                                             |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `sample`   | Custom sample name.                                                                                                     |
-| `mapped`   | Absolute path to input BAM/CRAM file. Allowed file extensions: ".bam" or ".cram".                                       |
-| `index`    | If available, provide full path to input BAI/CRAI index file. File extensions must be ".bam.bai" or ".cram.crai".       |
-| `filetype` | Type of input file. Options: "bam" or "cram".                                                                           |
+| Column     | Description                                                                                                       |
+| ---------- | ----------------------------------------------------------------------------------------------------------------- |
+| `sample`   | Custom sample name.                                                                                               |
+| `mapped`   | Absolute path to input BAM/CRAM file. Allowed file extensions: ".bam" or ".cram".                                 |
+| `index`    | If available, provide full path to input BAI/CRAI index file. File extensions must be ".bam.bai" or ".cram.crai". |
+| `filetype` | Type of input file. Options: "bam" or "cram".                                                                     |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 

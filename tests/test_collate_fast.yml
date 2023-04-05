@@ -1,8 +1,8 @@
-  command: nextflow run main.nf -profile test,docker --samtools_collate_fast
-  tags:
-    - test
-    - collate_fast
-  files:
+command: nextflow run main.nf -profile test,docker --samtools_collate_fast
+tags:
+  - test
+  - collate_fast
+files:
   - path: results/samtools/test2.idxstats
     md5sum: d3a0ad94fdf86c06b6a9e70627c1d176
   - path: results/samtools/test1.flagstat

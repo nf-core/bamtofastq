@@ -1,5 +1,5 @@
 - name: Run test profile
-  command: nextflow run main.nf -profile test_chr,docker 
+  command: nextflow run main.nf -profile test_chr,docker
   tags:
     - test
     - chromosomes
