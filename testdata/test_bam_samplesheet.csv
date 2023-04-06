@@ -1,4 +1,0 @@
-sample_id,mapped,index,file_type
-test1,https://github.com/qbic-pipelines/bamtofastq/raw/master/testdata/First_SmallTest_Paired.bam,https://github.com/qbic-pipelines/bamtofastq/raw/master/testdata/First_SmallTest_Paired.bam.bai,bam
-test2,https://github.com/qbic-pipelines/bamtofastq/raw/master/testdata/Second_SmallTest_Paired.bam,https://github.com/qbic-pipelines/bamtofastq/raw/master/testdata/Second_SmallTest_Paired.bam.bai,bam
-test3,https://github.com/qbic-pipelines/bamtofastq/raw/master/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.bam,https://github.com/qbic-pipelines/bamtofastq/raw/master/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.bam.bai,bam

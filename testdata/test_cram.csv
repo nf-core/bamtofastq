@@ -1,0 +1,4 @@
+sample_id,mapped,index,file_type
+test1,https://github.com/nf-core/bamtofastq/raw/dev/testdata/First_SmallTest_Paired.cram,https://github.com/nf-core/bamtofastq/raw/dev/testdata/First_SmallTest_Paired.cram.crai,cram
+test2,https://github.com/nf-core/bamtofastq/raw/dev/testdata/Second_SmallTest_Paired.cram,https://github.com/nf-core/bamtofastq/raw/dev/testdata/Second_SmallTest_Paired.cram.crai,cram
+test3,https://github.com/nf-core/bamtofastq/raw/dev/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram,https://github.com/nf-core/bamtofastq/raw/dev/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.cram.crai,cram
