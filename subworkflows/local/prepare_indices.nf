@@ -13,7 +13,6 @@ include { SAMTOOLS_FAIDX               } from '../../modules/nf-core/samtools/fa
 workflow PREPARE_INDICES {
     take:
     index_provided // boolean determined automatically
-    //cram_input     // boolean determined automatically
     input          // channel: [meta, alignment (BAM or CRAM), []]
     fasta          // optional: reference file if CRAM format and reference not in header
 
