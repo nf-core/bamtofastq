@@ -5,6 +5,7 @@
 Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.re/) template.
 
 ### `Added`
+
 - [#45](https://github.com/nf-core/bamtofastq/pull/45) Add `test.yml` files with md5sums
 - [#44](https://github.com/nf-core/bamtofastq/pull/44) DSL2 conversion
 

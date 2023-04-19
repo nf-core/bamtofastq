@@ -3,33 +3,25 @@ tags:
   - test
   - collate_fast
 files:
-  - path: results/samtools/test2.idxstats
-    md5sum: d3a0ad94fdf86c06b6a9e70627c1d176
-  - path: results/samtools/test1.flagstat
-    md5sum: 64ec08da780e7f71793c027d63f0843a
-  - path: results/samtools/test2.stats
-    md5sum: 80209d7dccf199294bb6aaaf2b87c012
-  - path: results/samtools/test1.idxstats
-    md5sum: 9f86d2d1ce17508417384750f229ab5e
-  - path: results/samtools/test1.stats
-    md5sum: 93e32ad7ccad74b413b328b57ebf84f2
+  - path: results/samtools/test.stats
+    md5sum: 13acf86526d7901b4cd98aa328d3feab
   - path: results/samtools/test2.flagstat
-    md5sum: cc0e4cf00af57f2cb7e271fb8e5bde6b
-  - path: results/samtools/test3.idxstats
-    md5sum: 4ce6ca70c2b5d17f719ac3dbd7431379
-  - path: results/samtools/test3.flagstat
-    md5sum: 6c101b0e9a0e66133e3e170ef9aa425f
-  - path: results/samtools/test3.stats
-    md5sum: 728134dee2e2a6af99cbae4f4cf554fa
-  - path: results/reads/test3_singleton.fq.gz
-    md5sum: 709872fc2910431b1e8b7074bfe38c67
-  - path: results/reads/test2_2.merged.fastq.gz
-    md5sum: 14fa21eadcd8803e6c1199608ab4adcf
+    md5sum: acbd95030a362a7e6491faa87d1b9c2c
+  - path: results/samtools/test.flagstat
+    md5sum: a53f3d26e2e9851f7d528442bbfe9781
+  - path: results/samtools/test.idxstats
+    md5sum: e179601fa7b8ebce81ac3765206f6c15
+  - path: results/samtools/test2.idxstats
+    md5sum: 90f01313bc89c7fd096aad051cd71b66
+  - path: results/samtools/test2.stats
+    md5sum: 7877bd166fe2d349966a6a23011f875d
   - path: results/reads/test2_1.merged.fastq.gz
-    md5sum: 55ffab8fd5ebc4795806723686993a33
-  - path: results/reads/test1_1.merged.fastq.gz
-    md5sum: 434a73eb9f46c2668b1c5d5b5bbb774c
-  - path: results/reads/test1_2.merged.fastq.gz
-    md5sum: 37dc9f9244596595eb9bafa46f94047c
+    md5sum: 6d6959d6955cd91f5c59f4b0fa4912bf
+  - path: results/reads/test2_2.merged.fastq.gz
+    md5sum: 6aeb5b48ffef5697a4d3c61c488735f8
+  - path: results/reads/test_2.merged.fastq.gz
+    md5sum: 8a4e01c993334bf2f9b40eb8e0ed69fb
+  - path: results/reads/test_1.merged.fastq.gz
+    md5sum: df8cf0d9fc7a7f6b23115592a6ff3261
   - path: results/fastqc
   - path: results/multiqc

@@ -4,33 +4,25 @@
     - test
     - cram
   files:
-    - path: results/samtools/test1.idxstats
-      md5sum: 9f86d2d1ce17508417384750f229ab5e
-    - path: results/samtools/test1.flagstat
-      md5sum: 64ec08da780e7f71793c027d63f0843a
+    - path: results/samtools/test.idxstats
+      md5sum: e179601fa7b8ebce81ac3765206f6c15
+    - path: results/samtools/test.flagstat
+      md5sum: a53f3d26e2e9851f7d528442bbfe9781
+    - path: results/samtools/test.stats
+      md5sum: fcc070b235a87bc305186bec94cb6bfa
     - path: results/samtools/test2.flagstat
-      md5sum: cc0e4cf00af57f2cb7e271fb8e5bde6b
+      md5sum: acbd95030a362a7e6491faa87d1b9c2c
     - path: results/samtools/test2.idxstats
-      md5sum: d3a0ad94fdf86c06b6a9e70627c1d176
-    - path: results/samtools/test3.flagstat
-      md5sum: 6c101b0e9a0e66133e3e170ef9aa425f
-    - path: results/samtools/test3.idxstats
-      md5sum: 4ce6ca70c2b5d17f719ac3dbd7431379
-    - path: results/samtools/test1.stats
-      md5sum: 34a28f2afbdc2e4d77e47cc518c3e3cb
+      md5sum: 90f01313bc89c7fd096aad051cd71b66
     - path: results/samtools/test2.stats
-      md5sum: 1c6d9e3e231327e0279ec0394e1c3153
-    - path: results/samtools/test3.stats
-      md5sum: a442c27343e1793f0af363034b358b75
-    - path: results/reads/test3_singleton.fq.gz
-      md5sum: 709872fc2910431b1e8b7074bfe38c67
+      md5sum: 91c1913c3b1dbd20e7c217afb60e407f
+    - path: results/reads/test_1.merged.fastq.gz
+      md5sum: 15ab79e32e45138d29b6278f4c32a8ca
+    - path: results/reads/test_2.merged.fastq.gz
+      md5sum: 2c2dbdf1a7584efb6861ad1ac5efbb43
     - path: results/reads/test2_1.merged.fastq.gz
-      md5sum: a96967522d1d9c279f253abffddd1180
+      md5sum: d0fd4034e5f07590b0944e3cf24cff60
     - path: results/reads/test2_2.merged.fastq.gz
-      md5sum: 6cbb711493adbca3fa69eac448dbb060
-    - path: results/reads/test1_2.merged.fastq.gz
-      md5sum: 7d15ae1cfb4afe2a5717c60e818dcf8c
-    - path: results/reads/test1_1.merged.fastq.gz
-      md5sum: d655174edf2c1d21af45cfdae7437434
+      md5sum: bcb8df2cda7006efb30bbf2c8830e761
     - path: results/fastqc
     - path: results/multiqc
