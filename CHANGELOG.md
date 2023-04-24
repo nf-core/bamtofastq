@@ -11,6 +11,8 @@ Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.
 
 ### `Fixed`
 
+- [#45](https://github.com/nf-core/bamtofastq/pull/45) Minor bugfix with chromosome extraction
+
 ### `Dependencies`
 
 ### `Deprecated`

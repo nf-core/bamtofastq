@@ -50,7 +50,16 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 [Samtools](https://www.htslib.org) is used to extract reads from the bam files and to compute some BAM/CRAM statistics.
 
-The converted and gzipped fastq output reads are written to the directory `results/reads/*.f(ast)?q.gz`.
+The converted and gzipped fastq output reads are written to the directory `results/reads/`.
+
+<details markdown="1">
+<summary>Read files</summary>
+
+- `reads/`
+  - `*.merged.fastq.gz`: Paired-end read files
+  - `*.other.fq.gz` : Single-end read files
+
+</details>
 
 ### MultiQC
 
