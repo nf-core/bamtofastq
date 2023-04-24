@@ -27,15 +27,8 @@ if (params.input) { ch_input = extract_csv(file(params.input, checkIfExists: tru
 fasta              = params.fasta              ? Channel.fromPath(params.fasta).collect()                    : Channel.value([])
 fasta_fai          = params.fasta_fai          ? Channel.fromPath(params.fasta_fai).collect()                : Channel.value([])
 
-// Initialize value based on input
-
-//ch_input.dump(tag:"ch:input")
-
-//index_provided = ch_input.map{it -> it[2]}.collect().ifEmpty(false) ? false: true
-//print(index_provided)
-
 // Initialize value channels based on params
-chr                     = params.chr                    ?: Channel.empty()
+chr                     = params.chr           ?: Channel.empty()
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -302,7 +295,7 @@ def extract_csv(csv_file) {
             if (row.file_type != file(row.mapped).getExtension().toString()) {
                 error('The file extension does not fit the specified file_type.\n' + row.toString() )
             }
-
+            
 
             // init meta map
             def meta = [:]
