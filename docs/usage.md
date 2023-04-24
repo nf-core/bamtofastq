@@ -167,7 +167,12 @@ For example:
 --chr 'X chrX'
 ```
 
-This extracts reads mapping to `X` as well as `chrX`
+This extracts reads mapping to `X` as well as `chrX`.
+To check beforehand which chromosome notation is used in your bam/cram file you can use samtools.
+
+```bash
+samtools idxstats your_input.[bam|cram] | head -n 25
+```
 
 ### `--no_read_QC` (optional)
 

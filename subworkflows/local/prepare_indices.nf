@@ -12,7 +12,6 @@ include { SAMTOOLS_FAIDX               } from '../../modules/nf-core/samtools/fa
 
 workflow PREPARE_INDICES {
     take:
-    index_provided // boolean determined automatically
     input          // channel: [meta, alignment (BAM or CRAM), []]
     fasta          // optional: reference file if CRAM format and reference not in header
 
@@ -20,16 +19,26 @@ workflow PREPARE_INDICES {
 
     ch_versions = Channel.empty()
 
-    // INDEX BAM/CRAM if not provided
-    ch_input = input.map{ it -> [it[0], it[1]] }
     ch_out = Channel.empty()
-    if (!index_provided){
-        SAMTOOLS_INDEX((input.map{ it -> [it[0], it[1]] }))
-        ch_versions     = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
-        ch_index_files  = Channel.empty().mix(SAMTOOLS_INDEX.out.bai, SAMTOOLS_INDEX.out.crai)       
-        ch_out          = ch_input.join(ch_index_files)               
-        
-    }
+    
+    // Determine if INDEX provided
+    input.branch{
+        is_indexed:  it[0].index == true
+        to_index:    it[0].index == false
+    }.set{samtools_input}
+
+    // Remove empty INDEX [] from channel
+    input_to_index = samtools_input.to_index.map{ it -> [it[0], it[1]] }
+
+    // INDEX BAM/CRAM only if not provided
+    SAMTOOLS_INDEX(input_to_index)  
+    ch_versions     = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
+    ch_index_files  = Channel.empty().mix(SAMTOOLS_INDEX.out.bai, SAMTOOLS_INDEX.out.crai)       
+    
+    // Combine channels
+    ch_new          = input_to_index.join(ch_index_files)
+    ch_out          = samtools_input.is_indexed.mix(ch_new)    
+
 
     // INDEX FASTA
     fasta_fai = []
@@ -40,10 +49,9 @@ workflow PREPARE_INDICES {
 
     }
 
-
     // Gather versions of all tools used       
     emit:   
-    ch_input    = ch_out
-    fasta_fai   = fasta_fai
-    versions    = ch_versions
+    ch_input_indexed    = ch_out
+    fasta_fai           = fasta_fai
+    versions            = ch_versions
 }
