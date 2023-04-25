@@ -22,8 +22,8 @@ The pipeline will auto-detect whether a sample is single- or paired-end. The sam
 
 ```console
 sample_id,mapped,index,file_type
-test1,First_SmallTest_Paired.cram,First_SmallTest_Paired.cram.crai,cram
-test2,Second_SmallTest_Paired.cram,Second_SmallTest_Paired.cram.crai,cram
+test1,test1.cram,test1.cram.crai,cram
+test2,test2.cram,test2.cram.crai,cram
 ```
 
 | Column     | Description                                                                                                       |
