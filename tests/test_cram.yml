@@ -1,5 +1,5 @@
 - name: Run test profile
-  command: nextflow run main.nf -profile test_cram,docker
+  command: nextflow run main.nf -profile test,test_cram,docker
   tags:
     - test
     - cram

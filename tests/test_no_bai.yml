@@ -1,5 +1,5 @@
 - name: Run test profile
-  command: nextflow run main.nf -profile test_no_bai,docker
+  command: nextflow run main.nf -profile test,test_no_bai,docker
   tags:
     - test
     - bam
