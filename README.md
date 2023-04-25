@@ -30,7 +30,7 @@ By default, the pipeline currently performs the following steps:
 6. Summarize QC and statistics before and after format conversion ([`MultiQC`](http://multiqc.info/)).
 
 <p align="center">
-    <img title="Bamtofastq Workflow" src="docs/images/nf-core-bamtofastq-subqay.png" width=60%>
+    <img title="Bamtofastq Workflow" src="docs/images/nf-core-bamtofastq-subway.png" width=60%>
 </p>
 
 ## Quick Start
