@@ -1,4 +1,0 @@
-sample_id,mapped,index,file_type
-test1,/home/afijo01/repos/bamtofastq/testdata/First_SmallTest_Paired.bam,/home/afijo01/repos/bamtofastq/testdata/First_SmallTest_Paired.bam.bai,bam
-test2,/home/afijo01/repos/bamtofastq/testdata/Second_SmallTest_Paired.bam,/home/afijo01/repos/bamtofastq/testdata/Second_SmallTest_Paired.bam.bai,bam
-test3,/home/afijo01/repos/bamtofastq/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.bam,/home/afijo01/repos/bamtofastq/testdata/wgEncodeUwRepliSeqK562G1AlnRep1.bam.bai,bam

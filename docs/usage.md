@@ -18,20 +18,20 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below. If the index files are not available, the files will be automatically indexed during the pipeline run which can have an effect on the runtime.
 
 ```console
 sample_id,mapped,index,file_type
-test1,First_SmallTest_Paired.cram,First_SmallTest_Paired.cram.crai,cram
-test2,Second_SmallTest_Paired.cram,Second_SmallTest_Paired.cram.crai,cram
+test1,test1.cram,test1.cram.crai,cram
+test2,test2.cram,test2.cram.crai,cram
 ```
 
-| Column     | Description                                                                                                             |
-| ---------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `sample`   | Custom sample name.                                                                                                     |
-| `mapped`   | Full path to input BAM/CRAM file. File has to have the extension ".bam" or ".cram".                                     |
-| `index`    | If available provide full path to input BAI/CRAI index file. File has to have the extension ".bam.bai" or ".cram.crai". |
-| `filetype` | For input BAM files the filetype hast to be "bam" and for input CRAM files, the filetype needs to be "cram".            |
+| Column     | Description                                                                                                       |
+| ---------- | ----------------------------------------------------------------------------------------------------------------- |
+| `sample`   | Custom sample name.                                                                                               |
+| `mapped`   | Absolute path to input BAM/CRAM file. Allowed file extensions: ".bam" or ".cram".                                 |
+| `index`    | If available, provide full path to input BAI/CRAI index file. File extensions must be ".bam.bai" or ".cram.crai". |
+| `filetype` | Type of input file. Options: "bam" or "cram".                                                                     |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -70,8 +70,7 @@ with `params.yaml` containing:
 ```yaml
 input: './samplesheet.csv'
 outdir: './results/'
-genome: 'GRCh37'
-input: 'data'
+fasta: './reference.fasta'
 <...>
 ```
 
@@ -142,7 +141,8 @@ Use this to specify the location of your input BAM/CRAM files. For example:
 
 ### `--fasta`
 
-Use this option to indicate which reference genome FASTA file to use when decompressing CRAM files. It will only work if the reference genome FASTA file listed in the CRAM header is available (_e.g._ via HTTP/FTP or on the local file system). Otherwise, you will need to use the [`--fasta`](#--fasta) option. You can check which reference FASTA file is indicated in the CRAM header with the following command:
+When converting a CRAM file the fasta file specified in the CRAM header should be used to decompress the file. If that file is not available, you will need to specify an alternative path using the [`--fasta`](#--fasta) option.
+You can check which reference FASTA file should be used by inspecting the CRAM file with the following command:
 
 ```bash
 samtools view -H path/to/sample.cram | grep '@SQ'.
@@ -166,7 +166,12 @@ For example:
 --chr 'X chrX'
 ```
 
-This extracts reads mapping to `X` as well as `chrX`
+This extracts reads mapping to `X` as well as `chrX`.
+To check beforehand which chromosome notation is used in your bam/cram file you can use samtools.
+
+```bash
+samtools idxstats your_input.[bam|cram] | head -n 25
+```
 
 ### `--no_read_QC` (optional)
 

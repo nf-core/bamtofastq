@@ -2,10 +2,10 @@ process CHECK_IF_PAIRED_END {
     tag "$meta.id"
     label 'process_low'
 
-    conda "bioconda::samtools=1.16.1"
+    conda "bioconda::samtools=1.17"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/samtools:1.16.1--h6899075_1' :
-        'quay.io/biocontainers/samtools:1.16.1--h6899075_1' }"
+        'https://depot.galaxyproject.org/singularity/samtools:1.17--h00cdaf9_0' :
+        'quay.io/biocontainers/samtools:1.17--h00cdaf9_0' }"
 
     input:
     tuple val(meta), path(input), path(index)
@@ -24,7 +24,7 @@ process CHECK_IF_PAIRED_END {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def reference = meta.filetype == "cram" ? "--reference ${fasta}" : ""
     """
-    if [ \$({ samtools view -H $reference $input -@$task.cpus ; samtools view $reference $input -@$task.cpus | head -n1000; } | samtools view $reference $reference -c -f 1 -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then
+    if [ \$({ samtools view -H $reference $input -@$task.cpus ; samtools view $reference $input -@$task.cpus | head -n1000; } | samtools view $reference -c -f 1 -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then
         echo 1 > ${prefix}.paired.txt
     else
         echo 0 > ${prefix}.single.txt

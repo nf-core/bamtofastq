@@ -27,11 +27,8 @@ if (params.input) { ch_input = extract_csv(file(params.input, checkIfExists: tru
 fasta              = params.fasta              ? Channel.fromPath(params.fasta).collect()                    : Channel.value([])
 fasta_fai          = params.fasta_fai          ? Channel.fromPath(params.fasta_fai).collect()                : Channel.value([])
 
-// Initialize value based on input
-index_provided = ch_input.map{it -> it[2]} == [] ? true : false
-
 // Initialize value channels based on params
-chr                     = params.chr                    ?: Channel.empty()
+chr                     = params.chr           ?: Channel.empty()
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -103,15 +100,15 @@ workflow BAMTOFASTQ {
 
     // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
     PREPARE_INDICES(
-        index_provided,
         ch_input,
         fasta
     )
+    
     ch_versions = ch_versions.mix(PREPARE_INDICES.out.versions)
 
-    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : []       
+    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : []     
 
-    ch_input = index_provided ? ch_input : PREPARE_INDICES.out.ch_input
+    ch_input = PREPARE_INDICES.out.ch_input_indexed
     
     // SUBWORKFLOW: Pre conversion QC and stats
 
@@ -122,24 +119,49 @@ workflow BAMTOFASTQ {
 
     ch_versions = ch_versions.mix(PRE_CONVERSION_QC.out.versions)
 
+    // MODULE: Check if SINGLE or PAIRED-END
+
+    CHECK_IF_PAIRED_END(ch_input, fasta)
+
+    ch_paired_end = ch_input.join(CHECK_IF_PAIRED_END.out.paired_end)
+    ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
+
+    // Combine channels into new input channel for conversion + add info about single/paired to meta map
+    ch_input_new = ch_single_end.map{ meta, bam, bai, txt -> 
+            [ [ id : meta.id,
+            filetype : meta.filetype,
+            single_end : true ],                 
+            bam,
+            bai
+            ] }.mix(ch_paired_end.map{ meta, bam, bai, txt -> 
+            [ [ id : meta.id,
+            filetype : meta.filetype,
+            single_end : false ],                
+            bam,
+            bai
+            ] })
+
+    ch_versions = ch_versions.mix(CHECK_IF_PAIRED_END.out.versions)
+
+
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input, fasta, [])
+        SAMTOOLS_CHR(ch_input_new, fasta, [])
 
-        samtools_chr_out = Channel.empty().mix(SAMTOOLS_CHR.out.bam,
+        samtools_chr_out = Channel.empty().mix( SAMTOOLS_CHR.out.bam,
                                                 SAMTOOLS_CHR.out.cram)
         SAMTOOLS_CHR_INDEX(samtools_chr_out)
-        ch_input = samtools_chr_out.join(Channel.empty().mix(SAMTOOLS_CHR_INDEX.out.bai,
-                                                            SAMTOOLS_CHR_INDEX.out.crai))
-
+        ch_input_chr = samtools_chr_out.join(Channel.empty().mix( SAMTOOLS_CHR_INDEX.out.bai,
+                                                                SAMTOOLS_CHR_INDEX.out.crai ))
 
         // Add chr names to id
-        ch_input = ch_input.map{ it ->
+        ch_input_new = ch_input_chr.map{ it ->
                 new_id = it[1].baseName
                 [[
                     id : new_id,
-                    filetype : it[0].filetype
+                    filetype : it[0].filetype,
+                    single_end: it[0].single_end
                 ],
                 it[1],
                 it[2]] }
@@ -149,21 +171,18 @@ workflow BAMTOFASTQ {
 
     }
 
-    // MODULE: Check if SINLGE or PAIRED-END
-
-    CHECK_IF_PAIRED_END(ch_input, fasta)
-
-    ch_paired_end = ch_input.join(CHECK_IF_PAIRED_END.out.paired_end)
-    ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
-
-    ch_versions = ch_versions.mix(CHECK_IF_PAIRED_END.out.versions)
-
     // MODULE: SINGLE-END Alignment to FastQ (SortExtractSingleEnd)
     def interleave = false
 
+    ch_input_new.branch{
+        ch_single:  it[0].single_end == true
+        ch_paired:  it[0].single_end == false
+    }.set{conversion_input}
+
+    // Module needs info about single-endedness
     SAMTOOLS_COLLATEFASTQ_SINGLE_END(
-        ch_single_end.map{it -> [it[0], it[1]]}, // meta, bam
-        fasta.map{ it ->                         // meta, fasta
+        conversion_input.ch_single.map{ it -> [ it[0], it[1] ]}, // meta, bam/cram
+        fasta.map{ it ->                                         // meta, fasta
             def new_id = ""
             if(it) {
                 new_id = it[0].baseName
@@ -178,7 +197,7 @@ workflow BAMTOFASTQ {
     //
 
     ALIGNMENT_TO_FASTQ (
-        ch_paired_end.map{it -> [it[0], it[1], it[2]]}, // meta, file, index
+        conversion_input.ch_paired,
         fasta,
         fasta_fai
     )
@@ -256,33 +275,27 @@ def extract_csv(csv_file) {
         def line, numberOfLinesInSampleSheet = 0;
         while ((line = reader.readLine()) != null) {numberOfLinesInSampleSheet++}
         if (numberOfLinesInSampleSheet < 2) {
-            log.error "Samplesheet had less than two lines. The sample sheet must be a csv file with a header, so at least two lines."
-            System.exit(1)
+            error("Samplesheet had less than two lines. The sample sheet must be a csv file with a header, so at least two lines.")
         }
     }
     Channel.from(csv_file).splitCsv(header: true)
         .map{ row ->
             if ( !row.sample_id ) {  // This also handles the case where the lane is left as an empty string
-                log.error('The sample sheet should specify a sample_id for each row.\n' + row.toString())
-                System.exit(1)
+                error('The sample sheet should specify a sample_id for each row.\n' + row.toString())
             }
             if ( !row.mapped ) {  // This also handles the case where the lane is left as an empty string
-                log.error('The sample sheet should specify a mapped file for each row.\n' + row.toString())
-                System.exit(1)
+                error('The sample sheet should specify a mapped file for each row.\n' + row.toString())
             }
             if (!row.file_type) {  // This also handles the case where the lane is left as an empty string
-                log.error('The sample sheet should specify a file_type for each row, valid values are bam/cram.\n' + row.toString())
-                System.exit(1)
+                error('The sample sheet should specify a file_type for each row, valid values are bam/cram.\n' + row.toString())
             }
             if (!(row.file_type == "bam" || row.file_type == "cram")) {
-                log.error('The file_type for the row below is neither "bam" nor "cram". Please correct this.\n' + row.toString() )
-                System.exit(1)
+                error('The file_type for the row below is neither "bam" nor "cram". Please correct this.\n' + row.toString() )
             }
             if (row.file_type != file(row.mapped).getExtension().toString()) {
-                log.error('The file extension does not fit the specified file_type.\n' + row.toString() )
-                System.exit(1)
+                error('The file extension does not fit the specified file_type.\n' + row.toString() )
             }
-
+            
 
             // init meta map
             def meta = [:]
@@ -291,6 +304,7 @@ def extract_csv(csv_file) {
             def mapped    = file(row.mapped, checkIfExists: true)
             def index     = row.index ? file(row.index, checkIfExists: true) : []
             meta.filetype = "${row.file_type}".toString()
+            meta.index    = row.index ? true : false
 
             return [meta, mapped, index]
 

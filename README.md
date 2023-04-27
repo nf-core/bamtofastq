@@ -1,6 +1,6 @@
 # ![nf-core/bamtofastq](docs/images/nf-core-bamtofastq_logo_light.png#gh-light-mode-only) ![nf-core/bamtofastq](docs/images/nf-core-bamtofastq_logo_dark.png#gh-dark-mode-only)
 
-[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/bamtofastq/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/bamtofastq/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.4022138-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.4022138)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A522.10.1-23aa62.svg)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
@@ -16,8 +16,6 @@
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
-<!-- TODO nf-core: Add full-sized test dataset and amend the paragraph below if applicable -->
-
 On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources.The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/bamtofastq/results).
 
 ## Pipeline summary
@@ -30,6 +28,10 @@ By default, the pipeline currently performs the following steps:
 4. Convert to fastq reads ([`Samtools`](https://www.htslib.org/)).
 5. QC of converted fastq reads ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
 6. Summarize QC and statistics before and after format conversion ([`MultiQC`](http://multiqc.info/)).
+
+<p align="center">
+    <img title="Bamtofastq Workflow" src="docs/images/nf-core-bamtofastq-subway.png" width=60%>
+</p>
 
 ## Quick Start
 
