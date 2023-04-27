@@ -16,12 +16,12 @@ files:
   - path: results/samtools/test2.idxstats
     md5sum: 90f01313bc89c7fd096aad051cd71b66
   - path: results/samtools/test2.stats
-    md5sum: 7877bd166fe2d349966a6a23011f875d
+    md5sum: f89e29166ff872b38ee72e15d44ae8c3
   - path: results/samtools/test.flagstat
     md5sum: a53f3d26e2e9851f7d528442bbfe9781
   - path: results/samtools/test.idxstats
     md5sum: e179601fa7b8ebce81ac3765206f6c15
   - path: results/samtools/test.stats
-    md5sum: 13acf86526d7901b4cd98aa328d3feab
+    md5sum: f81d34302eec687c43539432e81022d4
   - path: results/fastqc
   - path: results/multiqc

@@ -13,6 +13,6 @@
     - path: results/samtools/test3.idxstats
       md5sum: 094096b6f303cc18892e1e027c87f273
     - path: results/samtools/test3.stats
-      md5sum: 8fb130020af0a097b21203c388697b0e
+      md5sum: 5265894a506071133a29ef1ff5fb48b8
     - path: results/fastqc
     - path: results/multiqc

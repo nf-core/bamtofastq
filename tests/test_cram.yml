@@ -18,12 +18,12 @@
     - path: results/samtools/test2.idxstats
       md5sum: 90f01313bc89c7fd096aad051cd71b66
     - path: results/samtools/test2.stats
-      md5sum: 91c1913c3b1dbd20e7c217afb60e407f
+      md5sum: 6e4ad43d69cf225eb4b2bdc11401dd6e
     - path: results/samtools/test.flagstat
       md5sum: a53f3d26e2e9851f7d528442bbfe9781
     - path: results/samtools/test.idxstats
       md5sum: e179601fa7b8ebce81ac3765206f6c15
     - path: results/samtools/test.stats
-      md5sum: fcc070b235a87bc305186bec94cb6bfa
+      md5sum: ca5c3f558faef2cb5b50e5b015dcc231
     - path: results/fastqc
     - path: results/multiqc
