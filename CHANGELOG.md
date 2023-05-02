@@ -12,6 +12,10 @@ Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.
 - [#45](https://github.com/nf-core/bamtofastq/pull/45) Add `test.yml` files with md5sums
 - [#44](https://github.com/nf-core/bamtofastq/pull/44) DSL2 conversion
 
+### `Changed`
+
+- [#47](https://github.com/nf-core/bamtofastq/pull/47) Sync TEMPLATE with tools 2.8
+
 ### `Fixed`
 
 - [#45](https://github.com/nf-core/bamtofastq/pull/45) Minor bugfix with chromosome extraction
