@@ -42,9 +42,9 @@ By default, the pipeline currently performs the following steps:
 
 Download the pipeline and test it on a minimal dataset with a single command:
 
-  ```bash
-  nextflow run nf-core/bamtofastq -profile test,<docker/singularity/.../institute>
-  ```
+```bash
+nextflow run nf-core/bamtofastq -profile test,<docker/singularity/.../institute>
+```
 
 To run your own analysis, start by preparing a samplesheet with your input data that looks as follows:
 
