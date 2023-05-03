@@ -39,24 +39,29 @@
                 "chr": {
                     "type": "string",
                     "default": "None",
-                    "fa_icon": "fas fa-clock"
+                    "fa_icon": "fas fa-clock",
+                    "description": "Only use reads mapping to a specific chromosome/region. Has to be specified as in bam: i.e chr1, chr{1..22} (gets all reads mapping to chr1 to 22), 1, \"X Y\", incorrect naming will lead to a potentially silent error."
                 },
                 "no_read_QC": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-clock"
+                    "fa_icon": "fas fa-clock",
+                    "description": "If specified, no quality control will be performed on extracted reads. Useful, if this is done anyways in the subsequent workflow."
                 },
                 "no_stats": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-clock"
+                    "fa_icon": "fas fa-clock",
+                    "description": "If specified, skips all quality control and stats computation, including `FastQC` on both input bam and output reads, `samtools flagstat`, `samtools idxstats`, and `samtools stats`."
                 },
                 "reads_in_memory": {
                     "type": "integer",
                     "default": 100000,
-                    "fa_icon": "fas fa-clock"
+                    "fa_icon": "fas fa-clock",
+                    "description": "Reads to store in memory [default = '100000']. Only relevant for use with `--samtools_collate_fast`."
                 },
                 "samtools_collate_fast": {
                     "type": "boolean",
-                    "fa_icon": "fas fa-clock"
+                    "fa_icon": "fas fa-clock",
+                    "description": "Uses fast mode for samtools collate in `sortExtractMapped`, `sortExtractUnmapped` and `sortExtractSingleEnd`."
                 }
             }
         },
