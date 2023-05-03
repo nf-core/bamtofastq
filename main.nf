@@ -4,7 +4,6 @@
     nf-core/bamtofastq
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Github : https://github.com/nf-core/bamtofastq
-
     Website: https://nf-co.re/bamtofastq
     Slack  : https://nfcore.slack.com/channels/bamtofastq
 ----------------------------------------------------------------------------------------

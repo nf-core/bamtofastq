@@ -32,7 +32,7 @@ chr                     = params.chr           ?: Channel.empty()
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    ERROR MESSAGES AND WARNINGS 
+    ERROR MESSAGES AND WARNINGS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -52,10 +52,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
-// SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
-//
-
+include { CHECK_IF_PAIRED_END                  } from '../modules/local/check_paired_end'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -70,7 +67,6 @@ include { FASTQC  as  FASTQC_POST_CONVERSION   } from '../modules/nf-core/fastqc
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR        } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_PE         } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX } from '../modules/nf-core/samtools/index/main'
-include { CHECK_IF_PAIRED_END                  } from '../modules/local/check_paired_end'
 include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq/main'
 
 include { MULTIQC                       } from '../modules/nf-core/multiqc/main'
@@ -103,13 +99,13 @@ workflow BAMTOFASTQ {
         ch_input,
         fasta
     )
-    
+
     ch_versions = ch_versions.mix(PREPARE_INDICES.out.versions)
 
-    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : []     
+    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : []
 
     ch_input = PREPARE_INDICES.out.ch_input_indexed
-    
+
     // SUBWORKFLOW: Pre conversion QC and stats
 
     PRE_CONVERSION_QC(
@@ -127,16 +123,16 @@ workflow BAMTOFASTQ {
     ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
 
     // Combine channels into new input channel for conversion + add info about single/paired to meta map
-    ch_input_new = ch_single_end.map{ meta, bam, bai, txt -> 
+    ch_input_new = ch_single_end.map{ meta, bam, bai, txt ->
             [ [ id : meta.id,
             filetype : meta.filetype,
-            single_end : true ],                 
+            single_end : true ],
             bam,
             bai
-            ] }.mix(ch_paired_end.map{ meta, bam, bai, txt -> 
+            ] }.mix(ch_paired_end.map{ meta, bam, bai, txt ->
             [ [ id : meta.id,
             filetype : meta.filetype,
-            single_end : false ],                
+            single_end : false ],
             bam,
             bai
             ] })
@@ -295,7 +291,7 @@ def extract_csv(csv_file) {
             if (row.file_type != file(row.mapped).getExtension().toString()) {
                 error('The file extension does not fit the specified file_type.\n' + row.toString() )
             }
-            
+
 
             // init meta map
             def meta = [:]

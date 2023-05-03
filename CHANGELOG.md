@@ -1,5 +1,8 @@
 # nf-core/bamtofastq: Changelog
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## v2.0.0dev - [date]
 
 Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.re/) template.
@@ -8,6 +11,10 @@ Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.
 
 - [#45](https://github.com/nf-core/bamtofastq/pull/45) Add `test.yml` files with md5sums
 - [#44](https://github.com/nf-core/bamtofastq/pull/44) DSL2 conversion
+
+### `Changed`
+
+- [#47](https://github.com/nf-core/bamtofastq/pull/47) Sync TEMPLATE with tools 2.8
 
 ### `Fixed`
 
