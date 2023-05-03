@@ -46,7 +46,7 @@ jobs:
     strategy:
       matrix:
         config:
-          ["test", "test_cram", "test_chr", "test_no_bai", "test_no_crai, test_no_stats, test_no_qc, test_collate_fast"]
+          ["test", "test_cram", "test_chr", "test_no_bai", "test_no_crai", "test_no_stats", "test_no_qc", "test_collate_fast"]
         # Nextflow versions
         include:
           # Test pipeline minimum Nextflow version
