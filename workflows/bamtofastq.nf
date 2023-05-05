@@ -14,7 +14,7 @@ def checkPathParamList = [
     params.fasta,
     params.fasta_fai,
     params.input,
-    params.multiqc_config,
+    params.multiqc_config
     ]
 
 for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
