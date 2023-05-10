@@ -9,16 +9,20 @@ Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.
 
 ### `Added`
 
+- [#49](https://github.com/nf-core/bamtofastq/pull/49) Add descriptions to main options
 - [#48](https://github.com/nf-core/bamtofastq/pull/48) Add igenomes
 - [#45](https://github.com/nf-core/bamtofastq/pull/45) Add `test.yml` files with md5sums
 - [#44](https://github.com/nf-core/bamtofastq/pull/44) DSL2 conversion
 
 ### `Changed`
 
+- [#53](https://github.com/nf-core/bamtofastq/pull/53) Code review & updated modules
+- [#52](https://github.com/nf-core/bamtofastq/pull/52) Code review changed resources in configs
 - [#47](https://github.com/nf-core/bamtofastq/pull/47) Sync TEMPLATE with tools 2.8
 
 ### `Fixed`
 
+- [#49](https://github.com/nf-core/bamtofastq/pull/49) Fixed release version
 - [#45](https://github.com/nf-core/bamtofastq/pull/45) Minor bugfix with chromosome extraction
 
 ### `Dependencies`
