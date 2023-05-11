@@ -5,7 +5,7 @@ process CHECK_IF_PAIRED_END {
     conda "bioconda::samtools=1.17"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/samtools:1.17--h00cdaf9_0' :
-        'quay.io/biocontainers/samtools:1.17--h00cdaf9_0' }"
+        'biocontainers/samtools:1.17--h00cdaf9_0' }"
 
     input:
     tuple val(meta), path(input), path(index)
@@ -27,7 +27,7 @@ process CHECK_IF_PAIRED_END {
     if [ \$({ samtools view -H $reference $input -@$task.cpus ; samtools view $reference $input -@$task.cpus | head -n1000; } | samtools view $reference -c -f 1 -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then
         echo 1 > ${prefix}.paired.txt
     else
-        echo 0 > ${prefix}.single.txt
+        echo 1 > ${prefix}.single.txt
     fi
 
     cat <<-END_VERSIONS > versions.yml
