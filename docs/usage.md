@@ -68,9 +68,9 @@ nextflow run nf-core/bamtofastq -profile docker -params-file params.yaml
 with `params.yaml` containing:
 
 ```yaml
-input: './samplesheet.csv'
+input:  './samplesheet.csv'
 outdir: './results/'
-fasta: './reference.fasta'
+fasta:  './reference.fasta'
 <...>
 ```
 

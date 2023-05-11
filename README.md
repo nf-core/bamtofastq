@@ -12,7 +12,7 @@
 
 ## Introduction
 
-**nf-core/bamtofastq** is a bioinformatics best-practice analysis pipeline that converts (un)mapped `.bam` files (or `.cram` files with the `--cram_files` option) into `fq.gz` files. Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam/cram files it is possible to only convert reads mapping to a specific region or chromosome. The obtained FastQ files can then be used to further process with other pipelines.
+**nf-core/bamtofastq** is a bioinformatics best-practice analysis pipeline that converts (un)mapped `.bam` files or `.cram` files into `fq.gz` files. Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam/cram files it is possible to only convert reads mapping to a specific region or chromosome. The obtained FastQ files can then be used to further process with other pipelines.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
@@ -22,8 +22,8 @@ On release, automated continuous integration tests run the pipeline on a full-si
 
 By default, the pipeline currently performs the following steps:
 
-1. Quality control (QC) of input (bam) files ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
-2. Check if input files are single or paired-end ([`Samtools`](https://www.htslib.org/)).
+1. Quality control (QC) of input (bam/cram) files ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
+2. Check if input files are single- or paired-end ([`Samtools`](https://www.htslib.org/)).
 3. Compute statistics on input files ([`Samtools`](https://www.htslib.org/)).
 4. Convert to fastq reads ([`Samtools`](https://www.htslib.org/)).
 5. QC of converted fastq reads ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
@@ -43,7 +43,7 @@ By default, the pipeline currently performs the following steps:
 Download the pipeline and test it on a minimal dataset with a single command:
 
 ```bash
-nextflow run nf-core/bamtofastq -profile test,<docker/singularity/.../institute>
+nextflow run nf-core/bamtofastq -profile test,<docker/singularity/.../institute> --outdir './results'
 ```
 
 To run your own analysis, start by preparing a samplesheet with your input data that looks as follows:
