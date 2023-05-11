@@ -27,7 +27,7 @@ process CHECK_IF_PAIRED_END {
     if [ \$({ samtools view -H $reference $input -@$task.cpus ; samtools view $reference $input -@$task.cpus | head -n1000; } | samtools view $reference -c -f 1 -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then
         echo 1 > ${prefix}.paired.txt
     else
-        echo 0 > ${prefix}.single.txt
+        echo 1 > ${prefix}.single.txt
     fi
 
     cat <<-END_VERSIONS > versions.yml
