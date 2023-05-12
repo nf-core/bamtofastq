@@ -9,7 +9,7 @@ process CHECK_IF_PAIRED_END {
 
     input:
     tuple val(meta), path(input), path(index)
-    path fasta
+    path (fasta)
 
     output:
     tuple val(meta), path("*single.txt"),   emit: single_end, optional: true
