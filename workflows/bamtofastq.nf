@@ -24,11 +24,11 @@ if (params.input) { ch_input = extract_csv(file(params.input, checkIfExists: tru
 
 
 // Initialize file channels based on params
-fasta              = params.fasta              ? Channel.fromPath(params.fasta).collect()                    : Channel.value([])
-fasta_fai          = params.fasta_fai          ? Channel.fromPath(params.fasta_fai).collect()                : Channel.value([])
+fasta       = params.fasta      ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
+fasta_fai   = params.fasta_fai  ? Channel.fromPath(params.fasta_fai).collect()  : Channel.value([])
 
 // Initialize value channels based on params
-chr                     = params.chr           ?: Channel.empty()
+chr         = params.chr        ?: Channel.empty()
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,22 +63,22 @@ include { CHECK_IF_PAIRED_END                  } from '../modules/local/check_pa
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC  as  FASTQC_POST_CONVERSION   } from '../modules/nf-core/fastqc/main'
-include { SAMTOOLS_VIEW as SAMTOOLS_CHR        } from '../modules/nf-core/samtools/view/main'
-include { SAMTOOLS_VIEW as SAMTOOLS_PE         } from '../modules/nf-core/samtools/view/main'
-include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX } from '../modules/nf-core/samtools/index/main'
+include { FASTQC  as  FASTQC_POST_CONVERSION                        } from '../modules/nf-core/fastqc/main'
+include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view/main'
+include { SAMTOOLS_VIEW as SAMTOOLS_PE                              } from '../modules/nf-core/samtools/view/main'
+include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq/main'
 
-include { MULTIQC                       } from '../modules/nf-core/multiqc/main'
-include { CUSTOM_DUMPSOFTWAREVERSIONS   } from '../modules/nf-core/custom/dumpsoftwareversions/main'
+include { MULTIQC                                                   } from '../modules/nf-core/multiqc/main'
+include { CUSTOM_DUMPSOFTWAREVERSIONS                               } from '../modules/nf-core/custom/dumpsoftwareversions/main'
 
 //
 // SUBWORKFLOWS: Installed directly from subworkflows/local
 //
 
-include { PREPARE_INDICES             } from '../subworkflows/local/prepare_indices'
-include { PRE_CONVERSION_QC           } from '../subworkflows/local/pre_conversion_qc'
-include { ALIGNMENT_TO_FASTQ          } from '../subworkflows/local/alignment_to_fastq'
+include { PREPARE_INDICES                                           } from '../subworkflows/local/prepare_indices'
+include { PRE_CONVERSION_QC                                         } from '../subworkflows/local/pre_conversion_qc'
+include { ALIGNMENT_TO_FASTQ                                        } from '../subworkflows/local/alignment_to_fastq'
 
 
 /*
@@ -129,7 +129,8 @@ workflow BAMTOFASTQ {
             single_end : true ],
             bam,
             bai
-            ] }.mix(ch_paired_end.map{ meta, bam, bai, txt ->
+            ] }
+        .mix(ch_paired_end.map{ meta, bam, bai, txt ->
             [ [ id : meta.id,
             filetype : meta.filetype,
             single_end : false ],

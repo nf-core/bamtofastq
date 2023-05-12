@@ -16,6 +16,7 @@ Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.
 
 ### `Changed`
 
+- [#55](https://github.com/nf-core/bamtofastq/pull/55) Code review suggestions & formatting
 - [#54](https://github.com/nf-core/bamtofastq/pull/54) Code review changes
 - [#53](https://github.com/nf-core/bamtofastq/pull/53) Code review & updated modules
 - [#52](https://github.com/nf-core/bamtofastq/pull/52) Code review changed resources in configs
