@@ -29,7 +29,14 @@ Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.
 
 ### `Dependencies`
 
+| Dependency | Old version | New version |
+| ---------- | ----------- | ----------- |
+| `multiqc`  | 1.9         | 1.14        |
+| `samtools` | 1.10        | 1.17        |
+
 ### `Deprecated`
+
+- Option `--cram_files` not needed anymore due to automatic format detection.
 
 ## v1.2.0 - Anna Winlock
 
