@@ -28,7 +28,7 @@ fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : C
 fasta_fai = params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect()  : Channel.value([])
 
 // Initialize value channels based on params
-chr       = params.chr       ? : Channel.empty()
+chr       = params.chr       ?: Channel.empty()
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
