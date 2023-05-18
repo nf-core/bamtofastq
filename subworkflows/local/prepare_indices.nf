@@ -32,12 +32,12 @@ workflow PREPARE_INDICES {
 
     // INDEX BAM/CRAM only if not provided
     SAMTOOLS_INDEX(input_to_index)
-    ch_versions     = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
-    ch_index_files  = Channel.empty().mix(SAMTOOLS_INDEX.out.bai, SAMTOOLS_INDEX.out.crai)
+    ch_versions    = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
+    ch_index_files = Channel.empty().mix(SAMTOOLS_INDEX.out.bai, SAMTOOLS_INDEX.out.crai)
 
     // Combine channels
-    ch_new          = input_to_index.join(ch_index_files)
-    ch_out          = samtools_input.is_indexed.mix(ch_new)
+    ch_new = input_to_index.join(ch_index_files)
+    ch_out = samtools_input.is_indexed.mix(ch_new)
 
 
     // INDEX FASTA
@@ -51,7 +51,7 @@ workflow PREPARE_INDICES {
 
     // Gather versions of all tools used
     emit:
-    ch_input_indexed    = ch_out
-    fasta_fai           = fasta_fai
-    versions            = ch_versions
+    ch_input_indexed = ch_out
+    fasta_fai        = fasta_fai
+    versions         = ch_versions
 }

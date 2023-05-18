@@ -84,7 +84,6 @@ We thank the following people for their extensive assistance in the development 
 
 - [Gisela Gabernet](https://github.com/ggabernet)
 - [Matilda Åslin](https://github.com/matrulda)
-- [Susanne Jodoin](https://github.com/SusiJo)
 - [Bruno Grande](https://github.com/BrunoGrandePhd)
 
 ### Resources
