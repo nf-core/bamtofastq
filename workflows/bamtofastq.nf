@@ -24,11 +24,11 @@ if (params.input) { ch_input = extract_csv(file(params.input, checkIfExists: tru
 
 
 // Initialize file channels based on params
-fasta       = params.fasta      ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
-fasta_fai   = params.fasta_fai  ? Channel.fromPath(params.fasta_fai).collect()  : Channel.value([])
+fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
+fasta_fai = params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect()  : Channel.value([])
 
 // Initialize value channels based on params
-chr         = params.chr        ?: Channel.empty()
+chr       = params.chr       ?: Channel.empty()
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -52,7 +52,7 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CHECK_IF_PAIRED_END                  } from '../modules/local/check_paired_end'
+include { CHECK_IF_PAIRED_END                                       } from '../modules/local/check_paired_end'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

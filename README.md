@@ -12,7 +12,7 @@
 
 ## Introduction
 
-**nf-core/bamtofastq** is a bioinformatics best-practice analysis pipeline that converts (un)mapped `.bam` files or `.cram` files into `fq.gz` files. Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam/cram files it is possible to only convert reads mapping to a specific region or chromosome. The obtained FastQ files can then be used to further process with other pipelines.
+**nf-core/bamtofastq** is a bioinformatics best-practice analysis pipeline that converts (un)mapped `.bam` or `.cram` files into `fq.gz` files. Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam/cram files it is possible to only convert reads mapping to a specific region or chromosome. The obtained FastQ files can then be used to further process with other pipelines.
 
 The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
@@ -84,7 +84,6 @@ We thank the following people for their extensive assistance in the development 
 
 - [Gisela Gabernet](https://github.com/ggabernet)
 - [Matilda Åslin](https://github.com/matrulda)
-- [Susanne Jodoin](https://github.com/SusiJo)
 - [Bruno Grande](https://github.com/BrunoGrandePhd)
 
 ### Resources
