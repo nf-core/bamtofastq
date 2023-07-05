@@ -11,3 +11,5 @@ report_section_order:
     order: -1002
 
 export_plots: true
+
+fn_clean_sample_names: false
