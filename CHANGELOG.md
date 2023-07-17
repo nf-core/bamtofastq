@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- [#61](https://github.com/nf-core/bamtofastq/pull/61) Sync TEMPLATE with tools 2.9
+
 ### `Changed`
 
 ### `Fixed`
