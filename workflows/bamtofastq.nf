@@ -15,18 +15,8 @@ log.info logo + paramsSummaryLog(workflow) + citation
 
 WorkflowBamtofastq.initialise(params, log)
 
-// Check input path parameters to see if they exist
-def checkPathParamList = [
-    params.fasta,
-    params.fasta_fai,
-    params.input,
-    params.multiqc_config
-    ]
-
-for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
-
 // Check mandatory parameters
-if (params.input) { ch_input = extract_csv(file(params.input, checkIfExists: true)) } else { exit 1, 'Input samplesheet not specified!' }
+ch_input = extract_csv(file(params.input))
 
 
 // Initialize file channels based on params
@@ -43,9 +33,9 @@ chr       = params.chr       ?: Channel.empty()
 */
 
 ch_multiqc_config          = Channel.fromPath("$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-ch_multiqc_custom_config   = params.multiqc_config ? Channel.fromPath( params.multiqc_config, checkIfExists: true ) : Channel.empty()
-ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo, checkIfExists: true ) : Channel.empty()
-ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
+ch_multiqc_custom_config   = params.multiqc_config ? Channel.fromPath( params.multiqc_config ) : Channel.empty()
+ch_multiqc_logo            = params.multiqc_logo   ? Channel.fromPath( params.multiqc_logo ) : Channel.empty()
+ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
