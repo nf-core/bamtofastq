@@ -4,7 +4,7 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { paramsSummaryLog; paramsSummaryMap } from 'plugin/nf-validation'
+include { paramsSummaryLog; paramsSummaryMap; fromSamplesheet } from 'plugin/nf-validation'
 
 def logo = NfcoreTemplate.logo(workflow, params.monochrome_logs)
 def citation = '\n' + WorkflowMain.citation(workflow) + '\n'
@@ -16,8 +16,18 @@ log.info logo + paramsSummaryLog(workflow) + citation
 WorkflowBamtofastq.initialise(params, log)
 
 // Check mandatory parameters
-ch_input = extract_csv(file(params.input))
+ch_input = Channel.fromSamplesheet("input")
+            .map{ meta, mapped, index ->
 
+            if (meta.filetype != mapped.getExtension().toString()) {
+                error('The file extension does not fit the specified file_type.\n' + mapped.toString() )
+            }
+
+            meta.index  = index ? true : false
+
+            return [meta, mapped, index]
+
+            }
 
 // Initialize file channels based on params
 fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
@@ -255,50 +265,6 @@ workflow.onComplete {
     FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-// Function to extract information (meta data + file(s)) from csv file(s)
-def extract_csv(csv_file) {
-
-    // check that the sample sheet is not 1 line or less, because it'll skip all subsequent checks if so.
-    file(csv_file).withReader('UTF-8') { reader ->
-        def line, numberOfLinesInSampleSheet = 0;
-        while ((line = reader.readLine()) != null) {numberOfLinesInSampleSheet++}
-        if (numberOfLinesInSampleSheet < 2) {
-            error("Samplesheet had less than two lines. The sample sheet must be a csv file with a header, so at least two lines.")
-        }
-    }
-    Channel.from(csv_file).splitCsv(header: true)
-        .map{ row ->
-            if ( !row.sample_id ) {  // This also handles the case where the lane is left as an empty string
-                error('The sample sheet should specify a sample_id for each row.\n' + row.toString())
-            }
-            if ( !row.mapped ) {  // This also handles the case where the lane is left as an empty string
-                error('The sample sheet should specify a mapped file for each row.\n' + row.toString())
-            }
-            if (!row.file_type) {  // This also handles the case where the lane is left as an empty string
-                error('The sample sheet should specify a file_type for each row, valid values are bam/cram.\n' + row.toString())
-            }
-            if (!(row.file_type == "bam" || row.file_type == "cram")) {
-                error('The file_type for the row below is neither "bam" nor "cram". Please correct this.\n' + row.toString() )
-            }
-            if (row.file_type != file(row.mapped).getExtension().toString()) {
-                error('The file extension does not fit the specified file_type.\n' + row.toString() )
-            }
-
-
-            // init meta map
-            def meta = [:]
-
-            meta.id       = "${row.sample_id}".toString()
-            def mapped    = file(row.mapped, checkIfExists: true)
-            def index     = row.index ? file(row.index, checkIfExists: true) : []
-            meta.filetype = "${row.file_type}".toString()
-            meta.index    = row.index ? true : false
-
-            return [meta, mapped, index]
-
-            }
-
-}
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
