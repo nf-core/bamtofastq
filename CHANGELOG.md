@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Changed`
 
+- [#63](https://github.com/nf-core/bamtofastq/pull/63) Replace extract_csv with nf-validation plugin
+
 ### `Fixed`
 
 - [#62](https://github.com/nf-core/bamtofastq/pull/62) Adjust subway map for dark mode.

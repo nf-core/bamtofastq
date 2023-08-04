@@ -7,30 +7,33 @@
     "items": {
         "type": "object",
         "properties": {
-            "sample": {
+            "sample_id": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces"
+                "errorMessage": "The sample sheet should specify a sample_id for each row which cannot contain spaces.",
+                "meta": ["id"]
             },
-            "fastq_1": {
+            "mapped": {
                 "type": "string",
-                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.(bam|cram)$",
+                "errorMessage": "The sample sheet should specify a mapped file for each row, either '.bam' or '.cram'"
             },
-            "fastq_2": {
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
-                "anyOf": [
-                    {
-                        "type": "string",
-                        "pattern": "^\\S+\\.f(ast)?q\\.gz$"
-                    },
-                    {
-                        "type": "string",
-                        "maxLength": 0
-                    }
-                ]
+            "index": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.(bai|crai)$",
+                "errorMessage": "Index files can be provided but must have the extension '.bai' or '.crai'"
+            },
+            "file_type": {
+                "type": "string",
+                "errorMessage": "Input filetypes must either be 'bam' or 'cram'",
+                "meta": ["filetype"],
+                "enums": ["bam", "cram"]
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["sample_id", "mapped", "file_type"]
     }
 }
