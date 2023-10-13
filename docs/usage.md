@@ -18,7 +18,7 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many additional columns as you desire, however, the samplesheet must include the required columns listed in the table below (`sample`, `mapped`, `filetype`). If index files are not available, the `index` column should be omitted. In this case, the files will be automatically indexed during the pipeline run. This can have an effect on the runtime.
+The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many additional columns as you desire, however, the samplesheet must include the required columns listed in the table below (`sample_id`, `mapped`, `file_type`). If index files are not available, the `index` column should be omitted. In this case, the files will be automatically indexed during the pipeline run. This can have an effect on the runtime.
 
 ```console
 sample_id,mapped,index,file_type
@@ -28,10 +28,10 @@ test2,test2.cram,test2.cram.crai,cram
 
 | Column     | Description                                                                                                       | Required? |
 | ---------- | ----------------------------------------------------------------------------------------------------------------- | --------- |
-| `sample`   | Custom sample name.                                                                                               | Yes       |
+| `sample_id`   | Custom sample name.                                                                                               | Yes       |
 | `mapped`   | Absolute path to input BAM/CRAM file. Allowed file extensions: ".bam" or ".cram".                                 | Yes       |
 | `index`    | If available, provide full path to input BAI/CRAI index file. File extensions must be ".bam.bai" or ".cram.crai". | No        |
-| `filetype` | Type of input file. Options: "bam" or "cram".                                                                     | Yes       |
+| `file_type` | Type of input file. Options: "bam" or "cram".                                                                     | Yes       |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
