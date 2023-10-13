@@ -18,7 +18,7 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many additional columns as you desire, however, the samplesheet must include the required columns listed in the table below (`sample`, `mapped`, `filetype`). If index files are not available, the `index` column should be omitted. In this case, the files will be automatically indexed during the pipeline run. This can have an effect on the runtime. 
+The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many additional columns as you desire, however, the samplesheet must include the required columns listed in the table below (`sample`, `mapped`, `filetype`). If index files are not available, the `index` column should be omitted. In this case, the files will be automatically indexed during the pipeline run. This can have an effect on the runtime.
 
 ```console
 sample_id,mapped,index,file_type
