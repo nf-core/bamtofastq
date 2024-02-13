@@ -11,6 +11,7 @@ workflow PRE_CONVERSION_QC {
     take:
     input // channel: [meta, alignment (BAM or CRAM), index (optional)]
     fasta // optional: reference file if CRAM format and reference not in header
+    fasta_fai // optional: index for fasta
 
     main:
 
@@ -23,7 +24,7 @@ workflow PRE_CONVERSION_QC {
     SAMTOOLS_FLAGSTAT(input)
 
     // SAMTOOLS STATS
-    SAMTOOLS_STATS(input, fasta)
+    SAMTOOLS_STATS(input, fasta, fasta_fai)
 
     // FASTQC ONLY ON BAM
     input.branch{

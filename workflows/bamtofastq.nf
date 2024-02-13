@@ -111,7 +111,8 @@ workflow BAMTOFASTQ {
 
     PRE_CONVERSION_QC(
         ch_input,
-        fasta
+        fasta,
+        fasta_fai
     )
 
     ch_versions = ch_versions.mix(PRE_CONVERSION_QC.out.versions)
