@@ -1,4 +1,9 @@
-# ![nf-core/bamtofastq](docs/images/nf-core-bamtofastq_logo_light.png#gh-light-mode-only) ![nf-core/bamtofastq](docs/images/nf-core-bamtofastq_logo_dark.png#gh-dark-mode-only)
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/nf-core-bamtofastq_logo_dark.png">
+    <img alt="nf-core/bamtofastq" src="docs/images/nf-core-bamtofastq_logo_light.png">
+  </picture>
+</h1>
 
 [![GitHub Actions CI Status](https://github.com/nf-core/bamtofastq/workflows/nf-core%20CI/badge.svg)](https://github.com/nf-core/bamtofastq/actions?query=workflow%3A%22nf-core+CI%22)
 [![GitHub Actions Linting Status](https://github.com/nf-core/bamtofastq/workflows/nf-core%20linting/badge.svg)](https://github.com/nf-core/bamtofastq/actions?query=workflow%3A%22nf-core+linting%22)
@@ -38,11 +43,8 @@ By default, the pipeline currently performs the following steps:
 
 ## Usage
 
-:::note
-If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how
-to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline)
-with `-profile test` before running the workflow on actual data.
-:::
+> [!NOTE]
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
 Download the pipeline and test it on a minimal dataset with a single command:
 
@@ -71,11 +73,9 @@ nextflow run nf-core/bamtofastq \
    --outdir <OUTDIR>
 ```
 
-:::warning
-Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those
-provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
-see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
-:::
+> [!WARNING]
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
+> see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/bamtofastq/usage) and the [parameter documentation](https://nf-co.re/bamtofastq/parameters).
 
