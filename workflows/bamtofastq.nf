@@ -103,7 +103,7 @@ workflow BAMTOFASTQ {
 
     ch_versions = ch_versions.mix(PREPARE_INDICES.out.versions)
 
-    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : []
+    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : Channel.value([])
 
     ch_input = PREPARE_INDICES.out.ch_input_indexed
 
@@ -111,8 +111,7 @@ workflow BAMTOFASTQ {
 
     PRE_CONVERSION_QC(
         ch_input,
-        fasta,
-        fasta_fai
+        fasta
     )
 
     ch_versions = ch_versions.mix(PRE_CONVERSION_QC.out.versions)
@@ -146,7 +145,7 @@ workflow BAMTOFASTQ {
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input_new, fasta, [])
+        SAMTOOLS_CHR(ch_input_new, fasta.map{ it -> [[:], it] }, [])
 
         samtools_chr_out = Channel.empty().mix( SAMTOOLS_CHR.out.bam,
                                                 SAMTOOLS_CHR.out.cram)
