@@ -24,7 +24,13 @@ process CHECK_IF_PAIRED_END {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def reference = meta.filetype == "cram" ? "--reference ${fasta}" : ""
     """
-    if [ \$({ samtools view -H $reference $input -@$task.cpus ; samtools view $reference $input -@$task.cpus | head -n1000; } | samtools view $reference -c -f 1 -@$task.cpus | awk '{print \$1/1000}') = "1" ]; then
+    if [ "\$( samtools view $reference $input -@$task.cpus | head -n1000 | wc -l)" -lt "1000" ]; then
+        LINES_TO_CHK=\$( samtools view $reference $input -@$task.cpus | wc -l)
+    else
+        LINES_TO_CHK=1000
+    fi
+
+    if [ \$({ samtools view -H $reference $input -@$task.cpus ; samtools view $reference $input -@$task.cpus | head -n\$LINES_TO_CHK; } | samtools view $reference -c -f 1 -@$task.cpus | awk -v lines=\$LINES_TO_CHK '{print \$1/lines}') = "1" ]; then
         echo 1 > ${prefix}.paired.txt
     else
         echo 1 > ${prefix}.single.txt
