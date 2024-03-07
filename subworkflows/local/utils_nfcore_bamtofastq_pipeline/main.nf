@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the nf-core/pipeline pipeline
+// Subworkflow with functionality specific to the nf-core/bamtofastq pipeline
 //
 
 /*
@@ -147,7 +147,7 @@ workflow PIPELINE_COMPLETION {
 //
 def validateInputParameters() {
     genomeExistsError()
-}//
+}
 
 //
 // Get attribute from genome config file e.g. fasta
@@ -173,7 +173,9 @@ def genomeExistsError() {
             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         error(error_string)
     }
-}//
+}
+
+//
 // Generate methods description for MultiQC
 //
 def toolCitationText() {
