@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#73](https://github.com/nf-core/bamtofastq/pull/73) Sync TEMPLATE with tools 2.12
 
+### `Fixed`
+
+- [#77](https://github.com/nf-core/bamtofastq/pull/77) Fix detection of paired-end or single-end for input with less than 1000 reads.
+
 ## v2.1.0 - Grace Hopper
 
 ### `Added`
