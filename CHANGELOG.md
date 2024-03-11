@@ -9,9 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#73](https://github.com/nf-core/bamtofastq/pull/73) Sync TEMPLATE with tools 2.12
 
+### `Changed`
+
+- [#74](https://github.com/nf-core/bamtofastq/pull/74) Update to samtools to v1.19.2.
+- [#76](https://github.com/nf-core/bamtofastq/pull/76) Update modules cat/fastq and samtools/view.
+
 ### `Fixed`
 
 - [#77](https://github.com/nf-core/bamtofastq/pull/77) Fix detection of paired-end or single-end for input with less than 1000 reads.
+
+### `Dependencies`
+
+| Dependency | Old version | New version |
+| ---------- | ----------- | ----------- |
+| Samtools   | 1.17        | 1.19.2      |
+| MultiQC    | 1.15        | 1.21        |
 
 ## v2.1.0 - Grace Hopper
 
