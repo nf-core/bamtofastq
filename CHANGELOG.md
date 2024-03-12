@@ -8,15 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added`
 
 - [#73](https://github.com/nf-core/bamtofastq/pull/73) Sync TEMPLATE with tools 2.12
+- [#75](https://github.com/nf-core/bamtofastq/pull/75), [#78](https://github.com/nf-core/bamtofastq/pull/78) Sync TEMPLATE with tools 2.13
+- [#80](https://github.com/nf-core/bamtofastq/pull/80) Sync TEMPLATE with tools 2.13.1
 
 ### `Changed`
 
-- [#74](https://github.com/nf-core/bamtofastq/pull/74) Update to samtools to v1.19.2.
-- [#76](https://github.com/nf-core/bamtofastq/pull/76) Update modules cat/fastq and samtools/view.
+- [#74](https://github.com/nf-core/bamtofastq/pull/74) Update to samtools to v1.19.2
+- [#76](https://github.com/nf-core/bamtofastq/pull/76) Update modules cat/fastq and samtools/view
 
 ### `Fixed`
 
-- [#77](https://github.com/nf-core/bamtofastq/pull/77) Fix detection of paired-end or single-end for input with less than 1000 reads.
+- [#77](https://github.com/nf-core/bamtofastq/pull/77) Fix detection of paired-end or single-end for input with less than 1000 reads
+- [#81](https://github.com/nf-core/bamtofastq/pull/81) Add function `getGenomeAttribute` to `main.nf` and remove it from `subworkflows/local/utils_nfcore_bamtofastq_pipeline/main.nf`
 
 ### `Dependencies`
 
