@@ -18,7 +18,7 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below. If the index files are not available, the files will be automatically indexed during the pipeline run which can have an effect on the runtime.
+The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many additional columns as you desire, however, the samplesheet must include the required columns listed in the table below (`sample_id`, `mapped`, `file_type`). If index files are not available, the `index` column should be omitted. In this case, the files will be automatically indexed during the pipeline run. This can have an effect on the runtime.
 
 ```console
 sample_id,mapped,index,file_type
@@ -26,12 +26,12 @@ test1,test1.cram,test1.cram.crai,cram
 test2,test2.cram,test2.cram.crai,cram
 ```
 
-| Column     | Description                                                                                                       |
-| ---------- | ----------------------------------------------------------------------------------------------------------------- |
-| `sample`   | Custom sample name.                                                                                               |
-| `mapped`   | Absolute path to input BAM/CRAM file. Allowed file extensions: ".bam" or ".cram".                                 |
-| `index`    | If available, provide full path to input BAI/CRAI index file. File extensions must be ".bam.bai" or ".cram.crai". |
-| `filetype` | Type of input file. Options: "bam" or "cram".                                                                     |
+| Column      | Description                                                                                                       | Required? |
+| ----------- | ----------------------------------------------------------------------------------------------------------------- | --------- |
+| `sample_id` | Custom sample name.                                                                                               | Yes       |
+| `mapped`    | Absolute path to input BAM/CRAM file. Allowed file extensions: ".bam" or ".cram".                                 | Yes       |
+| `index`     | If available, provide full path to input BAI/CRAI index file. File extensions must be ".bam.bai" or ".cram.crai". | No        |
+| `file_type` | Type of input file. Options: "bam" or "cram".                                                                     | Yes       |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
