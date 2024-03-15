@@ -31,7 +31,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamt
 //   This is an example of how to use getGenomeAttribute() to fetch parameters
 //   from igenomes.config using `--genome`
 params.fasta = getGenomeAttribute('fasta')
-// params.fasta_fai = getGenomeAttribute(params, 'fasta_fai')
+params.fasta_fai = getGenomeAttribute('fasta_fai')
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
