@@ -10,7 +10,6 @@ include { paramsSummaryMultiqc; softwareVersionsToYAML } from '../subworkflows/n
 
 // Initialize file channels based on params
 fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
-fasta_fai = params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect()  : Channel.value([])
 
 // Initialize value channels based on params
 chr       = params.chr       ?: Channel.empty()
@@ -72,12 +71,9 @@ workflow BAMTOFASTQ {
 
     ch_versions = ch_versions.mix(PREPARE_INDICES.out.versions)
 
-    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : Channel.value([])
-
-    ch_input = PREPARE_INDICES.out.ch_input_indexed
-
     // SUBWORKFLOW: Pre conversion QC and stats
 
+    ch_input = PREPARE_INDICES.out.ch_input_indexed
     PRE_CONVERSION_QC(
         ch_input,
         fasta
@@ -163,6 +159,7 @@ workflow BAMTOFASTQ {
     // SUBWORKFLOW: PAIRED-END Alignment to FastQ
     //
 
+    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : Channel.value([])
     ALIGNMENT_TO_FASTQ (
         conversion_input.ch_paired,
         fasta,
