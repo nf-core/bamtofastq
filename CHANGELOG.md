@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#74](https://github.com/nf-core/bamtofastq/pull/74) Update to samtools to v1.19.2
 - [#76](https://github.com/nf-core/bamtofastq/pull/76) Update modules cat/fastq and samtools/view
+- [#88](https://github.com/nf-core/bamtofastq/pull/88) Update subworkflow utils_nfcore_pipeline
 
 ### `Fixed`
 
