@@ -23,7 +23,7 @@ workflow PRE_CONVERSION_QC {
     SAMTOOLS_FLAGSTAT(input)
 
     // SAMTOOLS STATS
-    SAMTOOLS_STATS(input, fasta)
+    SAMTOOLS_STATS(input, fasta.map{ it -> [[:], it] })
 
     // FASTQC ONLY ON BAM
     input.branch{

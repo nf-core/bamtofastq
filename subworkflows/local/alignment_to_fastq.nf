@@ -23,16 +23,16 @@ workflow ALIGNMENT_TO_FASTQ {
     // Index File if not PROVIDED -> this also requires updates to samtools view possibly URGH
 
     // MAP - MAP
-    SAMTOOLS_VIEW_MAP_MAP(input, fasta, [])
+    SAMTOOLS_VIEW_MAP_MAP(input, fasta.map{ it -> [[:], it] }, [])
 
     // UNMAP - UNMAP
-    SAMTOOLS_VIEW_UNMAP_UNMAP(input, fasta, [])
+    SAMTOOLS_VIEW_UNMAP_UNMAP(input, fasta.map{ it -> [[:], it] }, [])
 
     // UNMAP - MAP
-    SAMTOOLS_VIEW_UNMAP_MAP(input, fasta, [])
+    SAMTOOLS_VIEW_UNMAP_MAP(input, fasta.map{ it -> [[:], it] }, [])
 
     // MAP - UNMAP
-    SAMTOOLS_VIEW_MAP_UNMAP(input, fasta, [])
+    SAMTOOLS_VIEW_MAP_UNMAP(input, fasta.map{ it -> [[:], it] }, [])
 
     // Channel for merging UNMAPPED BAM
     all_unmapped_bam = SAMTOOLS_VIEW_UNMAP_UNMAP.out.bam
@@ -54,7 +54,7 @@ workflow ALIGNMENT_TO_FASTQ {
     ch_unmapped_bam_cram = Channel.empty().mix(all_unmapped_bam,all_unmapped_cram)
 
     // MERGE UNMAP
-    SAMTOOLS_MERGE_UNMAP(ch_unmapped_bam_cram, fasta, fasta_fai)
+    SAMTOOLS_MERGE_UNMAP(ch_unmapped_bam_cram, fasta.map{ it -> [[:], it] }, fasta_fai.map{ it -> [[:], it] })
 
     def interleave = false
 
