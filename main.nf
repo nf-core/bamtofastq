@@ -27,7 +27,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamt
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-params.fasta = getGenomeAttribute('fasta')
+params.fasta     = getGenomeAttribute('fasta')
 params.fasta_fai = getGenomeAttribute('fasta_fai')
 
 /*
