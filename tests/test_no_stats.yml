@@ -1,0 +1,16 @@
+- name: Run test profile
+  command: nextflow run main.nf -profile test,docker --no_stats
+  tags:
+    - test
+    - no_stats
+  files:
+    - path: results/reads/test_1.merged.fastq.gz
+      md5sum: 15ab79e32e45138d29b6278f4c32a8ca
+    - path: results/reads/test2_1.merged.fastq.gz
+      md5sum: d0fd4034e5f07590b0944e3cf24cff60
+    - path: results/reads/test2_2.merged.fastq.gz
+      md5sum: bcb8df2cda7006efb30bbf2c8830e761
+    - path: results/reads/test_2.merged.fastq.gz
+      md5sum: 2c2dbdf1a7584efb6861ad1ac5efbb43
+    - path: results/fastqc
+    - path: results/multiqc

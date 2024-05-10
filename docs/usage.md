@@ -6,7 +6,7 @@
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+Bamtofastq is a workflow designed to convert one or multiple bam/cram files into fastq format.
 
 ## Samplesheet input
 
@@ -16,39 +16,22 @@ You will need to create a samplesheet with information about the samples you wou
 --input '[path to samplesheet file]'
 ```
 
-### Multiple runs of the same sample
-
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
-
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
-```
-
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+The pipeline will auto-detect whether a sample is single- or paired-end. The samplesheet can have as many additional columns as you desire, however, the samplesheet must include the required columns listed in the table below (`sample_id`, `mapped`, `file_type`). If index files are not available, the `index` column should be omitted. In this case, the files will be automatically indexed during the pipeline run. This can have an effect on the runtime.
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
-
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+```console
+sample_id,mapped,index,file_type
+test1,test1.cram,test1.cram.crai,cram
+test2,test2.cram,test2.cram.crai,cram
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+| Column      | Description                                                                                                       | Required? |
+| ----------- | ----------------------------------------------------------------------------------------------------------------- | --------- |
+| `sample_id` | Custom sample name.                                                                                               | Yes       |
+| `mapped`    | Absolute path to input BAM/CRAM file. Allowed file extensions: ".bam" or ".cram".                                 | Yes       |
+| `index`     | If available, provide full path to input BAI/CRAI index file. File extensions must be ".bam.bai" or ".cram.crai". | No        |
+| `file_type` | Type of input file. Options: "bam" or "cram".                                                                     | Yes       |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -57,7 +40,7 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run nf-core/bamtofastq --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run nf-core/bamtofastq --input ./samplesheet.csv --outdir ./results -profile docker
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -88,9 +71,9 @@ nextflow run nf-core/bamtofastq -profile docker -params-file params.yaml
 with `params.yaml` containing:
 
 ```yaml
-input: './samplesheet.csv'
+input:  './samplesheet.csv'
 outdir: './results/'
-genome: 'GRCh37'
+fasta:  './reference.fasta'
 <...>
 ```
 
@@ -159,7 +142,131 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `wave`
   - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
 - `conda`
-  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
+  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
+
+### `--input`
+
+Use this to specify the location of your input BAM/CRAM files. For example:
+
+```bash
+--input 'path/to/samplesheet.csv'
+```
+
+### `--fasta`
+
+When converting a CRAM file the fasta file specified in the CRAM header should be used to decompress the file. If that file is not available, you will need to specify an alternative path using the [`--fasta`](#--fasta) option.
+You can check which reference FASTA file should be used by inspecting the CRAM file with the following command:
+
+```bash
+samtools view -H path/to/sample.cram | grep '@SQ'.
+```
+
+To specify a reference genome FASTA you can follow the command below:
+
+```bash
+--input 'path/to/samplesheet.csv' --fasta 'ftp://ftp.broadinstitute.org/pub/seq/references/Homo_sapiens_assembly19.fasta'
+```
+
+### `--chr` (optional)
+
+Use to only obtain reads mapping to a specific chromosome or region.
+
+> It is important to specify the chromosome or region name **exactly** as set in the bam/cram file. Otherwise no reads may be extracted!
+
+For example:
+
+```bash
+--chr 'X chrX'
+```
+
+This extracts reads mapping to `X` as well as `chrX`.
+To check beforehand which chromosome notation is used in your bam/cram file you can use samtools.
+
+```bash
+samtools idxstats your_input.[bam|cram] | head -n 25
+```
+
+### `--no_read_QC` (optional)
+
+Use to skip `FastQC` on obtained reads. This is useful, when the reads are used as input in another pipeline, which runs `QC` on its input data as well.
+
+```bash
+--no_read_QC
+```
+
+### `--samtools_collate_fast` (optional)
+
+Use to specify the fast mode for the `samtools collate` command in the processes `COLLATE_FASTQ_MAP`, `COLLATE_FASTQ_UNMAP` and `SAMTOOLS_COLLATEFASTQ_SINGLE_END`. This option relies on the samtools command line flags `-f -r INT` and will output primary alignments only. For full documentation of this mode please refer to the [samtools documentation](http://www.htslib.org/doc/samtools-collate.html#OPTIONS).
+
+### `--reads_in_memory` (optional)
+
+Only relevant in combination with `--samtools_collate_fast`. It specifies how many alignment reads are kept in memory [default = '100000']. This is useful for speeding up the processes `COLLATE_FASTQ_MAP`, `COLLATE_FASTQ_UNMAP` and `SAMTOOLS_COLLATEFASTQ_SINGLE_END`.
+
+Example:
+
+```bash
+--samtools_collate_fast --reads_in_memory '1000000'
+```
+
+### `--no_stats` (optional)
+
+Use to skip `FastQC` on both input bam/cram and output reads, as well as all processes that compute statistics `samtools flagstat`, `samtools idxstats`, and `samtools stats`. This is useful for large datasets, since the quality metrics processes require a significant amount of time and resources.
+
+:exclamation: Use this at own risk. You won't be able to quickly sanity check the results.
+
+```bash
+--no_stats
+```
+
+## Job resources
+
+### Automatic resubmission
+
+Each step in the pipeline has a default set of requirements for number of CPUs, memory and time. For most of the steps in the pipeline, if the job exits with an error code of `143` (exceeded requested resources) it will automatically resubmit with higher requests (2 x original, then 3 x original). If it still fails after three times then the pipeline is stopped.
+
+### Custom resource requests
+
+Wherever process-specific requirements are set in the pipeline, the default value can be changed by creating a custom config file. See the files hosted at [`nf-core/configs`](https://github.com/nf-core/configs/tree/master/conf) for examples.
+
+If you are likely to be running `nf-core` pipelines regularly it may be a good idea to request that your custom config file is uploaded to the `nf-core/configs` git repository. Before you do this please can you test that the config file works with your pipeline of choice using the `-c` parameter (see definition below). You can then create a pull request to the `nf-core/configs` repository with the addition of your config file, associated documentation file (see examples in [`nf-core/configs/docs`](https://github.com/nf-core/configs/tree/master/docs)), and amending [`nfcore_custom.config`](https://github.com/nf-core/configs/blob/master/nfcore_custom.config) to include your custom profile.
+
+If you have any questions or issues please send us a message on [Slack](https://nf-co.re/join/slack/).
+
+## AWS Batch specific parameters
+
+Running the pipeline on AWS Batch requires a couple of specific parameters to be set according to your AWS Batch configuration. Please use the `-awsbatch` profile and then specify all of the following parameters.
+
+### `--awsqueue`
+
+The JobQueue that you intend to use on AWS Batch.
+
+### `--awsregion`
+
+The AWS region to run your job in. Default is set to `eu-west-1` but can be adjusted to your needs.
+
+Please make sure to also set the `-w/--work-dir` and `--outdir` parameters to a S3 storage bucket of your choice - you'll get an error message notifying you if you didn't.
+
+## Other command line parameters
+
+### `--outdir`
+
+The output directory where the results will be saved.
+
+### `--email`
+
+Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.
+
+### `--email_on_fail`
+
+This works exactly as with `--email`, except emails are only sent if the workflow is not successful.
+
+### `-name`
+
+Name for the pipeline run. If not specified, Nextflow will automatically generate a random mnemonic.
+
+This is used in the MultiQC report (if not default) and in the summary HTML / e-mail (always).
+
+**NB:** Single hyphen (core Nextflow option)
 
 ### `-resume`
 
