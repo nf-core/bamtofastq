@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Changed`
 
 - [#90](https://github.com/nf-core/bamtofastq/pull/90) - Sync TEMPLATE with tools 2.14.0
-- [#90](https://github.com/nf-core/bamtofastq/pull/90) - Sync TEMPLATE with tools 2.14.1
+- [#91](https://github.com/nf-core/bamtofastq/pull/91) - Sync TEMPLATE with tools 2.14.1
 
 ### `Fixed`
 
