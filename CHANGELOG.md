@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#90](https://github.com/nf-core/bamtofastq/pull/90) - Sync TEMPLATE with tools 2.14.0
 - [#91](https://github.com/nf-core/bamtofastq/pull/91) - Sync TEMPLATE with tools 2.14.1
-- [#93](https://github.com/nf-core/bamtofastq/pull/93) - Update to samtools to v1.19.2 in local module `CHECK_IF_PAIRED_END`
+- [#93](https://github.com/nf-core/bamtofastq/pull/93) - Updated samtools to v1.19.2 in local module `CHECK_IF_PAIRED_END`
 
 ### `Fixed`
 
@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Changed`
 
-- [#74](https://github.com/nf-core/bamtofastq/pull/74) Update to samtools to v1.19.2
+- [#74](https://github.com/nf-core/bamtofastq/pull/74) Updated samtools to v1.19.2
 - [#76](https://github.com/nf-core/bamtofastq/pull/76) Update modules cat/fastq and samtools/view
 - [#88](https://github.com/nf-core/bamtofastq/pull/88) Update subworkflow utils_nfcore_pipeline
 
