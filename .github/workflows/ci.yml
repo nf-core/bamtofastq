@@ -40,12 +40,12 @@ jobs:
           - "conda"
           - "docker"
           - "singularity"
-        shouldRelease:
-          - if: ${{ github.base_ref == 'master' }}
+        isMaster:
+          - ${{ github.base_ref == 'master' }}
         exclude:
-          - shouldRelease: false
+          - shouldRelease: "false"
             engine: "conda"
-          - shouldRelease: false
+          - shouldRelease: "false"
             engine: "singularity"
     steps:
       - name: Check out pipeline code
