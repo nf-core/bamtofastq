@@ -152,7 +152,6 @@ def validateInputParameters() {
 }
 
 //
-<<<<<<< HEAD
 // Validate channels from input samplesheet
 //
 def validateInputSamplesheet(input) {
@@ -166,21 +165,8 @@ def validateInputSamplesheet(input) {
 
     return [ metas[0], fastqs ]
 }
-//
-// Get attribute from genome config file e.g. fasta
-//
-def getGenomeAttribute(attribute) {
-    if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
-        if (params.genomes[ params.genome ].containsKey(attribute)) {
-            return params.genomes[ params.genome ][ attribute ]
-        }
-    }
-    return null
-}
 
 //
-=======
->>>>>>> dev
 // Exit pipeline if incorrect --genome key provided
 //
 def genomeExistsError() {
