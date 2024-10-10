@@ -11,6 +11,8 @@ template:
   name: bamtofastq
   org: nf-core
   outdir: .
-  skip_features: null
+  skip_features:
+    - multiqc
+    - fastqc
   version: 2.1.2dev
 update: null
