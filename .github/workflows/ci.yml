@@ -41,7 +41,7 @@ jobs:
           - "docker"
           - "singularity"
         shouldRelease:
-          - if: "!${{ github.base_ref == 'master' }}"
+          - if: ${{ github.base_ref == 'master' }}
         exclude:
           - shouldRelease: false
             engine: "conda"
