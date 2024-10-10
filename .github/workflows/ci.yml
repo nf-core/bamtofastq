@@ -28,6 +28,10 @@ jobs:
           - "24.04.2"
           - "latest-everything"
         profile:
+          - "conda"
+          - "docker"
+          - "singularity"
+        test:
           - "test"
           - "test_cram"
           - "test_chr"
@@ -36,17 +40,13 @@ jobs:
           - "test_no_stats"
           - "test_no_qc"
           - "test_collate_fast"
-        engine:
-          - "conda"
-          - "docker"
-          - "singularity"
         isMaster:
           - ${{ github.base_ref == 'master' }}
         exclude:
-          - isMaster: "false"
-            engine: "conda"
-          - isMaster: "false"
-            engine: "singularity"
+          - isMaster: false
+            profile: "conda"
+          - isMaster: false
+            profile: "singularity"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4
@@ -59,6 +59,6 @@ jobs:
       - name: Disk space cleanup
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
 
-      - name: " Run pipeline with test data ${{ matrix.NXF_VER }} | ${{ matrix.profile }} | ${{ matrix.engine }}"
+      - name: " Run pipeline with test data ${{ matrix.NXF_VER }} | ${{ matrix.test }} | ${{ matrix.profile }}"
         run: |
-          nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.profile }},${{ matrix.engine }} --outdir ./results
+          nextflow run ${GITHUB_WORKSPACE} -profile ${{ matrix.test }},${{ matrix.profile }} --outdir ./results
