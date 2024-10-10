@@ -43,9 +43,9 @@ jobs:
         isMaster:
           - ${{ github.base_ref == 'master' }}
         exclude:
-          - shouldRelease: "false"
+          - isMaster: "false"
             engine: "conda"
-          - shouldRelease: "false"
+          - isMaster: "false"
             engine: "singularity"
     steps:
       - name: Check out pipeline code
