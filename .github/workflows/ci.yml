@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   test:
-    name: Run pipeline with test data
+    name: "Run pipeline with test data ${{ matrix.NXF_VER }} | ${{ matrix.test }} | ${{ matrix.profile }}"
     # Only run on push if this is the nf-core dev branch (merged PRs)
     if: "${{ github.event_name != 'push' || (github.event_name == 'push' && github.repository == 'nf-core/bamtofastq') }}"
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
           - "test_no_qc"
           - "test_collate_fast"
         isMaster:
-          - ${{ github.base_ref == 'master' }}
+          - ${{ github.ref == 'refs/heads/master' }}
         exclude:
           - isMaster: false
             profile: "conda"
