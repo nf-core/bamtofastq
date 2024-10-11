@@ -50,6 +50,8 @@ workflow NFCORE_BAMTOFASTQ {
     BAMTOFASTQ (
         samplesheet
     )
+    emit:
+    multiqc_report = BAMTOFASTQ.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -87,7 +89,8 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url
+        params.hook_url,
+        NFCORE_BAMTOFASTQ.out.multiqc_report
     )
 }
 
