@@ -5,6 +5,7 @@
 */
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
+include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
