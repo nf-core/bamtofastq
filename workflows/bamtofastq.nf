@@ -5,7 +5,7 @@
 */
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
-
+include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
 // Initialize file channels based on params
