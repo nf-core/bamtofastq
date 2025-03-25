@@ -123,3 +123,8 @@ Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.
 ## v1.0.0 - Ada Lovelace
 
 Initial release of qbic-pipelines/bamtofastq, created with the [nf-core](http://nf-co.re/) template.
+
+## v1.0.0 - Adolf Mukama
+- updated schema from nf-validation to nf-schema.
+- changed draft from draft-07 to draft-2020-12
+- changed the fromSamplesheet channel factory to the samplesheetToList function
