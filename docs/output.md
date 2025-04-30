@@ -20,10 +20,11 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <details markdown="1">
 <summary>Output files</summary>
 
-- `*.pre_conversion_fastqc.html`: FastQC report containing quality metrics before of input BAM files (Not available for CRAM input).
-- `*.pre_conversion_fastqc.zip`: Zip archive containing the FastQC report of the input BAM file, tab-delimited data file and plot images.
-- `*.post_conversion_fastqc.html`: FastQC report containing quality metrics before of converted fastq reads.
-- `*.post_conversion_fastqc.zip`: Zip archive containing the FastQC report of the converted fastq reads, tab-delimited data file and plot images.
+- `fastqc/`
+  - `*.pre_conversion_fastqc.html`: FastQC report containing quality metrics before of input BAM files (Not available for CRAM input).
+  - `*.pre_conversion_fastqc.zip`: Zip archive containing the FastQC report of the input BAM file, tab-delimited data file and plot images.
+  - `*.post_conversion_fastqc.html`: FastQC report containing quality metrics before of converted fastq reads.
+  - `*.post_conversion_fastqc.zip`: Zip archive containing the FastQC report of the converted fastq reads, tab-delimited data file and plot images.
 
 </details>
 
