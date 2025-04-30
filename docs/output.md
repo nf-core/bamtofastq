@@ -51,6 +51,8 @@ The converted and gzipped fastq output reads are written to the directory `resul
   - `*.merged.fastq.gz`: Paired-end read files
   - `*.other.fq.gz` : Single-end read files
 
+</details>
+
 ### MultiQC
 
 <details markdown="1">
