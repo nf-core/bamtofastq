@@ -6,7 +6,7 @@
 </h1>
 
 [![GitHub Actions CI Status](https://github.com/nf-core/bamtofastq/actions/workflows/ci.yml/badge.svg)](https://github.com/nf-core/bamtofastq/actions/workflows/ci.yml)
-[![GitHub Actions Linting Status](https://github.com/nf-core/bamtofastq/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/bamtofastq/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/bamtofastq/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions Linting Status](https://github.com/nf-core/bamtofastq/actions/workflows/linting.yml/badge.svg)](https://github.com/nf-core/bamtofastq/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/bamtofastq/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.4710628-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.4710628)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)
@@ -19,42 +19,51 @@
 
 ## Introduction
 
-**nf-core/bamtofastq** is a bioinformatics pipeline that ...
+**nf-core/bamtofastq** is a bioinformatics best-practice analysis pipeline that converts (un)mapped `.bam` or `.cram` files into `fq.gz` files. Initially, it auto-detects, whether the input file contains single-end or paired-end reads. Following this step, the reads are sorted using `samtools collate` and extracted with `samtools fastq`. Furthermore, for mapped bam/cram files it is possible to only convert reads mapping to a specific region or chromosome. The obtained FastQ files can then be used to further process with other pipelines.
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+The pipeline is built using [Nextflow](https://www.nextflow.io), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It uses Docker/Singularity containers making installation trivial and results highly reproducible. The [Nextflow DSL2](https://www.nextflow.io/docs/latest/dsl2.html) implementation of this pipeline uses one container per process which makes it much easier to maintain and update software dependencies. Where possible, these processes have been submitted to and installed from [nf-core/modules](https://github.com/nf-core/modules) in order to make them available to all nf-core pipelines, and to everyone within the Nextflow community!
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+On release, automated continuous integration tests run the pipeline on a full-sized dataset on the AWS cloud infrastructure. This ensures that the pipeline runs on AWS, has sensible resource allocation defaults set to run on real-world datasets, and permits the persistent storage of results to benchmark between pipeline releases and other analysis sources.The results obtained from the full-sized test can be viewed on the [nf-core website](https://nf-co.re/bamtofastq/results).
+
+## Pipeline summary
+
+By default, the pipeline currently performs the following steps:
+
+1. Quality control (QC) of input (bam/cram) files ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
+2. Check if input files are single- or paired-end ([`Samtools`](https://www.htslib.org/)).
+3. Compute statistics on input files ([`Samtools`](https://www.htslib.org/)).
+4. Convert to fastq reads ([`Samtools`](https://www.htslib.org/)).
+5. QC of converted fastq reads ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
+6. Summarize QC and statistics before and after format conversion ([`MultiQC`](http://multiqc.info/)).
+
+<p align="center">
+    <img title="Bamtofastq Workflow" src="docs/images/nf-core-bamtofastq-subway.png" width=60%>
+</p>
 
 ## Usage
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+Download the pipeline and test it on a minimal dataset with a single command:
 
-First, prepare a samplesheet with your input data that looks as follows:
+```bash
+nextflow run nf-core/bamtofastq -profile test,<docker/singularity/.../institute> --outdir './results'
+```
+
+To run your own analysis, start by preparing a samplesheet with your input data that looks as follows:
 
 `samplesheet.csv`:
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+sample_id,mapped,index,file_type
+test,test1.bam,test1.bam.bai,bam
+test2,test2.bam,test2.bam.bai,bam
 ```
 
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
-
--->
+Each row represents a bam/cram file with or without indices.
 
 Now, you can run the pipeline using:
-
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
 
 ```bash
 nextflow run nf-core/bamtofastq \
@@ -76,11 +85,20 @@ For more details about the output files and reports, please refer to the
 
 ## Credits
 
-nf-core/bamtofastq was originally written by Friederike Hanssen, Susanne Jodoin.
+nf-core/bamtofastq was originally written by Friederike Hanssen. It was ported to DSL2 by Susanne Jodoin.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+- [Gisela Gabernet](https://github.com/ggabernet)
+- [Matilda Åslin](https://github.com/matrulda)
+- [Bruno Grande](https://github.com/BrunoGrandePhd)
+
+### Resources
+
+The individual steps of this pipeline are based of on the following tutorials and resources:
+
+1.  [Extracting paired FASTQ read data from a BAM mapping file](http://darencard.net/blog/2017-09-07-extract-fastq-bam/)
+2.  [Check if BAM is derived from pair-end or single-end reads](https://www.biostars.org/p/178730/)
 
 ## Contributions and Support
 
@@ -90,10 +108,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 ## Citations
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use nf-core/bamtofastq for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
+If you use nf-core/bamtofastq for your analysis, please cite it using the following doi: [10.5281/zenodo.4710628](https://doi.org/10.5281/zenodo.4710628)
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 

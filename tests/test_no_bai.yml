@@ -1,0 +1,39 @@
+- name: Run test profile
+  command: nextflow run main.nf -profile test,test_no_bai,docker
+  tags:
+    - test
+    - bam
+    - no_bai
+    - paired-end
+    - single-end
+  files:
+    - path: results/reads/test_1.merged.fastq.gz
+      md5sum: 15ab79e32e45138d29b6278f4c32a8ca
+    - path: results/reads/test2_1.merged.fastq.gz
+      md5sum: d0fd4034e5f07590b0944e3cf24cff60
+    - path: results/reads/test2_2.merged.fastq.gz
+      md5sum: bcb8df2cda7006efb30bbf2c8830e761
+    - path: results/reads/test_2.merged.fastq.gz
+      md5sum: 2c2dbdf1a7584efb6861ad1ac5efbb43
+    - path: results/reads/test3_other.fq.gz
+      md5sum: 274765d73ffe4448503b1bf18f7f4880
+    - path: results/samtools/test2.flagstat
+      md5sum: acbd95030a362a7e6491faa87d1b9c2c
+    - path: results/samtools/test2.idxstats
+      md5sum: 90f01313bc89c7fd096aad051cd71b66
+    - path: results/samtools/test2.stats
+      md5sum: f89e29166ff872b38ee72e15d44ae8c3
+    - path: results/samtools/test3.flagstat
+      md5sum: 7b43b975b0a395040bf1ee3c48f058e7
+    - path: results/samtools/test3.idxstats
+      md5sum: 094096b6f303cc18892e1e027c87f273
+    - path: results/samtools/test3.stats
+      md5sum: 5265894a506071133a29ef1ff5fb48b8
+    - path: results/samtools/test.flagstat
+      md5sum: a53f3d26e2e9851f7d528442bbfe9781
+    - path: results/samtools/test.idxstats
+      md5sum: e179601fa7b8ebce81ac3765206f6c15
+    - path: results/samtools/test.stats
+      md5sum: f81d34302eec687c43539432e81022d4
+    - path: results/fastqc
+    - path: results/multiqc
