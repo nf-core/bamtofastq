@@ -1,0 +1,128 @@
+{
+    "-profile test": {
+        "content": [
+            29,
+            {
+                "CAT_FASTQ": {
+                    "cat": 8.3
+                },
+                "CHECK_IF_PAIRED_END": {
+                    "samtools": 1.2
+                },
+                "COLLATE_FASTQ_MAP": {
+                    "samtools": 1.2
+                },
+                "COLLATE_FASTQ_UNMAP": {
+                    "samtools": 1.2
+                },
+                "FASTQC_POST_CONVERSION": {
+                    "fastqc": "0.12.1"
+                },
+                "FASTQC_PRE_CONVERSION": {
+                    "fastqc": "0.12.1"
+                },
+                "SAMTOOLS_FLAGSTAT": {
+                    "samtools": 1.2
+                },
+                "SAMTOOLS_IDXSTATS": {
+                    "samtools": 1.2
+                },
+                "SAMTOOLS_MERGE_UNMAP": {
+                    "samtools": 1.2
+                },
+                "SAMTOOLS_STATS": {
+                    "samtools": 1.2
+                },
+                "SAMTOOLS_VIEW_MAP_MAP": {
+                    "samtools": 1.2
+                },
+                "SAMTOOLS_VIEW_MAP_UNMAP": {
+                    "samtools": 1.2
+                },
+                "SAMTOOLS_VIEW_UNMAP_MAP": {
+                    "samtools": 1.2
+                },
+                "SAMTOOLS_VIEW_UNMAP_UNMAP": {
+                    "samtools": 1.2
+                },
+                "Workflow": {
+                    "nf-core/bamtofastq": "v2.1.2dev"
+                }
+            },
+            [
+                "fastqc",
+                "fastqc/test.post_conversion_1_fastqc.html",
+                "fastqc/test.post_conversion_1_fastqc.zip",
+                "fastqc/test.post_conversion_2_fastqc.html",
+                "fastqc/test.post_conversion_2_fastqc.zip",
+                "fastqc/test.pre_conversion_fastqc.html",
+                "fastqc/test.pre_conversion_fastqc.zip",
+                "fastqc/test2.post_conversion_1_fastqc.html",
+                "fastqc/test2.post_conversion_1_fastqc.zip",
+                "fastqc/test2.post_conversion_2_fastqc.html",
+                "fastqc/test2.post_conversion_2_fastqc.zip",
+                "fastqc/test2.pre_conversion_fastqc.html",
+                "fastqc/test2.pre_conversion_fastqc.zip",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc_citations.txt",
+                "multiqc/multiqc_data/multiqc_data.json",
+                "multiqc/multiqc_data/multiqc_software_versions.txt",
+                "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_bamtofastq_software_mqc_versions.yml",
+                "reads",
+                "reads/test2_1.merged.fastq.gz",
+                "reads/test2_2.merged.fastq.gz",
+                "reads/test_1.merged.fastq.gz",
+                "reads/test_2.merged.fastq.gz",
+                "samtools",
+                "samtools/test.flagstat",
+                "samtools/test.idxstats",
+                "samtools/test.stats",
+                "samtools/test2.flagstat",
+                "samtools/test2.idxstats",
+                "samtools/test2.stats"
+            ],
+            [
+                "test.post_conversion_1_fastqc.html:md5,fd417a873106db52f330f0be80e61806",
+                "test.post_conversion_1_fastqc.zip:md5,a49d7774f1a3f448d3db0eedc821b84a",
+                "test.post_conversion_2_fastqc.html:md5,1847ddccd63b9db4643b0bca96bfb209",
+                "test.post_conversion_2_fastqc.zip:md5,3ca61bfa33d188fd5f9006eda3a4eb17",
+                "test.pre_conversion_fastqc.html:md5,9974ae758f85e4a663d4ac775128c6aa",
+                "test.pre_conversion_fastqc.zip:md5,39d7772bbd493a57c0d65ab6d7b380df",
+                "test2.post_conversion_1_fastqc.html:md5,9215eb2390f267a09f563cce3d31a96b",
+                "test2.post_conversion_1_fastqc.zip:md5,06079ae6c0f8abe96faa4288d80c0453",
+                "test2.post_conversion_2_fastqc.html:md5,d9fb9755ce6950728eff769ab7d61a9b",
+                "test2.post_conversion_2_fastqc.zip:md5,41a5460ee8417b037b0615a1833a71e6",
+                "test2.pre_conversion_fastqc.html:md5,3b186844e525fc883fc6525cb1bbffe7",
+                "test2.pre_conversion_fastqc.zip:md5,d44015c6bf504521136050f5cc01a4b2",
+                "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
+                "execution_report_2025-05-02_15-53-20.html:md5,7eb52eb856b225eab8c2e146e15d57c6",
+                "execution_timeline_2025-05-02_15-53-20.html:md5,6a51714a983e7f67647ac46366c899da",
+                "nf_core_bamtofastq_software_mqc_versions.yml:md5,cd4e42d50e2324f04ba655a9066367a3",
+                "params_2025-05-02_15-53-22.json:md5,e7d66bf2c4b9b2fd6d15075d5a7d0ab0",
+                "pipeline_dag_2025-05-02_15-53-20.html:md5,dc3fdeb5bbdf702cf49282c0884487d9",
+                "test2_1.merged.fastq.gz:md5,a4984fb5a60f80ccbfbfcf1cef9daaf3",
+                "test2_2.merged.fastq.gz:md5,bde23801e2d60604afb3bd0b0ab014ab",
+                "test_1.merged.fastq.gz:md5,9b0c08862a5e47e842a485ddad31b871",
+                "test_2.merged.fastq.gz:md5,40e17982d1231e561d6420234ae29357",
+                "test.flagstat:md5,a53f3d26e2e9851f7d528442bbfe9781",
+                "test.idxstats:md5,e179601fa7b8ebce81ac3765206f6c15",
+                "test.stats:md5,193876b9f833506d569436efbd206f8f",
+                "test2.flagstat:md5,acbd95030a362a7e6491faa87d1b9c2c",
+                "test2.idxstats:md5,90f01313bc89c7fd096aad051cd71b66",
+                "test2.stats:md5,d97fa64ca307574cad49c2bb256c2a88"
+            ],
+            "No BAM files",
+            "No CRAM files"
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "24.10.4"
+        },
+        "timestamp": "2025-05-02T15:54:21.954713"
+    }
+}

@@ -9,3 +9,5 @@ testing*
 null/
 *.fasta
 *.fai
+.nf-test*
+.nf-test/
