@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- [#108](https://github.com/nf-core/bamtofastq/pull/108) - Setup nf-test and convert default test to nf-test
+
 ### `Changed`
 
 - [#90](https://github.com/nf-core/bamtofastq/pull/90) - Template update for nf-core/tools v2.14.0
