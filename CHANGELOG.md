@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#108](https://github.com/nf-core/bamtofastq/pull/108) - Setup nf-test and convert default and cram test to nf-test
 - [#110](https://github.com/nf-core/bamtofastq/pull/110) - Convert chr tests to nf-test
+- [#110](https://github.com/nf-core/bamtofastq/pull/110) - Convert no_bai and no_crai tests to nf-test
 - [#112](https://github.com/nf-core/bamtofastq/pull/112) - Convert collate_fast, no_stats and no_qc tests to nf-test
 
 ### `Changed`
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#93](https://github.com/nf-core/bamtofastq/pull/93), [#94](https://github.com/nf-core/bamtofastq/pull/94) - Update samtools to v1.20
 - [#90](https://github.com/nf-core/bamtofastq/pull/90) - Template update for nf-core/tools v3.0.1
 - [#107](https://github.com/nf-core/bamtofastq/pull/107) - Template update for nf-core/tools v3.2.1
+- [#110](https://github.com/nf-core/bamtofastq/pull/110) - Update nf-test GHA
 
 ### `Fixed`
 
