@@ -1,5 +1,5 @@
 {
-    "-profile test | cram": {
+    "-profile test --input test_cram_samplesheet.csv": {
         "content": [
             28,
             {
@@ -83,20 +83,7 @@
                 "samtools/test2.stats"
             ],
             [
-                "test.post_conversion_1_fastqc.html:md5,fd417a873106db52f330f0be80e61806",
-                "test.post_conversion_1_fastqc.zip:md5,04a8b4d5a641bef7532f24ed19c64ee5",
-                "test.post_conversion_2_fastqc.html:md5,1847ddccd63b9db4643b0bca96bfb209",
-                "test.post_conversion_2_fastqc.zip:md5,137b59e8fa43bdcb715e6d2c9f4695da",
-                "test2.post_conversion_1_fastqc.html:md5,9215eb2390f267a09f563cce3d31a96b",
-                "test2.post_conversion_1_fastqc.zip:md5,116d854f9278b178c0fa9cea9c291ae1",
-                "test2.post_conversion_2_fastqc.html:md5,d9fb9755ce6950728eff769ab7d61a9b",
-                "test2.post_conversion_2_fastqc.zip:md5,f4c78a7b9a322e915c14c5948f4f1e57",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
-                "execution_report_2025-05-02_17-25-19.html:md5,669ac39727793d529d34df230e3aef61",
-                "execution_timeline_2025-05-02_17-25-19.html:md5,6dffe88af52842edbdf19bb1ba005e14",
-                "nf_core_bamtofastq_software_mqc_versions.yml:md5,3c8ff0a28da568af1729137607cd8e5b",
-                "params_2025-05-02_17-25-21.json:md5,2cee8907d5e902912c166078076199ef",
-                "pipeline_dag_2025-05-02_17-25-19.html:md5,d25c61483f69013a75deafcc42056cb0",
                 "test2_1.merged.fastq.gz:md5,a4984fb5a60f80ccbfbfcf1cef9daaf3",
                 "test2_2.merged.fastq.gz:md5,bde23801e2d60604afb3bd0b0ab014ab",
                 "test_1.merged.fastq.gz:md5,9b0c08862a5e47e842a485ddad31b871",
@@ -113,8 +100,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.4"
+            "nextflow": "24.10.6"
         },
-        "timestamp": "2025-05-02T17:26:13.151646"
+        "timestamp": "2025-05-05T08:53:06.037776837"
     }
 }

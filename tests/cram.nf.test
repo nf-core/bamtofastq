@@ -6,7 +6,7 @@ nextflow_pipeline {
     tag "pipeline_bamtofastq"
     tag "cpu"
 
-    test("-profile test | cram") {
+    test("-profile test --input test_cram_samplesheet.csv") {
 
         when {
             params {
