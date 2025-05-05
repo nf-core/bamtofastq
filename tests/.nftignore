@@ -1,5 +1,6 @@
 .DS_Store
 csv/*.csv
+fastqc/*_fastqc.{html,zip}
 multiqc/multiqc_data/multiqc.log
 multiqc/multiqc_data/multiqc_bcftools_stats.txt
 multiqc/multiqc_data/multiqc_data.json
@@ -11,5 +12,4 @@ multiqc/multiqc_data/picard_deduplication.txt
 multiqc/multiqc_data/vcftools*.txt
 multiqc/multiqc_plots/{svg,pdf,png}/*.{svg,pdf,png}
 multiqc/multiqc_report.html
-reports/fastp/**/*.fastp.{log,html}
-reports/fastqc/**/*_fastqc.{html,zip}
+pipeline_info/*.{html,json,txt,yml}
