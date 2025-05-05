@@ -15,5 +15,3 @@ lint:
     - .github/workflows/ci.yml
   files_unchanged:
     - .gitignore
-  modules_config: false
-  template_strings: false
