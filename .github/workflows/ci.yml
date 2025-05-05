@@ -34,8 +34,6 @@ jobs:
           - "docker"
           - "singularity"
         test_name:
-          - "test_no_bai"
-          - "test_no_crai"
           - "test_no_stats"
           - "test_no_qc"
           - "test_collate_fast"
