@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#90](https://github.com/nf-core/bamtofastq/pull/90) - Template update for nf-core/tools v3.0.1
 - [#107](https://github.com/nf-core/bamtofastq/pull/107) - Template update for nf-core/tools v3.2.1
 - [#110](https://github.com/nf-core/bamtofastq/pull/110) - Update nf-test GHA
+- [#115](https://github.com/nf-core/bamtofastq/pull/115) - Update modules cat/fastq, fastqc and multiqc
 
 ### `Fixed`
 
