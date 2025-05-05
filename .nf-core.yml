@@ -12,9 +12,7 @@ template:
 lint:
   actions_ci: false
   files_exist:
-    - .github/workflows/awsfulltest.yml
-    - .github/workflows/awstest.yml
-    - conf/modules.config
+    - .github/workflows/ci.yml
   files_unchanged:
     - .gitignore
   modules_config: false
