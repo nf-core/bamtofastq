@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#108](https://github.com/nf-core/bamtofastq/pull/108) - Setup nf-test and convert default and cram test to nf-test
 - [#110](https://github.com/nf-core/bamtofastq/pull/110) - Convert chr tests to nf-test
+- [#112](https://github.com/nf-core/bamtofastq/pull/112) - Convert no_qc and no_stats tests to nf-test
 
 ### `Changed`
 
