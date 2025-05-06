@@ -56,6 +56,9 @@ workflow BAMTOFASTQ {
     // Initialize file channels based on params
     fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
 
+    // Initialize value channels based on params
+    chr       = params.chr       ?: Channel.empty()
+
     ch_versions = Channel.empty()
     ch_multiqc_files = Channel.empty()
 
