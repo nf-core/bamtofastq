@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | Dependency | Old version | New version |
 | ---------- | ----------- | ----------- |
 | Samtools   | 1.19.2      | 1.20        |
+| cat        | 8.3         | 9.5         |
+| multiqc    | 1.25.1      | 1.28        |
 
 ## v2.1.1 - Joy Buolamwini
 
