@@ -10,10 +10,10 @@
                     "samtools": 1.2
                 },
                 "COLLATE_FASTQ_MAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "COLLATE_FASTQ_UNMAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
@@ -22,28 +22,28 @@
                     "fastqc": "0.12.1"
                 },
                 "SAMTOOLS_FLAGSTAT": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_IDXSTATS": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_MERGE_UNMAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_STATS": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_VIEW_MAP_MAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_VIEW_MAP_UNMAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_VIEW_UNMAP_MAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_VIEW_UNMAP_UNMAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "Workflow": {
                     "nf-core/bamtofastq": "v2.1.2dev"
@@ -94,10 +94,10 @@
                 "test_2.merged.fastq.gz:md5,40e17982d1231e561d6420234ae29357",
                 "test.flagstat:md5,a53f3d26e2e9851f7d528442bbfe9781",
                 "test.idxstats:md5,e179601fa7b8ebce81ac3765206f6c15",
-                "test.stats:md5,193876b9f833506d569436efbd206f8f",
+                "test.stats:md5,eaa2f946cf716c9d95b24beda628809d",
                 "test2.flagstat:md5,acbd95030a362a7e6491faa87d1b9c2c",
                 "test2.idxstats:md5,90f01313bc89c7fd096aad051cd71b66",
-                "test2.stats:md5,d97fa64ca307574cad49c2bb256c2a88"
+                "test2.stats:md5,2ff2794960f8dd8fb5457e7773e4033d"
             ],
             "No BAM files",
             "No CRAM files"
@@ -106,6 +106,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.4"
         },
-        "timestamp": "2025-05-05T15:16:53.884731"
+        "timestamp": "2025-05-06T09:37:54.783205"
     }
 }

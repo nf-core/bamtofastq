@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#107](https://github.com/nf-core/bamtofastq/pull/107) - Template update for nf-core/tools v3.2.1
 - [#110](https://github.com/nf-core/bamtofastq/pull/110) - Update nf-test GHA
 - [#115](https://github.com/nf-core/bamtofastq/pull/115) - Update modules cat/fastq, fastqc and multiqc
+- [#116](https://github.com/nf-core/bamtofastq/pull/116) - Update samtools to v1.21
 
 ### `Fixed`
 
@@ -30,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Dependency | Old version | New version |
 | ---------- | ----------- | ----------- |
-| Samtools   | 1.19.2      | 1.20        |
+| Samtools   | 1.19.2      | 1.21        |
 | cat        | 8.3         | 9.5         |
 | multiqc    | 1.25.1      | 1.28        |
 

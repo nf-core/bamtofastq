@@ -9,12 +9,6 @@ include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
-// Initialize file channels based on params
-fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
-
-// Initialize value channels based on params
-chr       = params.chr       ?: Channel.empty()
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT LOCAL MODULES/SUBWORKFLOWS
@@ -37,7 +31,6 @@ include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../m
 include { SAMTOOLS_VIEW as SAMTOOLS_PE                              } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq/main'
-
 include { MULTIQC                                                   } from '../modules/nf-core/multiqc/main'
 
 //
@@ -59,6 +52,9 @@ workflow BAMTOFASTQ {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
     main:
+
+    // Initialize file channels based on params
+    fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
 
     ch_versions = Channel.empty()
     ch_multiqc_files = Channel.empty()
@@ -89,14 +85,14 @@ workflow BAMTOFASTQ {
     ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
 
     // Combine channels into new input channel for conversion + add info about single/paired to meta map
-    ch_input_new = ch_single_end.map{ meta, bam, bai, txt ->
+    ch_input_new = ch_single_end.map{ meta, bam, bai, _txt ->
             [ [ id : meta.id,
             filetype : meta.filetype,
             single_end : true ],
             bam,
             bai
             ] }
-        .mix(ch_paired_end.map{ meta, bam, bai, txt ->
+        .mix(ch_paired_end.map{ meta, bam, bai, _txt ->
             [ [ id : meta.id,
             filetype : meta.filetype,
             single_end : false ],
@@ -110,7 +106,7 @@ workflow BAMTOFASTQ {
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input_new, fasta.map{ it -> [[:], it] }, [])
+        SAMTOOLS_CHR(ch_input_new, fasta.map{ it -> [[:], it] }, [], [])
 
         samtools_chr_out = Channel.empty().mix( SAMTOOLS_CHR.out.bam,
                                                 SAMTOOLS_CHR.out.cram)
@@ -120,7 +116,7 @@ workflow BAMTOFASTQ {
 
         // Add chr names to id
         ch_input_new = ch_input_chr.map{ it ->
-                new_id = it[1].baseName
+                def new_id = it[1].baseName
                 [[
                     id : new_id,
                     filetype : it[0].filetype,
