@@ -10,10 +10,10 @@
                     "samtools": 1.2
                 },
                 "COLLATE_FASTQ_MAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "COLLATE_FASTQ_UNMAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
@@ -22,22 +22,22 @@
                     "fastqc": "0.12.1"
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_MERGE_UNMAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_VIEW_MAP_MAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_VIEW_MAP_UNMAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_VIEW_UNMAP_MAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "SAMTOOLS_VIEW_UNMAP_UNMAP": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "Workflow": {
                     "nf-core/bamtofastq": "v2.1.2dev"
@@ -87,6 +87,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.4"
         },
-        "timestamp": "2025-05-05T15:19:20.158277"
+        "timestamp": "2025-05-06T09:37:43.221558"
     }
 }
