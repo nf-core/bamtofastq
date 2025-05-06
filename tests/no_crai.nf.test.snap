@@ -4,7 +4,7 @@
             30,
             {
                 "CAT_FASTQ": {
-                    "cat": 8.3
+                    "cat": 9.5
                 },
                 "CHECK_IF_PAIRED_END": {
                     "samtools": 1.2
@@ -103,8 +103,8 @@
         ],
         "meta": {
             "nf-test": "0.9.2",
-            "nextflow": "24.10.6"
+            "nextflow": "24.10.4"
         },
-        "timestamp": "2025-05-05T10:42:41.043839796"
+        "timestamp": "2025-05-05T15:18:49.691434"
     }
 }
