@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed`
 
 - [#109](https://github.com/nf-core/bamtofastq/pull/109) - Fix snapshots
+- [#118](https://github.com/nf-core/bamtofastq/pull/118) - Remove pattern for fasta_fai check
 
 ### `Dependencies`
 
