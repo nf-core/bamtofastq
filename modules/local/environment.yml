@@ -2,7 +2,6 @@ name: check_if_paired_end
 channels:
   - conda-forge
   - bioconda
-  - defaults
 dependencies:
-  - bioconda::samtools=1.20
-  - bioconda::htslib=1.20
+  - bioconda::htslib=1.21
+  - bioconda::samtools=1.21
