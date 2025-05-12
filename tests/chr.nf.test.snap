@@ -4,7 +4,7 @@
             12,
             {
                 "CHECK_IF_PAIRED_END": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
