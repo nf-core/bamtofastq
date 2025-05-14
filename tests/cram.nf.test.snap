@@ -1,7 +1,7 @@
 {
     "-profile test --input test_cram_samplesheet.csv": {
         "content": [
-            28,
+            30,
             {
                 "CAT_FASTQ": {
                     "cat": 9.5
@@ -17,6 +17,9 @@
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
+                },
+                "FASTQUTILS_INFO": {
+                    "fastq_utils": "0.25.2"
                 },
                 "SAMTOOLS_FAIDX": {
                     "samtools": 1.21
@@ -59,6 +62,9 @@
                 "fastqc/test2.post_conversion_1_fastqc.zip",
                 "fastqc/test2.post_conversion_2_fastqc.html",
                 "fastqc/test2.post_conversion_2_fastqc.zip",
+                "fastqutils",
+                "fastqutils/test.txt",
+                "fastqutils/test2.txt",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/multiqc.log",
@@ -83,6 +89,8 @@
                 "samtools/test2.stats"
             ],
             [
+                "test.txt:md5,db31682c36cde02f1e8567d130537cac",
+                "test2.txt:md5,0222a414a69c92608af1580f3c6ce996",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "test2_1.merged.fastq.gz:md5,a4984fb5a60f80ccbfbfcf1cef9daaf3",
                 "test2_2.merged.fastq.gz:md5,bde23801e2d60604afb3bd0b0ab014ab",
@@ -102,6 +110,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.4"
         },
-        "timestamp": "2025-05-06T09:38:30.662784"
+        "timestamp": "2025-05-14T14:09:45.429255"
     }
 }
