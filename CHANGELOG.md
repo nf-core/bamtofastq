@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#110](https://github.com/nf-core/bamtofastq/pull/110) - Convert chr tests to nf-test
 - [#110](https://github.com/nf-core/bamtofastq/pull/110) - Convert no_bai and no_crai tests to nf-test
 - [#112](https://github.com/nf-core/bamtofastq/pull/112) - Convert collate_fast, no_stats and no_qc tests to nf-test
-- [#117](https://github.com/nf-core/bamtofastq/pull/117) - Add fastqutils/info to check for truncated or quality-mismatched files
+- [#120](https://github.com/nf-core/bamtofastq/pull/120) - Add fastqutils/info to check for truncated or quality-mismatched files
 
 ### `Changed`
 
