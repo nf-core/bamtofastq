@@ -33,7 +33,6 @@ nextflow_pipeline {
             // Fasta file for cram verification with nft-bam
             def fasta_base  = 'https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/'
             def fasta       = fasta_base + 'genomics/homo_sapiens/genome/genome.fasta'
-            // since "No reads found in test3_singleton.fq.gz."
             assert workflow.success
             assertAll(
                 { assert snapshot(
