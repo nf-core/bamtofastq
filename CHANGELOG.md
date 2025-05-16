@@ -30,11 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Dependencies`
 
-| Dependency | Old version | New version |
-| ---------- | ----------- | ----------- |
-| Samtools   | 1.19.2      | 1.21        |
-| cat        | 8.3         | 9.5         |
-| MultiQC    | 1.25.1      | 1.28        |
+| Dependency  | Old version | New version |
+| ----------- | ----------- | ----------- |
+| cat         | -           | 0.25.2      |
+| fastq_utils | 1.19.2      | 1.21        |
+| MultiQC     | 1.25.1      | 1.28        |
+| Samtools    | 1.19.2      | 1.21        |
 
 ## v2.1.1 - Joy Buolamwini
 
