@@ -34,7 +34,7 @@ nextflow_pipeline {
             def fasta_base  = 'https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/'
             def fasta       = fasta_base + 'genomics/homo_sapiens/genome/genome.fasta'
             // since "No reads found in test3_singleton.fq.gz."
-            assert workflow.failed
+            assert workflow.success
             assertAll(
                 { assert snapshot(
                     // Number of successful tasks
