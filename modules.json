@@ -27,7 +27,7 @@
                     },
                     "samtools/collatefastq": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "9bcf33c7f6cda1c8d066cdef118baf5a276e59ab",
                         "installed_by": ["modules"]
                     },
                     "samtools/faidx": {
