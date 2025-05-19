@@ -7,7 +7,7 @@
                     "cat": 9.5
                 },
                 "CHECK_IF_PAIRED_END": {
-                    "samtools": 1.2
+                    "samtools": 1.21
                 },
                 "COLLATE_FASTQ_MAP": {
                     "samtools": 1.21
