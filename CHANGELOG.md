@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#110](https://github.com/nf-core/bamtofastq/pull/110) - Convert no_bai and no_crai tests to nf-test
 - [#112](https://github.com/nf-core/bamtofastq/pull/112) - Convert collate_fast, no_stats and no_qc tests to nf-test
 - [#114](https://github.com/nf-core/bamtofastq/pull/114) - Add contributors to nextflow.config
+- [#120](https://github.com/nf-core/bamtofastq/pull/120) - Add fastqutils/info to check for truncated or quality-mismatched files
 
 ### `Changed`
 
@@ -32,11 +33,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Dependencies`
 
-| Dependency | Old version | New version |
-| ---------- | ----------- | ----------- |
-| Samtools   | 1.19.2      | 1.21        |
-| cat        | 8.3         | 9.5         |
-| multiqc    | 1.25.1      | 1.28        |
+| Dependency  | Old version | New version |
+| ----------- | ----------- | ----------- |
+| cat         | 8.3         | 9.5         |
+| fastq_utils | -           | 0.25.2      |
+| MultiQC     | 1.21        | 1.28        |
+| Samtools    | 1.19.2      | 1.21        |
 
 ## v2.1.1 - Joy Buolamwini
 

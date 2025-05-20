@@ -15,6 +15,11 @@
                         "git_sha": "b1966f36ec9de31927b2603d8f499960b2a4c294",
                         "installed_by": ["modules"]
                     },
+                    "fastqutils/info": {
+                        "branch": "master",
+                        "git_sha": "2eaf001abf8815bae7176003a88bd7b3f1c539e1",
+                        "installed_by": ["modules"]
+                    },
                     "multiqc": {
                         "branch": "master",
                         "git_sha": "7b50cb7be890e4b28cffb82e438cc6a8d7805d3f",
@@ -22,7 +27,7 @@
                     },
                     "samtools/collatefastq": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "9bcf33c7f6cda1c8d066cdef118baf5a276e59ab",
                         "installed_by": ["modules"]
                     },
                     "samtools/faidx": {
