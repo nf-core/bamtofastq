@@ -167,11 +167,13 @@ workflow BAMTOFASTQ {
     )
 
     // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
-    // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]})
+    // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]}) // there is not zip in the output of the subworkflow?
     ch_versions = ch_versions.mix(ALIGNMENT_TO_FASTQ.out.versions)
 
 
     // MODULE: FastQC - Post conversion QC
+    // famosab: swapped the output of SAMTOOLS_COLLATEFASTQ_SINGLE_END from fastq_singleton to fastq_other because otherwise the fatsq files had empty reads
+    // coming from the samtools docs its not clear which file contains the expected reads
     ch_reads_post_qc = Channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
 
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
