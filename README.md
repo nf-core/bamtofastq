@@ -34,7 +34,8 @@ By default, the pipeline currently performs the following steps:
 3. Compute statistics on input files ([`Samtools`](https://www.htslib.org/)).
 4. Convert to fastq reads ([`Samtools`](https://www.htslib.org/)).
 5. QC of converted fastq reads ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
-6. Summarize QC and statistics before and after format conversion ([`MultiQC`](http://multiqc.info/)).
+6. Checking whether the produced fastq files are valid ([fastq_utils](https://github.com/nunofonseca/fastq_utils)).
+7. Summarize QC and statistics before and after format conversion ([`MultiQC`](http://multiqc.info/)).
 
 <p align="center">
     <img title="Bamtofastq Workflow" src="docs/images/nf-core-bamtofastq-subway.png" width=60%>
