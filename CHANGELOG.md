@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## dev
+## v2.2.0 - Kathleen Booth
 
 ### `Added`
 
@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#115](https://github.com/nf-core/bamtofastq/pull/115) - Update modules cat/fastq, fastqc and multiqc
 - [#116](https://github.com/nf-core/bamtofastq/pull/116) - Update samtools to v1.21
 - [#119](https://github.com/nf-core/bamtofastq/pull/119) - Update samtools version in local module to v1.21
+- [#123](https://github.com/nf-core/bamtofastq/pull/123) - Prepare release 2.2.0
 
 ### `Fixed`
 
