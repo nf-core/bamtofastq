@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#112](https://github.com/nf-core/bamtofastq/pull/112) - Convert collate_fast, no_stats and no_qc tests to nf-test
 - [#114](https://github.com/nf-core/bamtofastq/pull/114) - Add contributors to nextflow.config
 - [#120](https://github.com/nf-core/bamtofastq/pull/120) - Add fastqutils/info to check for truncated or quality-mismatched files
+- [#122](https://github.com/nf-core/bamtofastq/pull/122) - Add @FriederikeHanssen @maxulysse @famosab as CODEOWNERS
 
 ### `Changed`
 
