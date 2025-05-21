@@ -27,6 +27,7 @@ include { CHECK_IF_PAIRED_END                                       } from '../m
 // MODULE: Installed directly from nf-core/modules
 //
 include { FASTQC as FASTQC_POST_CONVERSION                          } from '../modules/nf-core/fastqc/main'
+include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_PE                              } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index/main'
@@ -166,16 +167,23 @@ workflow BAMTOFASTQ {
     )
 
     // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
-    // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]})
+    // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]}) // there is not zip in the output of the subworkflow?
     ch_versions = ch_versions.mix(ALIGNMENT_TO_FASTQ.out.versions)
 
 
     // MODULE: FastQC - Post conversion QC
-    ch_reads_post_qc = Channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_singleton, ALIGNMENT_TO_FASTQ.out.reads)
+    // famosab: swapped the output of SAMTOOLS_COLLATEFASTQ_SINGLE_END from fastq_singleton to fastq_other because otherwise the fatsq files had empty reads
+    // coming from the samtools docs its not clear which file contains the expected reads
+    ch_reads_post_qc = Channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
 
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
 
     ch_versions = ch_versions.mix(FASTQC_POST_CONVERSION.out.versions)
+
+    // MODULE: fastq_utils - Post conversion checks for broken fastq files
+    FASTQUTILS_INFO(ch_reads_post_qc)
+
+    ch_versions = ch_versions.mix(FASTQUTILS_INFO.out.versions)
 
     //
     // Collate and save software versions
