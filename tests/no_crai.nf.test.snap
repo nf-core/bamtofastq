@@ -52,7 +52,7 @@
                     "samtools": 1.21
                 },
                 "Workflow": {
-                    "nf-core/bamtofastq": "v2.1.2dev"
+                    "nf-core/bamtofastq": "v2.2.0"
                 }
             },
             [
@@ -113,6 +113,6 @@
             "nf-test": "0.9.2",
             "nextflow": "24.10.4"
         },
-        "timestamp": "2025-05-14T14:10:01.444539"
+        "timestamp": "2025-05-20T13:22:28.266709"
     }
 }
