@@ -49,7 +49,7 @@
                     "samtools": 1.21
                 },
                 "Workflow": {
-                    "nf-core/bamtofastq": "v2.2.0"
+                    "nf-core/bamtofastq": "v2.3.0dev"
                 }
             },
             [
