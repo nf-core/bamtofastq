@@ -6,5 +6,8 @@ results/
 testing/
 testing*
 *.pyc
+null/
 *.fasta
 *.fai
+.nf-test*
+.nf-test/

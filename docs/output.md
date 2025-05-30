@@ -12,6 +12,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - [FastQC](#fastqc) - Raw read QC
 - [Samtools](#samtools) - collate, extract reads and compute bam/cram stats
+- [Fastq_utils](#fastq_utils) - check whether the produced fastq files are valid (not empty or truncated)
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -30,17 +31,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) gives general quality metrics about your sequenced reads. It provides information about the quality score distribution across your reads, per base sequence content (%A/T/G/C), adapter contamination and overrepresented sequences. For further reading and documentation see the [FastQC help pages](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/Help/).
 
-![MultiQC - FastQC sequence counts plot](images/mqc_fastqc_counts.png)
-
-![MultiQC - FastQC mean quality scores plot](images/mqc_fastqc_quality.png)
-
-![MultiQC - FastQC adapter content plot](images/mqc_fastqc_adapter.png)
-
-:::note
-The FastQC plots displayed in the MultiQC report shows _untrimmed_ reads. They may contain adapter sequence and potentially regions with low quality.
-:::
-
-## Samtools
+### Samtools
 
 <details markdown="1">
 <summary>Output files</summary>
@@ -60,6 +51,18 @@ The converted and gzipped fastq output reads are written to the directory `resul
 - `reads/`
   - `*.merged.fastq.gz`: Paired-end read files
   - `*.other.fq.gz` : Single-end read files
+
+</details>
+
+### Fastq_utils
+
+Runs [`fastq_info`](https://github.com/nunofonseca/fastq_utils). Will throw an error for invalid fastq files.
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `fastutils/`
+  - `*.txt`: will contain "fastq_utils fastq_info ran and found no issues with \*" if file is valid.
 
 </details>
 

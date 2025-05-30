@@ -3,17 +3,57 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.2.0 - Kathleen Booth
+
+### `Added`
+
+- [#108](https://github.com/nf-core/bamtofastq/pull/108) - Setup nf-test and convert default and cram test to nf-test
+- [#110](https://github.com/nf-core/bamtofastq/pull/110) - Convert chr tests to nf-test
+- [#110](https://github.com/nf-core/bamtofastq/pull/110) - Convert no_bai and no_crai tests to nf-test
+- [#112](https://github.com/nf-core/bamtofastq/pull/112) - Convert collate_fast, no_stats and no_qc tests to nf-test
+- [#114](https://github.com/nf-core/bamtofastq/pull/114) - Add contributors to nextflow.config
+- [#120](https://github.com/nf-core/bamtofastq/pull/120) - Add fastqutils/info to check for truncated or quality-mismatched files
+- [#122](https://github.com/nf-core/bamtofastq/pull/122) - Add @FriederikeHanssen @maxulysse @famosab as CODEOWNERS
+
+### `Changed`
+
+- [#90](https://github.com/nf-core/bamtofastq/pull/90) - Template update for nf-core/tools v2.14.0
+- [#91](https://github.com/nf-core/bamtofastq/pull/91) - Template update for nf-core/tools v2.14.1
+- [#93](https://github.com/nf-core/bamtofastq/pull/93), [#94](https://github.com/nf-core/bamtofastq/pull/94) - Update samtools to v1.20
+- [#90](https://github.com/nf-core/bamtofastq/pull/90) - Template update for nf-core/tools v3.0.1
+- [#107](https://github.com/nf-core/bamtofastq/pull/107) - Template update for nf-core/tools v3.2.1
+- [#110](https://github.com/nf-core/bamtofastq/pull/110) - Update nf-test GHA
+- [#115](https://github.com/nf-core/bamtofastq/pull/115) - Update modules cat/fastq, fastqc and multiqc
+- [#116](https://github.com/nf-core/bamtofastq/pull/116) - Update samtools to v1.21
+- [#119](https://github.com/nf-core/bamtofastq/pull/119) - Update samtools version in local module to v1.21
+- [#123](https://github.com/nf-core/bamtofastq/pull/123) - Prepare release 2.2.0
+
+### `Fixed`
+
+- [#109](https://github.com/nf-core/bamtofastq/pull/109) - Fix snapshots
+- [#118](https://github.com/nf-core/bamtofastq/pull/118) - Edit pattern for fasta_fai check
+- [#125](https://github.com/nf-core/bamtofastq/pull/125) - Address review comments for release 2.2.0
+
+### `Dependencies`
+
+| Dependency  | Old version | New version |
+| ----------- | ----------- | ----------- |
+| cat         | 8.3         | 9.5         |
+| fastq_utils | -           | 0.25.2      |
+| MultiQC     | 1.21        | 1.28        |
+| Samtools    | 1.19.2      | 1.21        |
+
 ## v2.1.1 - Joy Buolamwini
 
 ### `Added`
 
-- [#73](https://github.com/nf-core/bamtofastq/pull/73) Sync TEMPLATE with tools 2.12
-- [#75](https://github.com/nf-core/bamtofastq/pull/75), [#78](https://github.com/nf-core/bamtofastq/pull/78) Sync TEMPLATE with tools 2.13
-- [#80](https://github.com/nf-core/bamtofastq/pull/80), [#84](https://github.com/nf-core/bamtofastq/pull/84) Sync TEMPLATE with tools 2.13.1
+- [#73](https://github.com/nf-core/bamtofastq/pull/73) Template update for nf-core/tools v2.12
+- [#75](https://github.com/nf-core/bamtofastq/pull/75), [#78](https://github.com/nf-core/bamtofastq/pull/78) Template update for nf-core/tools v2.13
+- [#80](https://github.com/nf-core/bamtofastq/pull/80), [#84](https://github.com/nf-core/bamtofastq/pull/84) Template update for nf-core/tools v2.13.1
 
 ### `Changed`
 
-- [#74](https://github.com/nf-core/bamtofastq/pull/74) Update to samtools to v1.19.2
+- [#74](https://github.com/nf-core/bamtofastq/pull/74) Update samtools to v1.19.2
 - [#76](https://github.com/nf-core/bamtofastq/pull/76) Update modules cat/fastq and samtools/view
 - [#88](https://github.com/nf-core/bamtofastq/pull/88) Update subworkflow utils_nfcore_pipeline
 
@@ -33,8 +73,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
-- [#61](https://github.com/nf-core/bamtofastq/pull/61) Sync TEMPLATE with tools 2.9
-- [#64](https://github.com/nf-core/bamtofastq/pull/64) Sync TEMPLATE with tools 2.10
+- [#61](https://github.com/nf-core/bamtofastq/pull/61) Template update for nf-core/tools v2.9
+- [#64](https://github.com/nf-core/bamtofastq/pull/64) Template update for nf-core/tools v2.10
 
 ### `Changed`
 
@@ -69,7 +109,7 @@ Initial release of nf-core/bamtofastq, created with the [nf-core](https://nf-co.
 - [#54](https://github.com/nf-core/bamtofastq/pull/54) Code review changes
 - [#53](https://github.com/nf-core/bamtofastq/pull/53) Code review & updated modules
 - [#52](https://github.com/nf-core/bamtofastq/pull/52) Code review changed resources in configs
-- [#47](https://github.com/nf-core/bamtofastq/pull/47) Sync TEMPLATE with tools 2.8
+- [#47](https://github.com/nf-core/bamtofastq/pull/47) Template update for nf-core/tools v2.8
 
 ### `Fixed`
 

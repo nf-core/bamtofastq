@@ -43,7 +43,7 @@ workflow PREPARE_INDICES {
     // INDEX FASTA
     fasta_fai = Channel.empty()
     if(params.fasta && !params.fasta_fai){
-        SAMTOOLS_FAIDX(fasta.map{ it -> [[id:it[0].baseName], it] }, [[:], []])
+        SAMTOOLS_FAIDX(fasta.map{ it -> [[id:it[0].baseName], it] }, [[:], []], [])
         ch_versions = ch_versions.mix(SAMTOOLS_FAIDX.out.versions)
         fasta_fai   = SAMTOOLS_FAIDX.out.fai.map{ meta, fai -> [fai] }
 
