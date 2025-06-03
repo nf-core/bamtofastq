@@ -14,3 +14,9 @@ template:
   org: nf-core
   outdir: .
   version: 2.2.0
+lint:
+  actions_ci: false
+  files_exist:
+    - .github/workflows/ci.yml
+  files_unchanged:
+    - .gitignore
