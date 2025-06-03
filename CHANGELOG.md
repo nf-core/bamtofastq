@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#116](https://github.com/nf-core/bamtofastq/pull/116) - Update samtools to v1.21
 - [#119](https://github.com/nf-core/bamtofastq/pull/119) - Update samtools version in local module to v1.21
 - [#123](https://github.com/nf-core/bamtofastq/pull/123) - Prepare release 2.2.0
+- [#128](https://github.com/nf-core/bamtofastq/pull/128) - Template update for nf-core/tools v3.3.1
 
 ### `Fixed`
 
