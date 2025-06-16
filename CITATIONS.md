@@ -14,6 +14,10 @@
 
   > Andrews, S. (2010). FastQC: A Quality Control Tool for High Throughput Sequence Data [Online].
 
+- [fastq_utils](https://github.com/nunofonseca/fastq_utils)
+
+  > Nuno Fonseca, & Jonathan Manning. (2023). nunofonseca/fastq_utils: 0.25.2 (0.25.2). Zenodo. https://doi.org/10.5281/zenodo.7755574
+
 - [MultiQC](https://pubmed.ncbi.nlm.nih.gov/27312411/)
 
   > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
