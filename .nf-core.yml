@@ -8,10 +8,10 @@ template:
   name: bamtofastq
   org: nf-core
   outdir: .
-  version: 2.2.0
+  version: 2.3.0dev
 lint:
   actions_ci: false
   files_exist:
-    - .github/workflows/ci.yml
+  - .github/workflows/ci.yml
   files_unchanged:
-    - .gitignore
+  - .gitignore
