@@ -1,4 +1,4 @@
-nf_core_version: 3.3.1
+nf_core_version: 3.3.2
 repository_type: pipeline
 template:
   author: Friederike Hanssen, Susanne Jodoin
@@ -9,9 +9,3 @@ template:
   org: nf-core
   outdir: .
   version: 2.3.0dev
-lint:
-  actions_ci: false
-  files_exist:
-    - .github/workflows/ci.yml
-  files_unchanged:
-    - .gitignore
