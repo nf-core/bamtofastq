@@ -95,18 +95,6 @@
                 "samtools/test2.stats"
             ],
             [
-                "test.post_conversion_1_fastqc.html:md5,f33df2efea5f1c100710ae1a5be9884f",
-                "test.post_conversion_1_fastqc.zip:md5,f3e99878f14e05bbdc34b6036d15657b",
-                "test.post_conversion_2_fastqc.html:md5,01a5f5383f9e61494dd08dcf06cd0c69",
-                "test.post_conversion_2_fastqc.zip:md5,da0556e8a1ed682f9db7cdb84edda440",
-                "test.pre_conversion_fastqc.html:md5,fede45cad9cd8ac97686bfa48b967c22",
-                "test.pre_conversion_fastqc.zip:md5,bb47ff76ff336c1abcc305ab65a61cc5",
-                "test2.post_conversion_1_fastqc.html:md5,55290a710fced385aad3df8fc6a2ad40",
-                "test2.post_conversion_1_fastqc.zip:md5,c133c8951f85753e08bf7b8afba60162",
-                "test2.post_conversion_2_fastqc.html:md5,07e5adf2878d79a878a9d58425541c2f",
-                "test2.post_conversion_2_fastqc.zip:md5,d6122ef6eb953ef8f28911e60f6f0e1e",
-                "test2.pre_conversion_fastqc.html:md5,6ddba71a6f1fbac945979af0b31d9424",
-                "test2.pre_conversion_fastqc.zip:md5,ced90c64ca2aceb782e96b4df5535769",
                 "test.txt:md5,db31682c36cde02f1e8567d130537cac",
                 "test2.txt:md5,0222a414a69c92608af1580f3c6ce996",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",

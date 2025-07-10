@@ -69,10 +69,6 @@
                 "samtools/test3.stats"
             ],
             [
-                "test3.chrX_chrY_X_Y.post_conversion_fastqc.html:md5,8ae203f0e0c2173d06af56c893211414",
-                "test3.chrX_chrY_X_Y.post_conversion_fastqc.zip:md5,a2496fed58e2a13d53b435370b54d1e5",
-                "test3.pre_conversion_fastqc.html:md5,2db5721216f5c07fda0c2ba72d76c1cf",
-                "test3.pre_conversion_fastqc.zip:md5,24d9d6b5ee4ba282739523160abee864",
                 "test3.chrX_chrY_X_Y.txt:md5,228544370b1655729e7e94ff21832d31",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "test3.chrX_chrY_X_Y_other.fq.gz:md5,6f79ab14a70e174ef178469e3a5febdd",

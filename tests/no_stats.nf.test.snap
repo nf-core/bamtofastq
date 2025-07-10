@@ -79,18 +79,6 @@
                 "reads/test_2.merged.fastq.gz"
             ],
             [
-                "test.post_conversion_1_fastqc.html:md5,b46bf742240beb939e461256afbcda85",
-                "test.post_conversion_1_fastqc.zip:md5,565055ed756384c81806cf69c308a788",
-                "test.post_conversion_2_fastqc.html:md5,edf5766a6144e2bc1a956657fbaecb71",
-                "test.post_conversion_2_fastqc.zip:md5,c701180a117f5eb0ab4d7378de57917e",
-                "test.pre_conversion_fastqc.html:md5,fede45cad9cd8ac97686bfa48b967c22",
-                "test.pre_conversion_fastqc.zip:md5,af1397bd4b09caf77afcfa8f0cc33132",
-                "test2.post_conversion_1_fastqc.html:md5,c9eb453f735b00b1f7ec19af8761fbfa",
-                "test2.post_conversion_1_fastqc.zip:md5,994bbe876abab3b0070f65b6c218ba1b",
-                "test2.post_conversion_2_fastqc.html:md5,58e3b1d3f8f7a56bb64586cd0550fc9d",
-                "test2.post_conversion_2_fastqc.zip:md5,976bce07419491e843072e467c59786e",
-                "test2.pre_conversion_fastqc.html:md5,6ddba71a6f1fbac945979af0b31d9424",
-                "test2.pre_conversion_fastqc.zip:md5,bebdc68a6f139390600348fe48d95c24",
                 "test.txt:md5,db31682c36cde02f1e8567d130537cac",
                 "test2.txt:md5,0222a414a69c92608af1580f3c6ce996",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",

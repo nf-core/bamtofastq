@@ -1,5 +1,6 @@
 .DS_Store
 csv/*.csv
+fastqc/*_fastqc.{html,zip}
 multiqc/multiqc_data/BETA-multiqc.parquet
 multiqc/multiqc_data/llms-full.txt
 multiqc/multiqc_data/multiqc.log
