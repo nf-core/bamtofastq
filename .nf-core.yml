@@ -1,9 +1,4 @@
-lint:
-  files_exist:
-    - .github/workflows/ci.yml
-  files_unchanged:
-    - .gitignore
-nf_core_version: 3.3.2
+nf_core_version: 3.4.1
 repository_type: pipeline
 template:
   author: Friederike Hanssen, Susanne Jodoin
