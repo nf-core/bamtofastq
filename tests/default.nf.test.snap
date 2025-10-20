@@ -1,6 +1,7 @@
 {
     "-profile test": {
         "content": [
+            31,
             {
                 "CAT_FASTQ": {
                     "cat": 9.5
@@ -112,6 +113,6 @@
             "nf-test": "0.9.3",
             "nextflow": "25.04.8"
         },
-        "timestamp": "2025-10-17T21:48:41.335464"
+        "timestamp": "2025-10-20T12:06:36.555785"
     }
 }
