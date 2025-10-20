@@ -46,9 +46,6 @@
                 },
                 "SAMTOOLS_VIEW_UNMAP_UNMAP": {
                     "samtools": 1.21
-                },
-                "Workflow": {
-                    "nf-core/bamtofastq": "v2.3.0dev"
                 }
             },
             [
