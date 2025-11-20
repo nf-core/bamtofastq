@@ -1,0 +1,7 @@
+name: check_if_paired_end
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bioconda::htslib=1.21
+  - bioconda::samtools=1.21
