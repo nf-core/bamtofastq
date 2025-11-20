@@ -4,10 +4,10 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_bamtofastq_pipeline'
-include { paramsSummaryMap       } from 'plugin/nf-schema'
-include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { methodsDescriptionText                                    } from '../subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { paramsSummaryMap                                          } from 'plugin/nf-schema'
+include { paramsSummaryMultiqc                                      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { softwareVersionsToYAML                                    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,24 +49,24 @@ include { ALIGNMENT_TO_FASTQ                                        } from '../s
 */
 
 workflow BAMTOFASTQ {
-
     take:
     ch_samplesheet // channel: samplesheet read in from --input
+
     main:
 
     // Initialize file channels based on params
-    fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
+    fasta = params.fasta ? channel.fromPath(params.fasta).collect() : channel.value([])
 
     // Initialize value channels based on params
-    chr       = params.chr       ?: Channel.empty()
+    chr = params.chr ?: channel.empty()
 
-    ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    ch_versions = channel.empty()
+    ch_multiqc_files = channel.empty()
 
     // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
     PREPARE_INDICES(
         ch_samplesheet,
-        fasta
+        fasta,
     )
 
     ch_versions = ch_versions.mix(PREPARE_INDICES.out.versions)
@@ -76,7 +76,7 @@ workflow BAMTOFASTQ {
     ch_input = PREPARE_INDICES.out.ch_input_indexed
     PRE_CONVERSION_QC(
         ch_input,
-        fasta
+        fasta,
     )
 
     ch_versions = ch_versions.mix(PRE_CONVERSION_QC.out.versions)
@@ -89,20 +89,31 @@ workflow BAMTOFASTQ {
     ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
 
     // Combine channels into new input channel for conversion + add info about single/paired to meta map
-    ch_input_new = ch_single_end.map{ meta, bam, bai, _txt ->
-            [ [ id : meta.id,
-            filetype : meta.filetype,
-            single_end : true ],
-            bam,
-            bai
-            ] }
-        .mix(ch_paired_end.map{ meta, bam, bai, _txt ->
-            [ [ id : meta.id,
-            filetype : meta.filetype,
-            single_end : false ],
-            bam,
-            bai
-            ] })
+    ch_input_new = ch_single_end
+        .map { meta, bam, bai, _txt ->
+            [
+                [
+                    id: meta.id,
+                    filetype: meta.filetype,
+                    single_end: true,
+                ],
+                bam,
+                bai,
+            ]
+        }
+        .mix(
+            ch_paired_end.map { meta, bam, bai, _txt ->
+                [
+                    [
+                        id: meta.id,
+                        filetype: meta.filetype,
+                        single_end: false,
+                    ],
+                    bam,
+                    bai,
+                ]
+            }
+        )
 
     ch_versions = ch_versions.mix(CHECK_IF_PAIRED_END.out.versions)
 
@@ -110,48 +121,62 @@ workflow BAMTOFASTQ {
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input_new, fasta.map{ it -> [[:], it] }, [], [])
+        SAMTOOLS_CHR(ch_input_new, fasta.map { it -> [[:], it] }, [], [])
 
-        samtools_chr_out = Channel.empty().mix( SAMTOOLS_CHR.out.bam,
-                                                SAMTOOLS_CHR.out.cram)
+        samtools_chr_out = channel.empty()
+            .mix(
+                SAMTOOLS_CHR.out.bam,
+                SAMTOOLS_CHR.out.cram,
+            )
         SAMTOOLS_CHR_INDEX(samtools_chr_out)
-        ch_input_chr = samtools_chr_out.join(Channel.empty().mix( SAMTOOLS_CHR_INDEX.out.bai,
-                                                                SAMTOOLS_CHR_INDEX.out.crai ))
+        ch_input_chr = samtools_chr_out.join(
+            channel.empty().mix(
+                SAMTOOLS_CHR_INDEX.out.bai,
+                SAMTOOLS_CHR_INDEX.out.crai,
+            )
+        )
 
         // Add chr names to id
-        ch_input_new = ch_input_chr.map{ it ->
-                def new_id = it[1].baseName
-                [[
-                    id : new_id,
-                    filetype : it[0].filetype,
-                    single_end: it[0].single_end
+        ch_input_new = ch_input_chr.map { it ->
+            def new_id = it[1].baseName
+            [
+                [
+                    id: new_id,
+                    filetype: it[0].filetype,
+                    single_end: it[0].single_end,
                 ],
                 it[1],
-                it[2]] }
+                it[2],
+            ]
+        }
 
         ch_versions = ch_versions.mix(SAMTOOLS_CHR.out.versions)
         ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
-
     }
 
     // MODULE: SINGLE-END Alignment to FastQ (SortExtractSingleEnd)
     def interleave = false
 
-    ch_input_new.branch{
-        ch_single:  it[0].single_end == true
-        ch_paired:  it[0].single_end == false
-    }.set{conversion_input}
+    ch_input_new
+        .branch {
+            ch_single: it[0].single_end == true
+            ch_paired: it[0].single_end == false
+        }
+        .set { conversion_input }
 
     // Module needs info about single-endedness
     SAMTOOLS_COLLATEFASTQ_SINGLE_END(
-        conversion_input.ch_single.map{ it -> [ it[0], it[1] ]}, // meta, bam/cram
-        fasta.map{ it ->                                         // meta, fasta
+        conversion_input.ch_single.map { it -> [it[0], it[1]] },
+        fasta.map { it ->
+            // meta, fasta
             def new_id = ""
-            if(it) {
+            if (it) {
                 new_id = it[0].baseName
             }
-            [[id:new_id], it] },
-        interleave)
+            [[id: new_id], it]
+        },
+        interleave,
+    )
 
     ch_versions = ch_versions.mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.versions)
 
@@ -159,11 +184,11 @@ workflow BAMTOFASTQ {
     // SUBWORKFLOW: PAIRED-END Alignment to FastQ
     //
 
-    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : Channel.value([])
-    ALIGNMENT_TO_FASTQ (
+    fasta_fai = params.fasta ? params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : channel.value([])
+    ALIGNMENT_TO_FASTQ(
         conversion_input.ch_paired,
         fasta,
-        fasta_fai
+        fasta_fai,
     )
 
     // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
@@ -174,7 +199,7 @@ workflow BAMTOFASTQ {
     // MODULE: FastQC - Post conversion QC
     // famosab: swapped the output of SAMTOOLS_COLLATEFASTQ_SINGLE_END from fastq_singleton to fastq_other because otherwise the fatsq files had empty reads
     // coming from the samtools docs its not clear which file contains the expected reads
-    ch_reads_post_qc = Channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
+    ch_reads_post_qc = channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
 
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
 
@@ -188,69 +213,81 @@ workflow BAMTOFASTQ {
     //
     // Collate and save software versions
     //
-    softwareVersionsToYAML(ch_versions)
+    def topic_versions = channel.topic("versions")
+        .distinct()
+        .branch { entry ->
+            versions_file: entry instanceof Path
+            versions_tuple: true
+        }
+
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [process[process.lastIndexOf(':') + 1..-1], "  ${tool}: ${version}"]
+        }
+        .groupTuple(by: 0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+        .mix(topic_versions_string)
         .collectFile(
             storeDir: "${params.outdir}/pipeline_info",
-            name: 'nf_core_'  +  'bamtofastq_software_'  + 'mqc_'  + 'versions.yml',
+            name: 'nf_core_' + 'bamtofastq_software_' + 'mqc_' + 'versions.yml',
             sort: true,
-            newLine: true
-        ).set { ch_collated_versions }
+            newLine: true,
+        )
+        .set { ch_collated_versions }
 
 
     //
     // MODULE: MultiQC
     //
-    ch_multiqc_config        = Channel.fromPath(
-        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ?
-        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
-        Channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo ?
-        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.empty()
+    ch_multiqc_config = channel.fromPath(
+        "${projectDir}/assets/multiqc_config.yml",
+        checkIfExists: true
+    )
+    ch_multiqc_custom_config = params.multiqc_config
+        ? channel.fromPath(params.multiqc_config, checkIfExists: true)
+        : channel.empty()
+    ch_multiqc_logo = params.multiqc_logo
+        ? channel.fromPath(params.multiqc_logo, checkIfExists: true)
+        : channel.empty()
 
-    summary_params      = paramsSummaryMap(
-        workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
+    summary_params = paramsSummaryMap(
+        workflow,
+        parameters_schema: "nextflow_schema.json"
+    )
+    ch_workflow_summary = channel.value(paramsSummaryMultiqc(summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(
-        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
-        file(params.multiqc_methods_description, checkIfExists: true) :
-        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-    ch_methods_description                = Channel.value(
-        methodsDescriptionText(ch_multiqc_custom_methods_description))
+        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml')
+    )
+    ch_multiqc_custom_methods_description = params.multiqc_methods_description
+        ? file(params.multiqc_methods_description, checkIfExists: true)
+        : file("${projectDir}/assets/methods_description_template.yml", checkIfExists: true)
+    ch_methods_description = channel.value(
+        methodsDescriptionText(ch_multiqc_custom_methods_description)
+    )
 
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
     ch_multiqc_files = ch_multiqc_files.mix(
         ch_methods_description.collectFile(
             name: 'methods_description_mqc.yaml',
-            sort: true
+            sort: true,
         )
     )
 
-    MULTIQC (
+    MULTIQC(
         ch_multiqc_files.collect(),
         ch_multiqc_config.toList(),
         ch_multiqc_custom_config.toList(),
         ch_multiqc_logo.toList(),
         [],
-        []
+        [],
     )
 
     emit:
     multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
-
+    versions       = ch_versions // channel: [ path(versions.yml) ]
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
