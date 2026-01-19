@@ -204,8 +204,6 @@ workflow BAMTOFASTQ {
     // MODULE: fastq_utils - Post conversion checks for broken fastq files
     FASTQUTILS_INFO(ch_reads_post_qc)
 
-    ch_versions = ch_versions.mix(FASTQUTILS_INFO.out.versions)
-
     //
     // Collate and save software versions
     //
