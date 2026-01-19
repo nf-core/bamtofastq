@@ -22,7 +22,7 @@
                     "fastqc": "0.12.1"
                 },
                 "FASTQUTILS_INFO": {
-                    "fastq_utils": "0.25.3"
+                    "fastqutils": "0.25.3"
                 },
                 "SAMTOOLS_COLLATEFASTQ_SINGLE_END": {
                     "samtools": "1.22.1"

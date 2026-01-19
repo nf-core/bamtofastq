@@ -12,7 +12,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - [FastQC](#fastqc) - Raw read QC
 - [Samtools](#samtools) - collate, extract reads and compute bam/cram stats
-- [Fastq_utils](#fastq_utils) - check whether the produced fastq files are valid (not empty or truncated)
+- [Fastq_utils](#fastqutils) - check whether the produced fastq files are valid (not empty or truncated)
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 
@@ -56,13 +56,13 @@ The converted and gzipped fastq output reads are written to the directory `resul
 
 ### Fastq_utils
 
-Runs [`fastq_info`](https://github.com/nunofonseca/fastq_utils). Will throw an error for invalid fastq files.
+Runs [`fastq_info`](https://github.com/nunofonseca/fastqutils). Will throw an error for invalid fastq files.
 
 <details markdown="1">
 <summary>Output files</summary>
 
 - `fastutils/`
-  - `*.txt`: will contain "fastq_utils fastq_info ran and found no issues with \*" if file is valid.
+  - `*.txt`: will contain "fastqutils fastq_info ran and found no issues with \*" if file is valid.
 
 </details>
 
