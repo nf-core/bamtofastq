@@ -4,7 +4,7 @@
             13,
             {
                 "CHECK_IF_PAIRED_END": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
@@ -13,31 +13,31 @@
                     "fastqc": "0.12.1"
                 },
                 "FASTQUTILS_INFO": {
-                    "fastq_utils": "0.25.2"
+                    "fastq_utils": "0.25.3"
                 },
                 "SAMTOOLS_CHR": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 },
                 "SAMTOOLS_CHR_INDEX": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 },
                 "SAMTOOLS_COLLATEFASTQ_SINGLE_END": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 },
                 "SAMTOOLS_FLAGSTAT": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 },
                 "SAMTOOLS_IDXSTATS": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 },
                 "SAMTOOLS_INDEX": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 },
                 "SAMTOOLS_STATS": {
-                    "samtools": 1.21
+                    "samtools": "1.22.1"
                 }
             },
             [
@@ -74,7 +74,7 @@
                 "test3.chrX_chrY_X_Y_other.fq.gz:md5,6f79ab14a70e174ef178469e3a5febdd",
                 "test3.flagstat:md5,7b43b975b0a395040bf1ee3c48f058e7",
                 "test3.idxstats:md5,094096b6f303cc18892e1e027c87f273",
-                "test3.stats:md5,a2994534537147cf4f3185bd867bc220"
+                "test3.stats:md5,bb0748c7f73eb4f813afc481a9e379a8"
             ],
             [
                 "test3.chrX_chrY_X_Y.bam:md5,ab0ddbdbb098c2c0a07988645c0e5d08"
@@ -82,9 +82,9 @@
             "No CRAM files"
         ],
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.6"
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
         },
-        "timestamp": "2025-07-10T11:32:48.118050987"
+        "timestamp": "2026-01-19T11:05:25.652086"
     }
 }
