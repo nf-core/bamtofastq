@@ -24,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | multiqc     | 1.28        | 1.33        |
 | Samtools    | 1.21.       | 1.22.1      |
 
-
 ## v2.2.0 - Kathleen Booth
 
 ### `Added`
