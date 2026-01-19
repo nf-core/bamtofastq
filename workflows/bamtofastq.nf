@@ -29,7 +29,6 @@ include { CHECK_IF_PAIRED_END                                       } from '../m
 include { FASTQC as FASTQC_POST_CONVERSION                          } from '../modules/nf-core/fastqc/main'
 include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view/main'
-include { SAMTOOLS_VIEW as SAMTOOLS_PE                              } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq/main'
 include { MULTIQC                                                   } from '../modules/nf-core/multiqc/main'
@@ -150,7 +149,6 @@ workflow BAMTOFASTQ {
             ]
         }
 
-        ch_versions = ch_versions.mix(SAMTOOLS_CHR.out.versions)
         ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
     }
 
@@ -202,8 +200,6 @@ workflow BAMTOFASTQ {
     ch_reads_post_qc = channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
 
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
-
-    ch_versions = ch_versions.mix(FASTQC_POST_CONVERSION.out.versions)
 
     // MODULE: fastq_utils - Post conversion checks for broken fastq files
     FASTQUTILS_INFO(ch_reads_post_qc)

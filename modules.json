@@ -7,62 +7,62 @@
                 "nf-core": {
                     "cat/fastq": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "f4743b089085121497b7c1c81a28810ce2740dde",
                         "installed_by": ["modules"]
                     },
                     "fastqc": {
                         "branch": "master",
-                        "git_sha": "41dfa3f7c0ffabb96a6a813fe321c6d1cc5b6e46",
+                        "git_sha": "5bdb098216aaf5df9c3b6343e6204cd932503c16",
                         "installed_by": ["modules"]
                     },
                     "fastqutils/info": {
                         "branch": "master",
-                        "git_sha": "92168db7097574f7407062f26e901f2d2fb96135",
+                        "git_sha": "bf5f37e076bd8ed13f292dcfb99c1aea1eb772aa",
                         "installed_by": ["modules"]
                     },
                     "multiqc": {
                         "branch": "master",
-                        "git_sha": "82a79183037a403ad1b6714e5dbcff25500efaf6",
+                        "git_sha": "80cba9452fb1e9bb79884976fa1ca0e671949aa2",
                         "installed_by": ["modules"]
                     },
                     "samtools/collatefastq": {
                         "branch": "master",
-                        "git_sha": "705f8c9ac4dfdf07666e71abde28f267e2dfd5eb",
+                        "git_sha": "c8be52dba1166c678e74cda9c3a3c221635c8bb1",
                         "installed_by": ["modules"]
                     },
                     "samtools/faidx": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "9a48bce39a67e2cb34b8f125fc1d50f0ad98b616",
                         "installed_by": ["modules"]
                     },
                     "samtools/flagstat": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "e334e12a1e985adc5ffc3fc78a68be1de711de45",
                         "installed_by": ["modules"]
                     },
                     "samtools/idxstats": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "c8be52dba1166c678e74cda9c3a3c221635c8bb1",
                         "installed_by": ["modules"]
                     },
                     "samtools/index": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "c8be52dba1166c678e74cda9c3a3c221635c8bb1",
                         "installed_by": ["modules"]
                     },
                     "samtools/merge": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "9a48bce39a67e2cb34b8f125fc1d50f0ad98b616",
                         "installed_by": ["modules"]
                     },
                     "samtools/stats": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "5cb9a8694da0a0e550921636bb60bc8c56445fd7",
                         "installed_by": ["modules"]
                     },
                     "samtools/view": {
                         "branch": "master",
-                        "git_sha": "05954dab2ff481bcb999f24455da29a5828af08d",
+                        "git_sha": "5cb9a8694da0a0e550921636bb60bc8c56445fd7",
                         "installed_by": ["modules"]
                     }
                 }

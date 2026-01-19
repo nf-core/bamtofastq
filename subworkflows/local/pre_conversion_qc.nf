@@ -45,8 +45,6 @@ workflow PRE_CONVERSION_QC {
     // Gather versions of all tools used
     ch_versions = ch_versions.mix(SAMTOOLS_IDXSTATS.out.versions)
     ch_versions = ch_versions.mix(SAMTOOLS_FLAGSTAT.out.versions)
-    ch_versions = ch_versions.mix(SAMTOOLS_STATS.out.versions)
-    ch_versions = ch_versions.mix(FASTQC_PRE_CONVERSION.out.versions)
 
     emit:
     flagstat = SAMTOOLS_FLAGSTAT.out.flagstat
