@@ -58,7 +58,7 @@ workflow BAMTOFASTQ {
     fasta = params.fasta ? channel.fromPath(params.fasta).collect() : channel.value([])
 
     // Initialize value channels based on params
-    chr = params.chr ?: channel.empty()
+    // chr = params.chr ?: channel.empty() // declared but not used
 
     ch_versions = channel.empty()
     ch_multiqc_files = channel.empty()
@@ -158,9 +158,9 @@ workflow BAMTOFASTQ {
     def interleave = false
 
     ch_input_new
-        .branch {
-            ch_single: it[0].single_end == true
-            ch_paired: it[0].single_end == false
+        .branch { files ->
+            ch_single: files[0].single_end == true
+            ch_paired: files[0].single_end == false
         }
         .set { conversion_input }
 
@@ -289,5 +289,5 @@ workflow BAMTOFASTQ {
 
     emit:
     multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions // channel: [ path(versions.yml) ]
+    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }

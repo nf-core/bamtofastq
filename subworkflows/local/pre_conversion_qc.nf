@@ -14,7 +14,7 @@ workflow PRE_CONVERSION_QC {
 
     main:
 
-    ch_versions = Channel.empty()
+    ch_versions = channel.empty()
 
     // SAMTOOLS IDXSTATS
     SAMTOOLS_IDXSTATS(input)
@@ -23,19 +23,24 @@ workflow PRE_CONVERSION_QC {
     SAMTOOLS_FLAGSTAT(input)
 
     // SAMTOOLS STATS
-    SAMTOOLS_STATS(input, fasta.map{ it -> [[:], it] })
+    SAMTOOLS_STATS(input, fasta.map { it -> [[:], it] })
 
     // FASTQC ONLY ON BAM
-    input.branch{
-        bam:  it[0].filetype == 'bam'
-        cram: it[0].filetype == 'cram'
-    }.set{fastqc_input}
+    input
+        .branch { files ->
+            bam: files[0].filetype == 'bam'
+            cram: files[0].filetype == 'cram'
+        }
+        .set { fastqc_input }
 
-    FASTQC_PRE_CONVERSION(fastqc_input.bam
-        .map{ it ->
-            [it[0], // meta
-            it[1]]  // bam
-        })
+    FASTQC_PRE_CONVERSION(
+        fastqc_input.bam.map { it ->
+            [
+                it[0],
+                it[1],
+            ]
+        }
+    )
 
     // Gather versions of all tools used
     ch_versions = ch_versions.mix(SAMTOOLS_IDXSTATS.out.versions)
@@ -44,10 +49,10 @@ workflow PRE_CONVERSION_QC {
     ch_versions = ch_versions.mix(FASTQC_PRE_CONVERSION.out.versions)
 
     emit:
-    flagstat    = SAMTOOLS_FLAGSTAT.out.flagstat
-    idxstats    = SAMTOOLS_IDXSTATS.out.idxstats
-    stats       = SAMTOOLS_STATS.out.stats
-    zip         = FASTQC_PRE_CONVERSION.out.zip
-    html        = FASTQC_PRE_CONVERSION.out.html
-    versions    = ch_versions
+    flagstat = SAMTOOLS_FLAGSTAT.out.flagstat
+    idxstats = SAMTOOLS_IDXSTATS.out.idxstats
+    stats    = SAMTOOLS_STATS.out.stats
+    zip      = FASTQC_PRE_CONVERSION.out.zip
+    html     = FASTQC_PRE_CONVERSION.out.html
+    versions = ch_versions
 }
