@@ -12,14 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#132](https://github.com/nf-core/bamtofastq/pull/132) - Template update for nf-core/tools v3.3.2
 - [#133](https://github.com/nf-core/bamtofastq/pull/133) - Template update for nf-core/tools v3.4.1
 - [#134](https://github.com/nf-core/bamtofastq/pull/134) - Template update for nf-core/tools v3.5.1
+- [#135](https://github.com/nf-core/bamtofastq/pull/135) - Fix nextflow lint and update all modules
 
 ### `Fixed`
 
 ### `Dependencies`
 
-| Dependency | Old version | New version |
-| ---------- | ----------- | ----------- |
-| multiqc    | 1.28        | 1.32        |
+| Dependency  | Old version | New version |
+| ----------- | ----------- | ----------- |
+| fastq_utils | 0.25.2      | 0.25.3      |
+| multiqc     | 1.28        | 1.33        |
+| Samtools    | 1.21        | 1.22.1      |
+
+Bump minimal Nextflow version to 25.10.2 and nf-schema to 2.6.1
 
 ## v2.2.0 - Kathleen Booth
 

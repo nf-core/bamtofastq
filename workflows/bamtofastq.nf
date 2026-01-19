@@ -29,7 +29,6 @@ include { CHECK_IF_PAIRED_END                                       } from '../m
 include { FASTQC as FASTQC_POST_CONVERSION                          } from '../modules/nf-core/fastqc/main'
 include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info/main'
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view/main'
-include { SAMTOOLS_VIEW as SAMTOOLS_PE                              } from '../modules/nf-core/samtools/view/main'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index/main'
 include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq/main'
 include { MULTIQC                                                   } from '../modules/nf-core/multiqc/main'
@@ -58,7 +57,7 @@ workflow BAMTOFASTQ {
     fasta = params.fasta ? channel.fromPath(params.fasta).collect() : channel.value([])
 
     // Initialize value channels based on params
-    chr = params.chr ?: channel.empty()
+    // chr = params.chr ?: channel.empty() // declared but not used
 
     ch_versions = channel.empty()
     ch_multiqc_files = channel.empty()
@@ -150,7 +149,6 @@ workflow BAMTOFASTQ {
             ]
         }
 
-        ch_versions = ch_versions.mix(SAMTOOLS_CHR.out.versions)
         ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
     }
 
@@ -158,9 +156,9 @@ workflow BAMTOFASTQ {
     def interleave = false
 
     ch_input_new
-        .branch {
-            ch_single: it[0].single_end == true
-            ch_paired: it[0].single_end == false
+        .branch { files ->
+            ch_single: files[0].single_end == true
+            ch_paired: files[0].single_end == false
         }
         .set { conversion_input }
 
@@ -203,12 +201,8 @@ workflow BAMTOFASTQ {
 
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
 
-    ch_versions = ch_versions.mix(FASTQC_POST_CONVERSION.out.versions)
-
     // MODULE: fastq_utils - Post conversion checks for broken fastq files
     FASTQUTILS_INFO(ch_reads_post_qc)
-
-    ch_versions = ch_versions.mix(FASTQUTILS_INFO.out.versions)
 
     //
     // Collate and save software versions
@@ -289,5 +283,5 @@ workflow BAMTOFASTQ {
 
     emit:
     multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions // channel: [ path(versions.yml) ]
+    versions       = ch_versions                 // channel: [ path(versions.yml) ]
 }
