@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- [#137](https://github.com/nf-core/bamtofastq/pull/137) - Recover help message
+
 ### `Dependencies`
 
 | Dependency  | Old version | New version |
