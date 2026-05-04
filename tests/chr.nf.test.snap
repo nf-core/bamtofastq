@@ -74,17 +74,17 @@
                 "test3.chrX_chrY_X_Y_other.fq.gz:md5,6f79ab14a70e174ef178469e3a5febdd",
                 "test3.flagstat:md5,7b43b975b0a395040bf1ee3c48f058e7",
                 "test3.idxstats:md5,094096b6f303cc18892e1e027c87f273",
-                "test3.stats:md5,bb0748c7f73eb4f813afc481a9e379a8"
+                "test3.stats:md5,28954b3c5a6050edfbbe5899ca6aa23e"
             ],
             [
                 "test3.chrX_chrY_X_Y.bam:md5,ab0ddbdbb098c2c0a07988645c0e5d08"
             ],
             "No CRAM files"
         ],
+        "timestamp": "2026-05-04T14:21:43.22636",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-01-19T11:05:25.652086"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }

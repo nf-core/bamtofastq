@@ -124,12 +124,7 @@ workflow BAMTOFASTQ {
                 SAMTOOLS_CHR.out.cram,
             )
         SAMTOOLS_CHR_INDEX(samtools_chr_out)
-        ch_input_chr = samtools_chr_out.join(
-            channel.empty().mix(
-                SAMTOOLS_CHR_INDEX.out.bai,
-                SAMTOOLS_CHR_INDEX.out.crai,
-            )
-        )
+        ch_input_chr = samtools_chr_out.join(SAMTOOLS_CHR_INDEX.out.index)
 
         // Add chr names to id
         ch_input_new = ch_input_chr.map { it ->

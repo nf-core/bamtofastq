@@ -51,7 +51,7 @@ workflow ALIGNMENT_TO_FASTQ {
     ch_unmapped_bam_cram = channel.empty().mix(all_unmapped_bam, all_unmapped_cram)
 
     // MERGE UNMAP
-    SAMTOOLS_MERGE_UNMAP(ch_unmapped_bam_cram, fasta_fai.map { it -> [it[0], it[1], it[2], []] })
+    SAMTOOLS_MERGE_UNMAP(ch_unmapped_bam_cram.map { meta, ams -> [meta, ams, []]}, fasta_fai.map { meta, fasta_file, fai_file -> [meta, fasta_file, fai_file, []] })
 
     def interleave = false
 
