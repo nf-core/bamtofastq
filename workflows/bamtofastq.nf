@@ -69,8 +69,8 @@ workflow BAMTOFASTQ {
         ch_samplesheet,
         fasta,
     )
-    fai = params.fasta ? params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : channel.empty()
-    ch_fasta_fai = params.fasta ? fasta.combine(fai).map { fasta_file, fai_file -> [ [id: fasta_file.baseName], fasta_file, fai_file ] } : channel.empty()
+    fai = params.fasta ? params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai.collect() : channel.empty()
+    ch_fasta_fai = params.fasta ? fasta.combine(fai).map { fasta_file, fai_file -> [[id: fasta_file.baseName], fasta_file, fai_file] }.collect() : channel.empty()
 
     // SUBWORKFLOW: Pre conversion QC and stats
     ch_input = PREPARE_INDICES.out.ch_input_indexed
@@ -204,9 +204,9 @@ workflow BAMTOFASTQ {
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${outdir}/pipeline_info",
-            name: 'nf_core_'  +  'bamtofastq_software_'  + 'mqc_'  + 'versions.yml',
+            name: 'nf_core_' + 'bamtofastq_software_' + 'mqc_' + 'versions.yml',
             sort: true,
-            newLine: true
+            newLine: true,
         )
 
     //
@@ -235,6 +235,7 @@ workflow BAMTOFASTQ {
             ]
         }
     )
+
     emit:
     multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
 }
