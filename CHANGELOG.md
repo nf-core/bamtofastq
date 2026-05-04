@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#134](https://github.com/nf-core/bamtofastq/pull/134) - Template update for nf-core/tools v3.5.1
 - [#135](https://github.com/nf-core/bamtofastq/pull/135) - Fix nextflow lint and update all modules
 - [#138](https://github.com/nf-core/bamtofastq/pull/138) - Template update for nf-core/tools v4.0.2
-- [#139](https://github.com/nf-core/bamtofastq/pull/139) - Update all modules, adjust fasta_fai input channels, remove {modules/subworkflows}/nf-core/**/tests/
+- [#139](https://github.com/nf-core/bamtofastq/pull/139) - Update all modules, adjust fasta_fai input channels, remove {modules/subworkflows}/nf-core/\*\*/tests/
 
 ### `Fixed`
 
