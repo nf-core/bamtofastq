@@ -16,9 +16,6 @@ workflow PREPARE_INDICES {
     fasta // optional: reference file if CRAM format and reference not in header
 
     main:
-
-    ch_versions = channel.empty()
-
     ch_out = channel.empty()
 
     // Determine if INDEX provided
@@ -34,23 +31,20 @@ workflow PREPARE_INDICES {
 
     // INDEX BAM/CRAM only if not provided
     SAMTOOLS_INDEX(input_to_index)
-    ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions)
-    ch_index_files = channel.empty().mix(SAMTOOLS_INDEX.out.bai, SAMTOOLS_INDEX.out.crai)
 
     // Combine channels
-    ch_new = input_to_index.join(ch_index_files)
+    ch_new = input_to_index.join(SAMTOOLS_INDEX.out.index)
     ch_out = samtools_input.is_indexed.mix(ch_new)
 
 
     // INDEX FASTA
     fasta_fai = channel.empty()
     if (params.fasta && !params.fasta_fai) {
-        SAMTOOLS_FAIDX(fasta.map { it -> [[id: it[0].baseName], it] }, [[:], []], [])
-        fasta_fai = SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> [fai] }
+        SAMTOOLS_FAIDX(fasta.map { it -> [[id: it[0].baseName], it, []] }, [])
+        fasta_fai = SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai }.collect()
     }
 
     emit:
     ch_input_indexed = ch_out
     fasta_fai        = fasta_fai
-    versions         = ch_versions
 }

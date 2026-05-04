@@ -7,13 +7,13 @@
                     "cat": 9.5
                 },
                 "CHECK_IF_PAIRED_END": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "COLLATE_FASTQ_MAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "COLLATE_FASTQ_UNMAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
@@ -25,22 +25,22 @@
                     "fastqutils": "0.25.3"
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_MERGE_UNMAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_MAP_MAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_MAP_UNMAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_UNMAP_MAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_UNMAP_UNMAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 }
             },
             [
@@ -90,10 +90,10 @@
             "No BAM files",
             "No CRAM files"
         ],
+        "timestamp": "2026-05-04T14:56:26.499029",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-01-19T11:14:40.804431"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }

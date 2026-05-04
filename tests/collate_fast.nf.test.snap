@@ -7,13 +7,13 @@
                     "cat": 9.5
                 },
                 "CHECK_IF_PAIRED_END": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "COLLATE_FASTQ_MAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "COLLATE_FASTQ_UNMAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
@@ -25,31 +25,31 @@
                     "fastqutils": "0.25.3"
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_FLAGSTAT": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_IDXSTATS": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_MERGE_UNMAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_STATS": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_MAP_MAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_MAP_UNMAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_UNMAP_MAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_UNMAP_UNMAP": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 }
             },
             [
@@ -104,18 +104,18 @@
                 "test_2.merged.fastq.gz:md5,f02e1a72b6749df8115ac59b49eb55db",
                 "test.flagstat:md5,a53f3d26e2e9851f7d528442bbfe9781",
                 "test.idxstats:md5,e179601fa7b8ebce81ac3765206f6c15",
-                "test.stats:md5,0847f08bb1c599016cc225e11466b4c7",
+                "test.stats:md5,3c3f8fa56674fa987fd912b530f49c3c",
                 "test2.flagstat:md5,acbd95030a362a7e6491faa87d1b9c2c",
                 "test2.idxstats:md5,90f01313bc89c7fd096aad051cd71b66",
-                "test2.stats:md5,e1bfdfa8806ed5abea70613337ef2569"
+                "test2.stats:md5,7e6537bde51ee4bb4a50562014ae2cd4"
             ],
             "No BAM files",
             "No CRAM files"
         ],
+        "timestamp": "2026-05-04T15:07:14.407412",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-01-19T11:06:47.137049"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }
