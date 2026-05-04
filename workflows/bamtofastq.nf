@@ -58,7 +58,7 @@ workflow BAMTOFASTQ {
     main:
 
     // Initialize file channels based on params
-    fasta = params.fasta ? channel.fromPath(params.fasta).collect() : channel.value([])
+    fasta = params.fasta ? channel.fromPath(params.fasta).collect() : channel.empty()
 
     // Initialize value channels based on params
     // chr = params.chr ?: channel.empty() // declared but not used
@@ -69,8 +69,8 @@ workflow BAMTOFASTQ {
         ch_samplesheet,
         fasta,
     )
-    fai = params.fasta ? params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : channel.value([])
-    ch_fasta_fai = fasta.combine(fai).map { fasta_file, fai_file -> [ [id: fasta_file.baseName], fasta_file, fai_file ] }
+    fai = params.fasta ? params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : channel.empty()
+    ch_fasta_fai = params.fasta ? fasta.combine(fai).map { fasta_file, fai_file -> [ [id: fasta_file.baseName], fasta_file, fai_file ] } : channel.empty()
 
     // SUBWORKFLOW: Pre conversion QC and stats
     ch_input = PREPARE_INDICES.out.ch_input_indexed

@@ -4,7 +4,7 @@
             13,
             {
                 "CHECK_IF_PAIRED_END": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
@@ -16,28 +16,28 @@
                     "fastqutils": "0.25.3"
                 },
                 "SAMTOOLS_CHR": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_CHR_INDEX": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_COLLATEFASTQ_SINGLE_END": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_FLAGSTAT": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_IDXSTATS": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_INDEX": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_STATS": {
-                    "samtools": "1.22.1"
+                    "samtools": "1.23.1"
                 }
             },
             [
