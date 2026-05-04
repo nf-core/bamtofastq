@@ -13,4 +13,4 @@ null/
 .nf-test*
 .nf-test/
 modules/nf-core/**/tests/
-
+subworkflows/nf-core/**/tests/
