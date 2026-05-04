@@ -1,0 +1,90 @@
+{
+    "-profile test --input test_chr_samplesheet.csv": {
+        "content": [
+            13,
+            {
+                "CHECK_IF_PAIRED_END": {
+                    "samtools": "1.22.1"
+                },
+                "FASTQC_POST_CONVERSION": {
+                    "fastqc": "0.12.1"
+                },
+                "FASTQC_PRE_CONVERSION": {
+                    "fastqc": "0.12.1"
+                },
+                "FASTQUTILS_INFO": {
+                    "fastqutils": "0.25.3"
+                },
+                "SAMTOOLS_CHR": {
+                    "samtools": "1.22.1"
+                },
+                "SAMTOOLS_CHR_INDEX": {
+                    "samtools": "1.22.1"
+                },
+                "SAMTOOLS_COLLATEFASTQ_SINGLE_END": {
+                    "samtools": "1.22.1"
+                },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": "1.22.1"
+                },
+                "SAMTOOLS_FLAGSTAT": {
+                    "samtools": "1.22.1"
+                },
+                "SAMTOOLS_IDXSTATS": {
+                    "samtools": "1.22.1"
+                },
+                "SAMTOOLS_INDEX": {
+                    "samtools": "1.22.1"
+                },
+                "SAMTOOLS_STATS": {
+                    "samtools": "1.22.1"
+                }
+            },
+            [
+                "fastqc",
+                "fastqc/test3.chrX_chrY_X_Y.post_conversion_fastqc.html",
+                "fastqc/test3.chrX_chrY_X_Y.post_conversion_fastqc.zip",
+                "fastqc/test3.pre_conversion_fastqc.html",
+                "fastqc/test3.pre_conversion_fastqc.zip",
+                "fastqutils",
+                "fastqutils/test3.chrX_chrY_X_Y.txt",
+                "multiqc",
+                "multiqc/multiqc_data",
+                "multiqc/multiqc_data/llms-full.txt",
+                "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
+                "multiqc/multiqc_data/multiqc_citations.txt",
+                "multiqc/multiqc_data/multiqc_data.json",
+                "multiqc/multiqc_data/multiqc_software_versions.txt",
+                "multiqc/multiqc_data/multiqc_sources.txt",
+                "multiqc/multiqc_report.html",
+                "pipeline_info",
+                "pipeline_info/nf_core_bamtofastq_software_mqc_versions.yml",
+                "reads",
+                "reads/test3.chrX_chrY_X_Y_other.fq.gz",
+                "samtools",
+                "samtools/test3.chrX_chrY_X_Y.bam",
+                "samtools/test3.flagstat",
+                "samtools/test3.idxstats",
+                "samtools/test3.stats"
+            ],
+            [
+                "test3.chrX_chrY_X_Y.txt:md5,228544370b1655729e7e94ff21832d31",
+                "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
+                "test3.chrX_chrY_X_Y_other.fq.gz:md5,6f79ab14a70e174ef178469e3a5febdd",
+                "test3.flagstat:md5,7b43b975b0a395040bf1ee3c48f058e7",
+                "test3.idxstats:md5,094096b6f303cc18892e1e027c87f273",
+                "test3.stats:md5,bb0748c7f73eb4f813afc481a9e379a8"
+            ],
+            [
+                "test3.chrX_chrY_X_Y.bam:md5,ab0ddbdbb098c2c0a07988645c0e5d08"
+            ],
+            "No CRAM files"
+        ],
+        "meta": {
+            "nf-test": "0.9.3",
+            "nextflow": "25.10.2"
+        },
+        "timestamp": "2026-01-19T11:05:25.652086"
+    }
+}
