@@ -18,21 +18,19 @@ workflow ALIGNMENT_TO_FASTQ {
     fasta_fai
 
     main:
-
-    ch_versions = channel.empty()
     // Index File if not PROVIDED -> this also requires updates to samtools view possibly URGH
 
     // MAP - MAP
-    SAMTOOLS_VIEW_MAP_MAP(input, fasta.map { it -> [[:], it] }, [], [])
+    SAMTOOLS_VIEW_MAP_MAP(input, fasta_fai, [[:],[]], [[:],[]], [])
 
     // UNMAP - UNMAP
-    SAMTOOLS_VIEW_UNMAP_UNMAP(input, fasta.map { it -> [[:], it] }, [], [])
+    SAMTOOLS_VIEW_UNMAP_UNMAP(input, fasta_fai, [[:],[]], [[:],[]], [])
 
     // UNMAP - MAP
-    SAMTOOLS_VIEW_UNMAP_MAP(input, fasta.map { it -> [[:], it] }, [], [])
+    SAMTOOLS_VIEW_UNMAP_MAP(input, fasta_fai, [[:],[]], [[:],[]], [])
 
     // MAP - UNMAP
-    SAMTOOLS_VIEW_MAP_UNMAP(input, fasta.map { it -> [[:], it] }, [], [])
+    SAMTOOLS_VIEW_MAP_UNMAP(input, fasta_fai, [[:],[]], [[:],[]], [])
 
     // channel for merging UNMAPPED BAM
     all_unmapped_bam = SAMTOOLS_VIEW_UNMAP_UNMAP.out.bam
@@ -54,7 +52,7 @@ workflow ALIGNMENT_TO_FASTQ {
     ch_unmapped_bam_cram = channel.empty().mix(all_unmapped_bam, all_unmapped_cram)
 
     // MERGE UNMAP
-    SAMTOOLS_MERGE_UNMAP(ch_unmapped_bam_cram, fasta.map { it -> [[:], it] }, fasta_fai.map { it -> [[:], it] }, [[],[]])
+    SAMTOOLS_MERGE_UNMAP(ch_unmapped_bam_cram, fasta_fai.map { it -> [it[0], it[1], it[2], []] })
 
     def interleave = false
 
@@ -102,11 +100,6 @@ workflow ALIGNMENT_TO_FASTQ {
     // Concatenate Mapped_R1 with Unmapped_R1 and Mapped_R2 with Unmapped_R2
     CAT_FASTQ(reads_to_concat)
 
-    // Gather versions of all tools used
-    ch_versions = ch_versions.mix(COLLATE_FASTQ_MAP.out.versions)
-    ch_versions = ch_versions.mix(COLLATE_FASTQ_UNMAP.out.versions)
-
     emit:
     reads    = CAT_FASTQ.out.reads
-    versions = ch_versions
 }

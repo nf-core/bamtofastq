@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | ----------- | ----------- | ----------- |
 | fastq_utils | 0.25.2      | 0.25.3      |
 | multiqc     | 1.28        | 1.34        |
-| Samtools    | 1.21        | 1.22.1      |
+| Samtools    | 1.21        | 1.23.1      |
 
 Bump minimal Nextflow version to 25.10.4 and nf-schema to 2.6.1
 

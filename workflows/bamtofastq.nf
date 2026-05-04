@@ -72,8 +72,6 @@ workflow BAMTOFASTQ {
         fasta,
     )
 
-    ch_versions = ch_versions.mix(PREPARE_INDICES.out.versions)
-
     // SUBWORKFLOW: Pre conversion QC and stats
 
     ch_input = PREPARE_INDICES.out.ch_input_indexed
@@ -81,8 +79,6 @@ workflow BAMTOFASTQ {
         ch_input,
         fasta,
     )
-
-    ch_versions = ch_versions.mix(PRE_CONVERSION_QC.out.versions)
 
     // MODULE: Check if SINGLE or PAIRED-END
 
@@ -124,7 +120,7 @@ workflow BAMTOFASTQ {
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input_new, fasta.map { it -> [[:], it] }, [], [])
+        SAMTOOLS_CHR(ch_input_new, fasta.map { it -> [[:], it, []] }, [[:], []], [[:], []], [])
 
         samtools_chr_out = channel.empty()
             .mix(
@@ -152,8 +148,6 @@ workflow BAMTOFASTQ {
                 it[2],
             ]
         }
-
-        ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
     }
 
     // MODULE: SINGLE-END Alignment to FastQ (SortExtractSingleEnd)
@@ -180,8 +174,6 @@ workflow BAMTOFASTQ {
         interleave,
     )
 
-    ch_versions = ch_versions.mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.versions)
-
     //
     // SUBWORKFLOW: PAIRED-END Alignment to FastQ
     //
@@ -195,7 +187,6 @@ workflow BAMTOFASTQ {
 
     // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
     // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]}) // there is not zip in the output of the subworkflow?
-    ch_versions = ch_versions.mix(ALIGNMENT_TO_FASTQ.out.versions)
 
 
     // MODULE: FastQC - Post conversion QC
