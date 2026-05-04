@@ -33,6 +33,7 @@ workflow PIPELINE_INITIALISATION {
     help // boolean: Display help message and exit
     help_full // boolean: Show the full help message
     show_hidden // boolean: Show hidden parameters in the help message
+    monochrome_logs // boolean: Disable ANSI colour codes in log output
 
     main:
 
