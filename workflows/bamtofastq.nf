@@ -62,8 +62,6 @@ workflow BAMTOFASTQ {
 
     // Initialize value channels based on params
     // chr = params.chr ?: channel.empty() // declared but not used
-
-    ch_versions = channel.empty()
     ch_multiqc_files = channel.empty()
 
     // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
@@ -71,18 +69,18 @@ workflow BAMTOFASTQ {
         ch_samplesheet,
         fasta,
     )
+    fai = params.fasta ? params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : channel.value([])
+    ch_fasta_fai = fasta.combine(fai).map { fasta_file, fai_file -> [ [id: fasta_file.baseName], fasta_file, fai_file ] }
 
     // SUBWORKFLOW: Pre conversion QC and stats
-
     ch_input = PREPARE_INDICES.out.ch_input_indexed
     PRE_CONVERSION_QC(
         ch_input,
-        fasta,
+        ch_fasta_fai,
     )
 
     // MODULE: Check if SINGLE or PAIRED-END
-
-    CHECK_IF_PAIRED_END(ch_input, fasta)
+    CHECK_IF_PAIRED_END(ch_input, ch_fasta_fai)
 
     ch_paired_end = ch_input.join(CHECK_IF_PAIRED_END.out.paired_end)
     ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
@@ -113,8 +111,6 @@ workflow BAMTOFASTQ {
                 ]
             }
         )
-
-    ch_versions = ch_versions.mix(CHECK_IF_PAIRED_END.out.versions)
 
 
     // Extract only reads mapping to a chromosome
@@ -163,26 +159,16 @@ workflow BAMTOFASTQ {
     // Module needs info about single-endedness
     SAMTOOLS_COLLATEFASTQ_SINGLE_END(
         conversion_input.ch_single.map { it -> [it[0], it[1]] },
-        fasta.map { it ->
-            // meta, fasta
-            def new_id = ""
-            if (it) {
-                new_id = it[0].baseName
-            }
-            [[id: new_id], it]
-        },
+        ch_fasta_fai,
         interleave,
     )
 
     //
     // SUBWORKFLOW: PAIRED-END Alignment to FastQ
     //
-
-    fasta_fai = params.fasta ? params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : channel.value([])
     ALIGNMENT_TO_FASTQ(
         conversion_input.ch_paired,
-        fasta,
-        fasta_fai,
+        ch_fasta_fai,
     )
 
     // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
@@ -219,7 +205,7 @@ workflow BAMTOFASTQ {
             "${process}:\n${tool_versions.join('\n')}"
         }
 
-    def ch_collated_versions = softwareVersionsToYAML(ch_versions.mix(topic_versions.versions_file))
+    def ch_collated_versions = softwareVersionsToYAML(topic_versions.versions_file)
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${outdir}/pipeline_info",
@@ -254,6 +240,6 @@ workflow BAMTOFASTQ {
             ]
         }
     )
-    emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    emit:
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
 }

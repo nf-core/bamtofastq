@@ -14,7 +14,6 @@ include { CAT_FASTQ                                    } from '../../modules/nf-
 workflow ALIGNMENT_TO_FASTQ {
     take:
     input // channel: [meta, alignment (BAM or CRAM), index (optional)]
-    fasta // optional: reference file if CRAM format and reference not in header
     fasta_fai
 
     main:
@@ -59,26 +58,14 @@ workflow ALIGNMENT_TO_FASTQ {
     // SortExtractUnmapped: Collate & convert unmapped
     COLLATE_FASTQ_UNMAP(
         SAMTOOLS_MERGE_UNMAP.out.cram.mix(SAMTOOLS_MERGE_UNMAP.out.bam),
-        fasta.map { it ->
-            def new_id = ""
-            if (it) {
-                new_id = it[0].baseName
-            }
-            [[id: new_id], it]
-        },
+        fasta_fai,
         interleave,
     )
 
     // /SortExtractMapped: Collate & convert mapped
     COLLATE_FASTQ_MAP(
         SAMTOOLS_VIEW_MAP_MAP.out.cram.mix(SAMTOOLS_VIEW_MAP_MAP.out.bam),
-        fasta.map { it ->
-            def new_id = ""
-            if (it) {
-                new_id = it[0].baseName
-            }
-            [[id: new_id], it]
-        },
+        fasta_fai,
         interleave,
     )
 

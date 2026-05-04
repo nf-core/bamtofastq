@@ -10,7 +10,7 @@ include { FASTQC as FASTQC_PRE_CONVERSION } from '../../modules/nf-core/fastqc/m
 workflow PRE_CONVERSION_QC {
     take:
     input // channel: [meta, alignment (BAM or CRAM), index (optional)]
-    fasta // optional: reference file if CRAM format and reference not in header
+    fasta_fai
 
     main:
     // SAMTOOLS IDXSTATS
@@ -20,7 +20,7 @@ workflow PRE_CONVERSION_QC {
     SAMTOOLS_FLAGSTAT(input)
 
     // SAMTOOLS STATS
-    SAMTOOLS_STATS(input, fasta.map { it -> [[:], it, [] ]})
+    SAMTOOLS_STATS(input, fasta_fai)
 
     // FASTQC ONLY ON BAM
     input
