@@ -41,7 +41,7 @@ workflow PREPARE_INDICES {
     fasta_fai = channel.empty()
     if (params.fasta && !params.fasta_fai) {
         SAMTOOLS_FAIDX(fasta.map { it -> [[id: it[0].baseName], it, []] }, [])
-        fasta_fai = SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> [fai] }
+        fasta_fai = SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai }.collect()
     }
 
     emit:
