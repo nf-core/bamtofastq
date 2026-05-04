@@ -31,10 +31,9 @@ workflow PREPARE_INDICES {
 
     // INDEX BAM/CRAM only if not provided
     SAMTOOLS_INDEX(input_to_index)
-    ch_index_files = channel.empty().mix(SAMTOOLS_INDEX.out.index)
 
     // Combine channels
-    ch_new = input_to_index.join(ch_index_files)
+    ch_new = input_to_index.join(SAMTOOLS_INDEX.out.index)
     ch_out = samtools_input.is_indexed.mix(ch_new)
 
 

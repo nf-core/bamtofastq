@@ -1,7 +1,7 @@
 {
     "-profile test --input test_bam_samplesheet_no_bai.csv": {
         "content": [
-            43,
+            26,
             {
                 "CAT_FASTQ": {
                     "cat": 9.5
@@ -23,9 +23,6 @@
                 },
                 "FASTQUTILS_INFO": {
                     "fastqutils": "0.25.3"
-                },
-                "SAMTOOLS_COLLATEFASTQ_SINGLE_END": {
-                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_FAIDX": {
                     "samtools": "1.23.1"
@@ -60,10 +57,6 @@
             },
             [
                 "fastqc",
-                "fastqc/test.post_conversion_1_fastqc.html",
-                "fastqc/test.post_conversion_1_fastqc.zip",
-                "fastqc/test.post_conversion_2_fastqc.html",
-                "fastqc/test.post_conversion_2_fastqc.zip",
                 "fastqc/test.pre_conversion_fastqc.html",
                 "fastqc/test.pre_conversion_fastqc.zip",
                 "fastqc/test2.post_conversion_1_fastqc.html",
@@ -72,14 +65,10 @@
                 "fastqc/test2.post_conversion_2_fastqc.zip",
                 "fastqc/test2.pre_conversion_fastqc.html",
                 "fastqc/test2.pre_conversion_fastqc.zip",
-                "fastqc/test3.post_conversion_fastqc.html",
-                "fastqc/test3.post_conversion_fastqc.zip",
                 "fastqc/test3.pre_conversion_fastqc.html",
                 "fastqc/test3.pre_conversion_fastqc.zip",
                 "fastqutils",
-                "fastqutils/test.txt",
                 "fastqutils/test2.txt",
-                "fastqutils/test3.txt",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/llms-full.txt",
@@ -95,47 +84,35 @@
                 "reads",
                 "reads/test2_1.merged.fastq.gz",
                 "reads/test2_2.merged.fastq.gz",
-                "reads/test3_other.fq.gz",
-                "reads/test_1.merged.fastq.gz",
-                "reads/test_2.merged.fastq.gz",
                 "samtools",
                 "samtools/test.flagstat",
                 "samtools/test.idxstats",
-                "samtools/test.stats",
                 "samtools/test2.flagstat",
                 "samtools/test2.idxstats",
                 "samtools/test2.stats",
                 "samtools/test3.flagstat",
-                "samtools/test3.idxstats",
-                "samtools/test3.stats"
+                "samtools/test3.idxstats"
             ],
             [
-                "test.txt:md5,db31682c36cde02f1e8567d130537cac",
                 "test2.txt:md5,0222a414a69c92608af1580f3c6ce996",
-                "test3.txt:md5,81a5df2013bc57437c2b97cea899d44d",
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "test2_1.merged.fastq.gz:md5,a4984fb5a60f80ccbfbfcf1cef9daaf3",
                 "test2_2.merged.fastq.gz:md5,bde23801e2d60604afb3bd0b0ab014ab",
-                "test3_other.fq.gz:md5,d8a935709a2519d0af2b0e28631962f7",
-                "test_1.merged.fastq.gz:md5,9b0c08862a5e47e842a485ddad31b871",
-                "test_2.merged.fastq.gz:md5,40e17982d1231e561d6420234ae29357",
                 "test.flagstat:md5,a53f3d26e2e9851f7d528442bbfe9781",
                 "test.idxstats:md5,e179601fa7b8ebce81ac3765206f6c15",
-                "test.stats:md5,0847f08bb1c599016cc225e11466b4c7",
                 "test2.flagstat:md5,acbd95030a362a7e6491faa87d1b9c2c",
                 "test2.idxstats:md5,90f01313bc89c7fd096aad051cd71b66",
-                "test2.stats:md5,e1bfdfa8806ed5abea70613337ef2569",
+                "test2.stats:md5,7e6537bde51ee4bb4a50562014ae2cd4",
                 "test3.flagstat:md5,7b43b975b0a395040bf1ee3c48f058e7",
-                "test3.idxstats:md5,094096b6f303cc18892e1e027c87f273",
-                "test3.stats:md5,bb0748c7f73eb4f813afc481a9e379a8"
+                "test3.idxstats:md5,094096b6f303cc18892e1e027c87f273"
             ],
             "No BAM files",
             "No CRAM files"
         ],
+        "timestamp": "2026-05-04T14:28:25.913932",
         "meta": {
-            "nf-test": "0.9.3",
-            "nextflow": "25.10.2"
-        },
-        "timestamp": "2026-01-19T11:10:23.396557"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }
