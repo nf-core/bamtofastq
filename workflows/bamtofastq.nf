@@ -69,8 +69,11 @@ workflow BAMTOFASTQ {
         ch_samplesheet,
         fasta,
     )
-    fai = params.fasta ? params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : channel.empty()
-    ch_fasta_fai = params.fasta ? fasta.combine(fai).map { fasta_file, fai_file -> [[id: fasta_file.baseName], fasta_file, fai_file] } : channel.value([[:], [], []])
+
+    // Create fasta_fai channel that handles all cases
+    ch_fasta_fai = params.fasta
+        ? fasta.combine(params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai).collect().map { f, fai -> [[id: f.baseName], f, fai] }
+        : channel.value([[:], [], []])
 
     // SUBWORKFLOW: Pre conversion QC and stats
     ch_input = PREPARE_INDICES.out.ch_input_indexed
