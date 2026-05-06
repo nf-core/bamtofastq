@@ -13,7 +13,7 @@ include { SAMTOOLS_FAIDX } from '../../../modules/nf-core/samtools/faidx'
 workflow PREPARE_INDICES {
     take:
     input // channel: [meta, alignment (BAM or CRAM), []]
-    fasta // optional: reference file if CRAM format and reference not in header
+    fasta_fai // optional: reference file if CRAM format and reference not in header
 
     main:
     ch_out = channel.empty()
@@ -38,13 +38,18 @@ workflow PREPARE_INDICES {
 
 
     // INDEX FASTA
-    fasta_fai = channel.empty()
-    if (params.fasta && !params.fasta_fai) {
-        SAMTOOLS_FAIDX(fasta.map { it -> [[id: it[0].baseName], it, []] }, [])
-        fasta_fai = SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai }.collect()
-    }
+    fasta_fai
+        .branch { files ->
+            is_fasta_indexed: files[0].index == true
+            to_index: files[0].index == false
+        }
+        .set { samtools_fasta_input }
+    fasta_to_index = samtools_fasta_input.to_index.map { it -> [it[0], it[1], []] }
+    SAMTOOLS_FAIDX(fasta_to_index,[])
+    fasta_indexed = fasta_to_index.join(SAMTOOLS_FAIDX.out.fai)
+    ch_fasta_fai = samtools_fasta_input.is_fasta_indexed.mix(fasta_indexed)
 
     emit:
     ch_input_indexed = ch_out
-    fasta_fai        = fasta_fai
+    fasta_fai        = ch_fasta_fai
 }
