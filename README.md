@@ -88,7 +88,7 @@ For more details about the output files and reports, please refer to the
 
 ## Credits
 
-nf-core/bamtofastq was originally written by Friederike Hanssen. It was ported to DSL2 by Susanne Jodoin.
+nf-core/bamtofastq was originally written by Friederike Hanssen. It was ported to DSL2 by Susanne Jodoin. It was further maintained by Famke Bäuerle.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 

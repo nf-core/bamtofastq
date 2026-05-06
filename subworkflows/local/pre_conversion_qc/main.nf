@@ -2,10 +2,10 @@
 // Pre-conversion QC
 //
 
-include { SAMTOOLS_FLAGSTAT               } from '../../modules/nf-core/samtools/flagstat/main'
-include { SAMTOOLS_IDXSTATS               } from '../../modules/nf-core/samtools/idxstats/main'
-include { SAMTOOLS_STATS                  } from '../../modules/nf-core/samtools/stats/main'
-include { FASTQC as FASTQC_PRE_CONVERSION } from '../../modules/nf-core/fastqc/main'
+include { SAMTOOLS_FLAGSTAT               } from '../../../modules/nf-core/samtools/flagstat'
+include { SAMTOOLS_IDXSTATS               } from '../../../modules/nf-core/samtools/idxstats'
+include { SAMTOOLS_STATS                  } from '../../../modules/nf-core/samtools/stats'
+include { FASTQC as FASTQC_PRE_CONVERSION } from '../../../modules/nf-core/fastqc'
 
 workflow PRE_CONVERSION_QC {
     take:

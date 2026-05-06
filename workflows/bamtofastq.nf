@@ -15,7 +15,7 @@ include { softwareVersionsToYAML                                    } from '../s
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CHECK_IF_PAIRED_END                                       } from '../modules/local/check_paired_end'
+include { CHECKPAIREDEND                                            } from '../modules/local/checkpairedend'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,12 +26,12 @@ include { CHECK_IF_PAIRED_END                                       } from '../m
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC as FASTQC_POST_CONVERSION                          } from '../modules/nf-core/fastqc/main'
-include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info/main'
-include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view/main'
-include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index/main'
-include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq/main'
-include { MULTIQC                                                   } from '../modules/nf-core/multiqc/main'
+include { FASTQC as FASTQC_POST_CONVERSION                          } from '../modules/nf-core/fastqc'
+include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info'
+include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view'
+include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index'
+include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq'
+include { MULTIQC                                                   } from '../modules/nf-core/multiqc'
 
 //
 // SUBWORKFLOWS: Installed directly from subworkflows/local
@@ -83,10 +83,10 @@ workflow BAMTOFASTQ {
     )
 
     // MODULE: Check if SINGLE or PAIRED-END
-    CHECK_IF_PAIRED_END(ch_input, ch_fasta_fai)
+    CHECKPAIREDEND(ch_input, ch_fasta_fai)
 
-    ch_paired_end = ch_input.join(CHECK_IF_PAIRED_END.out.paired_end)
-    ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
+    ch_paired_end = ch_input.join(CHECKPAIREDEND.out.paired_end)
+    ch_single_end = ch_input.join(CHECKPAIREDEND.out.single_end)
 
     // Combine channels into new input channel for conversion + add info about single/paired to meta map
     ch_input_new = ch_single_end

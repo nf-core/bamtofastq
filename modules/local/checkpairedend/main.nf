@@ -1,4 +1,4 @@
-process CHECK_IF_PAIRED_END {
+process CHECKPAIREDEND {
     tag "${meta.id}"
     label 'process_low'
 
