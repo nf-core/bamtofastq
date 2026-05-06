@@ -62,14 +62,15 @@ workflow BAMTOFASTQ {
     fasta = params.fasta ? channel.fromPath(params.fasta).collect() : channel.empty()
     ch_fasta = fasta.map { it -> [[id: it.baseName, index: false], it, []] }
     fai = params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : channel.empty()
-    ch_fai = fai.map { it -> [[id: it.simpleName, index: true], it, []] }
-    ch_fasta_fai = params.fasta_fai ? ch_fasta.join(ch_fai).map { _meta, fasta_file, meta_fai, fai_file -> [meta_fai, fasta_file, fai_file] }.collect() : ch_fasta
+    ch_fai = params.fasta_fai ? fai.map { it -> [[id: it.simpleName, index: true], it, []] } : channel.empty()
+    fasta_fai = params.fasta_fai ? ch_fasta.join(ch_fai).map { _meta, fasta_file, meta_fai, fai_file -> [meta_fai, fasta_file, fai_file] }.collect() : ch_fasta
 
     // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
     PREPARE_INDICES(
         ch_samplesheet,
-        ch_fasta_fai,
+        fasta_fai,
     )
+    ch_fasta_fai = params.fasta_fai ? fasta_fai : PREPARE_INDICES.out.fasta_fai
 
     // SUBWORKFLOW: Pre conversion QC and stats
     ch_input = PREPARE_INDICES.out.ch_input_indexed
