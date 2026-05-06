@@ -81,15 +81,12 @@
                             "index": false
                         },
                         "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
-                        [
-                            
-                        ],
                         "genome.fasta.fai:md5,9da2a56e2853dc8c0b86a9e7229c9fe5"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-05-06T15:18:56.566827",
+        "timestamp": "2026-05-06T16:31:52.068514",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.0"
@@ -115,15 +112,12 @@
                             "index": false
                         },
                         "/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta",
-                        [
-                            
-                        ],
                         "genome.fasta.fai:md5,3520cd30e1b100e55f578db9c855f685"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-05-06T15:18:18.703711",
+        "timestamp": "2026-05-06T16:31:44.676334",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.0"
