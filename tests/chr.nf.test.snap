@@ -3,7 +3,7 @@
         "content": [
             13,
             {
-                "CHECK_IF_PAIRED_END": {
+                "CHECKPAIREDEND": {
                     "samtools": "1.23.1"
                 },
                 "FASTQC_POST_CONVERSION": {
