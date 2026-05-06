@@ -34,8 +34,8 @@ workflow NFCORE_BAMTOFASTQ {
     samplesheet // channel: samplesheet read in from --input
 
     main:
-    params.fasta     = getGenomeAttribute('fasta')
-    params.fasta_fai = getGenomeAttribute('fasta_fai')
+    params.fasta     = params.fasta ?: getGenomeAttribute('fasta')
+    params.fasta_fai = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
 
     //
     // WORKFLOW: Run pipeline
