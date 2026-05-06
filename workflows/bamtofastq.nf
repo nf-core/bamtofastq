@@ -63,7 +63,7 @@ workflow BAMTOFASTQ {
     ch_fasta = fasta.map { it -> [[id: it.baseName, index: false], it, []] }
     fai = params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : channel.empty()
     ch_fai = fai.map { it -> [[id: it.simpleName, index: true], it, []] }
-    ch_fasta_fai = params.fasta_fai ? ch_fasta.join(ch_fai).map { _meta, fasta_file, meta_fai, fai_file -> [meta_fai, fasta_file, fai_file] } : ch_fasta
+    ch_fasta_fai = params.fasta_fai ? ch_fasta.join(ch_fai).map { _meta, fasta_file, meta_fai, fai_file -> [meta_fai, fasta_file, fai_file] }.collect() : ch_fasta
 
     // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
     PREPARE_INDICES(

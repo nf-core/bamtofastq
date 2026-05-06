@@ -45,11 +45,11 @@ workflow PREPARE_INDICES {
         }
         .set { samtools_fasta_input }
     fasta_to_index = samtools_fasta_input.to_index.map { it -> [it[0], it[1], []] }
-    SAMTOOLS_FAIDX(fasta_to_index,[])
+    SAMTOOLS_FAIDX(fasta_to_index, [])
     fasta_indexed = fasta_to_index.join(SAMTOOLS_FAIDX.out.fai)
     ch_fasta_fai = samtools_fasta_input.is_fasta_indexed.mix(fasta_indexed)
 
     emit:
     ch_input_indexed = ch_out
-    fasta_fai        = ch_fasta_fai
+    fasta_fai        = ch_fasta_fai.collect()
 }
