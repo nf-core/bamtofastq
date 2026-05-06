@@ -36,20 +36,28 @@ workflow PREPARE_INDICES {
     ch_new = input_to_index.join(SAMTOOLS_INDEX.out.index)
     ch_out = samtools_input.is_indexed.mix(ch_new)
 
-
     // INDEX FASTA
     fasta_fai
-        .branch { files ->
-            is_fasta_indexed: files[0].index == true
-            to_index: files[0].index == false
+        .branch { meta, _fasta_file, _fai_file ->
+            is_fasta_indexed: meta.index == true
+            to_index:         meta.index == false
         }
-        .set { samtools_fasta_input }
-    fasta_to_index = samtools_fasta_input.to_index.map { it -> [it[0], it[1], []] }
-    SAMTOOLS_FAIDX(fasta_to_index, [])
-    fasta_indexed = fasta_to_index.join(SAMTOOLS_FAIDX.out.fai)
-    ch_fasta_fai = samtools_fasta_input.is_fasta_indexed.mix(fasta_indexed)
+        .set { fasta_branch }
+
+    SAMTOOLS_FAIDX(fasta_branch.to_index.map { m, f, _i -> [m, f, []] }, [[],[]])
+
+    // Reconstruct: take the original [meta, fasta] and combine with the NEW fai
+    // This ignores the ID entirely and just pairs the file with the index
+    fasta_newly_indexed = fasta_branch.to_index
+        .map { meta, fasta, _old_fai -> [meta, fasta] }
+        .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai })
+        .map { meta, fasta, new_fai -> [meta, fasta, new_fai] }
+
+    ch_fasta_fai = fasta_branch.is_fasta_indexed
+        .mix(fasta_newly_indexed)
+        .first()
 
     emit:
     ch_input_indexed = ch_out
-    fasta_fai        = ch_fasta_fai.collect()
+    fasta_fai        = ch_fasta_fai
 }

@@ -58,20 +58,32 @@ workflow BAMTOFASTQ {
     main:
     ch_multiqc_files = channel.empty()
 
-    // Initialize reference file channels based on params
-    fasta = params.fasta ? channel.fromPath(params.fasta).collect() : channel.empty()
-    ch_fasta = fasta.map { it -> [[id: it.baseName, index: false], it, []] }
-    fai = params.fasta_fai ? channel.fromPath(params.fasta_fai).collect() : channel.empty()
-    ch_fai = params.fasta_fai ? fai.map { it -> [[id: it.simpleName, index: true], it, []] } : channel.empty()
-    fasta_fai = params.fasta_fai ? ch_fasta.join(ch_fai).map { _meta, fasta_file, meta_fai, fai_file -> [meta_fai, fasta_file, fai_file] } : ch_fasta
-    fasta_fai = fasta_fai.collect()
+    ch_fasta = params.fasta
+        ? channel.fromPath(params.fasta).map { it -> [[id:it.baseName], it, []] }.collect()
+        : channel.value([ [id:'none'], [], [] ])
+
+    ch_fai = params.fasta_fai
+        ? channel.fromPath(params.fasta_fai).map { it -> [[id:it.simpleName], [], it] }.collect()
+        : channel.value([])
+
+    fasta_fai = ch_fasta.combine(ch_fai)
+        .map { meta, fasta, fai ->
+            if (meta.id == 'none') return [ [id:'none', index:false], [], [] ]
+
+            def new_meta = meta.clone()
+            new_meta.index = (fai && !(fai instanceof List && fai.isEmpty())) ? true : false
+
+            return [ new_meta, fasta, fai ?: [] ]
+        }
+        .first()
 
     // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
     PREPARE_INDICES(
         ch_samplesheet,
-        fasta_fai,
+        fasta_fai
     )
-    ch_fasta_fai = PREPARE_INDICES.out.fasta_fai
+
+    ch_fasta_fai = PREPARE_INDICES.out.fasta_fai.collect()
 
     // SUBWORKFLOW: Pre conversion QC and stats
     ch_input = PREPARE_INDICES.out.ch_input_indexed
@@ -117,7 +129,7 @@ workflow BAMTOFASTQ {
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input_new, fasta.map { it -> [[:], it, []] }, [[:], []], [[:], []], [])
+        SAMTOOLS_CHR(ch_input_new, ch_fasta_fai, [[:], []], [[:], []], [])
 
         samtools_chr_out = channel.empty()
             .mix(
