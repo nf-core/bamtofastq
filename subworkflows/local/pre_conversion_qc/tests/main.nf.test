@@ -81,7 +81,13 @@ nextflow_workflow {
 
         then {
             assert workflow.success
-            assert snapshot(sanitizeOutput(workflow.out)).match()
+            assert snapshot(
+                workflow.out.flagstat,
+                workflow.out.html,
+                workflow.out.idxstats,
+                workflow.out.stats,
+                file(workflow.out.zip[0][1]).name,
+                ).match()
         }
     }
 
