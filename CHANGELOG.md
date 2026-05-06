@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Fixed`
 
 - [#137](https://github.com/nf-core/bamtofastq/pull/137) - Recover help message
-- [#141](https://github.com/nf-core/bamtofastq/pull/141) - Update local sbwf and module to adhere to directory structure
+- [#141](https://github.com/nf-core/bamtofastq/pull/141) - Update local sbwf and module to adhere to directory structure, update nf-test plugins
 
 ### `Dependencies`
 
@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | fastq_utils | 0.25.2      | 0.25.3      |
 | multiqc     | 1.28        | 1.34        |
 | Samtools    | 1.21        | 1.23.1      |
+| nft-utils   | 0.0.5       | 0.0.9       |
+| nft-bam     | 0.4.0       | 0.6.1       |
 
 Bump minimal Nextflow version to 25.10.4 and nf-schema to 2.6.1
 

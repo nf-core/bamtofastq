@@ -35,4 +35,11 @@ process CHECKPAIREDEND {
         echo 1 > ${prefix}.single.txt
     fi
     """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.single.txt
+    touch ${prefix}.paired.txt
+    """
 }
