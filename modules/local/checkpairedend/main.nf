@@ -1,4 +1,4 @@
-process CHECK_IF_PAIRED_END {
+process CHECKPAIREDEND {
     tag "${meta.id}"
     label 'process_low'
 
@@ -34,5 +34,12 @@ process CHECK_IF_PAIRED_END {
     else
         echo 1 > ${prefix}.single.txt
     fi
+    """
+
+    stub:
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.single.txt
+    touch ${prefix}.paired.txt
     """
 }

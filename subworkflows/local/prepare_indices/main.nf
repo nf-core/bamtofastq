@@ -6,8 +6,8 @@
 // For all modules here:
 // A when clause condition is defined in the conf/modules.config to determine if the module should be run
 
-include { SAMTOOLS_INDEX } from '../../modules/nf-core/samtools/index/main'
-include { SAMTOOLS_FAIDX } from '../../modules/nf-core/samtools/faidx/main'
+include { SAMTOOLS_INDEX } from '../../../modules/nf-core/samtools/index'
+include { SAMTOOLS_FAIDX } from '../../../modules/nf-core/samtools/faidx'
 
 
 workflow PREPARE_INDICES {

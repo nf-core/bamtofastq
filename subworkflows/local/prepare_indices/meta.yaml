@@ -1,0 +1,72 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "prepare_indices"
+description: |
+  Prepare indices for BAM/CRAM alignment files using `samtools index` (if not
+  already indexed) and optionally index FASTA reference using `samtools faidx`.
+keywords:
+  - samtools
+  - index
+  - bam
+  - cram
+  - fasta
+components:
+  - samtools/index
+  - samtools/faidx
+input:
+  - input:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, alignment (BAM or CRAM), []].
+      structure:
+        - meta:
+            type: map
+            description: |
+              Metadata map with sample information
+              e.g. [ id:'sample1', filetype:'bam', index:false ]
+        - alignment:
+            type: file
+            description: Alignment file (BAM or CRAM format)
+            pattern: "*.{bam,cram}"
+        - empty:
+            type: list
+            description: Empty list placeholder
+  - fasta:
+      type: channel
+      description: |
+        Optional channel emitting reference FASTA files (required for CRAM
+        indexing when reference is not embedded in header).
+      structure:
+        - fasta:
+            type: file
+            description: Reference genome FASTA file
+            pattern: "*.{fa,fna,fasta}"
+output:
+  - ch_input_indexed:
+      type: channel
+      description: |
+        Channel emitting indexed alignment files as tuples: [meta, alignment, index].
+      structure:
+        - meta:
+            type: map
+            description: Metadata map with sample information
+        - alignment:
+            type: file
+            description: Indexed alignment file (BAM or CRAM format)
+            pattern: "*.{bam,cram}"
+        - index:
+            type: file
+            description: Index file for alignment (BAI or CRAI format)
+            pattern: "*.{bai,crai}"
+  - fasta_fai:
+      type: channel
+      description: |
+        Channel emitting collected FASTA index files (.fai) from `samtools faidx`.
+      structure:
+        - fai:
+            type: file
+            description: Reference genome FASTA index file(s)
+            pattern: "*.fai"
+authors:
+  - "@FriederikeHanssen"
+maintainers:
+  - "@famosab"
