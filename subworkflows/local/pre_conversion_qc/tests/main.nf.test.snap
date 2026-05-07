@@ -92,15 +92,7 @@
                     "test.flagstat:md5,2191911d72575a2358b08b1df64ccb53"
                 ]
             ],
-            [
-                [
-                    {
-                        "id": "test",
-                        "filetype": "bam"
-                    },
-                    "test.pre_conversion_fastqc.html:md5,696922744d0174955fc193c24fb1be51"
-                ]
-            ],
+            "test.pre_conversion_fastqc.html",
             [
                 [
                     {
