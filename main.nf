@@ -21,15 +21,6 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamt
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-params.fasta     = getGenomeAttribute('fasta')
-params.fasta_fai = getGenomeAttribute('fasta_fai')
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -43,6 +34,8 @@ workflow NFCORE_BAMTOFASTQ {
     samplesheet // channel: samplesheet read in from --input
 
     main:
+    params.fasta     = params.fasta ?: getGenomeAttribute('fasta')
+    params.fasta_fai = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
 
     //
     // WORKFLOW: Run pipeline

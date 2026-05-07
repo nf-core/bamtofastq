@@ -1,0 +1,91 @@
+{
+    "sarscov2 - bam - fasta - stub": {
+        "content": [
+            {
+                "reads": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        [
+                            "test_1.merged.fastq.gz:md5,68b329da9893e34099c7d8ad5cb9c940",
+                            "test_2.merged.fastq.gz:md5,68b329da9893e34099c7d8ad5cb9c940"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T14:25:44.843528",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "human - cram - fasta": {
+        "content": [
+            {
+                "reads": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        [
+                            "test_1.merged.fastq.gz:md5,9b0c08862a5e47e842a485ddad31b871",
+                            "test_2.merged.fastq.gz:md5,40e17982d1231e561d6420234ae29357"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T14:29:24.05926",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "sarscov2 - bam - single_end": {
+        "content": [
+            {
+                "reads": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        [
+                            "test_1.merged.fastq.gz:md5,d41d8cd98f00b204e9800998ecf8427e",
+                            "test_2.merged.fastq.gz:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T14:31:06.045315",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "sarscov2 - bam - fasta": {
+        "content": [
+            {
+                "reads": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        [
+                            "test_1.merged.fastq.gz:md5,e37dbf48031da5b5711b64da5742c731",
+                            "test_2.merged.fastq.gz:md5,3b2e72e954b104fa2b130c07f3bd182a"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T14:26:10.179518",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    }
+}

@@ -1,7 +1,7 @@
 {
     "-profile test": {
         "content": [
-            31,
+            32,
             {
                 "CAT_FASTQ": {
                     "cat": 9.5
@@ -23,6 +23,9 @@
                 },
                 "FASTQUTILS_INFO": {
                     "fastqutils": "0.25.3"
+                },
+                "SAMTOOLS_FAIDX": {
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_FLAGSTAT": {
                     "samtools": "1.23.1"
@@ -101,15 +104,15 @@
                 "test_2.merged.fastq.gz:md5,40e17982d1231e561d6420234ae29357",
                 "test.flagstat:md5,a53f3d26e2e9851f7d528442bbfe9781",
                 "test.idxstats:md5,e179601fa7b8ebce81ac3765206f6c15",
-                "test.stats:md5,bfda2889477b443e63e92c5f40b54cc3",
+                "test.stats:md5,3c3f8fa56674fa987fd912b530f49c3c",
                 "test2.flagstat:md5,acbd95030a362a7e6491faa87d1b9c2c",
                 "test2.idxstats:md5,90f01313bc89c7fd096aad051cd71b66",
-                "test2.stats:md5,729a7397b086b737710e5548e9cbb1ff"
+                "test2.stats:md5,7e6537bde51ee4bb4a50562014ae2cd4"
             ],
             "No BAM files",
             "No CRAM files"
         ],
-        "timestamp": "2026-05-04T15:14:27.453894",
+        "timestamp": "2026-05-06T16:49:52.107567",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.0"

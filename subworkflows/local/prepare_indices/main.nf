@@ -13,7 +13,7 @@ include { SAMTOOLS_FAIDX } from '../../../modules/nf-core/samtools/faidx'
 workflow PREPARE_INDICES {
     take:
     input // channel: [meta, alignment (BAM or CRAM), []]
-    fasta // optional: reference file if CRAM format and reference not in header
+    fasta_fai // optional: reference file if CRAM format and reference not in header
 
     main:
     ch_out = channel.empty()
@@ -36,15 +36,28 @@ workflow PREPARE_INDICES {
     ch_new = input_to_index.join(SAMTOOLS_INDEX.out.index)
     ch_out = samtools_input.is_indexed.mix(ch_new)
 
-
     // INDEX FASTA
-    fasta_fai = channel.empty()
-    if (params.fasta && !params.fasta_fai) {
-        SAMTOOLS_FAIDX(fasta.map { it -> [[id: it[0].baseName], it, []] }, [])
-        fasta_fai = SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai }.collect()
-    }
+    fasta_fai
+        .branch { meta, _fasta_file, _fai_file ->
+            is_fasta_indexed: meta.index == true
+            to_index:         meta.index == false
+        }
+        .set { fasta_branch }
+
+    SAMTOOLS_FAIDX(fasta_branch.to_index.map { m, f, _i -> [m, f, []] }, [[],[]])
+
+    // Reconstruct: take the original [meta, fasta] and combine with the NEW fai
+    // This ignores the ID entirely and just pairs the file with the index
+    fasta_newly_indexed = fasta_branch.to_index
+        .map { meta, fasta, _old_fai -> [meta, fasta] }
+        .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai })
+        .map { meta, fasta, new_fai -> [meta, fasta, new_fai] }
+
+    ch_fasta_fai = fasta_branch.is_fasta_indexed
+        .mix(fasta_newly_indexed)
+        .first()
 
     emit:
     ch_input_indexed = ch_out
-    fasta_fai        = fasta_fai
+    fasta_fai        = ch_fasta_fai
 }
