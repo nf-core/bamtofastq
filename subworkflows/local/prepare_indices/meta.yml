@@ -36,10 +36,24 @@ input:
         Optional channel emitting reference FASTA files (required for CRAM
         indexing when reference is not embedded in header).
       structure:
-        - fasta:
-            type: file
-            description: Reference genome FASTA file
-            pattern: "*.{fa,fna,fasta}"
+        - fasta_fai:
+            type: channel
+            description: |
+              Channel emitting tuples: [meta, fasta, fai]. `meta.index` should be true if a
+              pre-built `.fai` is supplied, false to rebuild it via `samtools faidx`. Pass
+              `[ [id:'none', index:false], [], [] ]` if no reference is needed.
+            structure:
+              - meta:
+                  type: map
+                  description: Metadata map with reference id and `index` flag
+              - fasta:
+                  type: file
+                  description: Reference genome FASTA file
+                  pattern: "*.{fa,fna,fasta}"
+              - fai:
+                  type: file
+                  description: Reference genome FASTA index file (optional, rebuilt if absent)
+                  pattern: "*.fai"
 output:
   - ch_input_indexed:
       type: channel

@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#137](https://github.com/nf-core/bamtofastq/pull/137) - Recover help message
 - [#141](https://github.com/nf-core/bamtofastq/pull/141) - Update local sbwf and module to adhere to directory structure, update nf-test plugins
 - [#142](https://github.com/nf-core/bamtofastq/pull/142) - Add tests to local subworkflows, improve `.fai` generation
+- [#143](https://github.com/nf-core/bamtofastq/pull/143) - Improve `fai` again and address review comments
 
 ### `Dependencies`
 

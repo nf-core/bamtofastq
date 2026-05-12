@@ -56,7 +56,7 @@ output:
       - samtools:
           type: string
           description: The tool name
-      - samtools --version 2>&1 | sed -n '1p' | awk '{print $2}':
+      - samtools version | sed '1!d;s/.* //':
           type: eval
           description: The expression to obtain the version of samtools
 
@@ -68,7 +68,7 @@ topics:
       - samtools:
           type: string
           description: The tool name
-      - samtools --version 2>&1 | sed -n '1p' | awk '{print $2}':
+      - samtools version | sed '1!d;s/.* //':
           type: eval
           description: The expression to obtain the version of samtools
 
