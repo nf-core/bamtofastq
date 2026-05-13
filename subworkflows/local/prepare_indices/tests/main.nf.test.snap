@@ -2,6 +2,16 @@
     "sarscov2 - bam - indexed": {
         "content": [
             {
+                "ch_fasta_fai": [
+                    [
+                        {
+                            "id": "fasta",
+                            "index": true
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta.fai"
+                    ]
+                ],
                 "ch_input_indexed": [
                     [
                         {
@@ -11,20 +21,10 @@
                         "/nf-core/test-datasets/modules/data/genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam",
                         "/nf-core/test-datasets/modules/data/genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam.bai"
                     ]
-                ],
-                "fasta_fai": [
-                    [
-                        {
-                            "id": "fasta",
-                            "index": true
-                        },
-                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
-                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta.fai"
-                    ]
                 ]
             }
         ],
-        "timestamp": "2026-05-06T15:16:35.143963",
+        "timestamp": "2026-05-13T11:45:52.685713",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.0"
@@ -33,6 +33,16 @@
     "sarscov2 - bam - indexed - stub": {
         "content": [
             {
+                "ch_fasta_fai": [
+                    [
+                        {
+                            "id": "fasta",
+                            "index": true
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta.fai"
+                    ]
+                ],
                 "ch_input_indexed": [
                     [
                         {
@@ -42,20 +52,10 @@
                         "/nf-core/test-datasets/modules/data/genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam",
                         "/nf-core/test-datasets/modules/data/genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam.bai"
                     ]
-                ],
-                "fasta_fai": [
-                    [
-                        {
-                            "id": "fasta",
-                            "index": true
-                        },
-                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
-                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta.fai"
-                    ]
                 ]
             }
         ],
-        "timestamp": "2026-05-06T15:16:55.729674",
+        "timestamp": "2026-05-13T11:46:16.938032",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.0"
@@ -64,6 +64,16 @@
     "sarscov2 - bam - to_index_bam_fasta": {
         "content": [
             {
+                "ch_fasta_fai": [
+                    [
+                        {
+                            "id": "fasta",
+                            "index": false
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
+                        "genome.fasta.fai:md5,9da2a56e2853dc8c0b86a9e7229c9fe5"
+                    ]
+                ],
                 "ch_input_indexed": [
                     [
                         {
@@ -73,20 +83,10 @@
                         "/nf-core/test-datasets/modules/data/genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam",
                         "test.paired_end.sorted.bam.bai:md5,704c10dd1326482448ca3073fdebc2f4"
                     ]
-                ],
-                "fasta_fai": [
-                    [
-                        {
-                            "id": "fasta",
-                            "index": false
-                        },
-                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
-                        "genome.fasta.fai:md5,9da2a56e2853dc8c0b86a9e7229c9fe5"
-                    ]
                 ]
             }
         ],
-        "timestamp": "2026-05-06T16:31:52.068514",
+        "timestamp": "2026-05-13T11:46:10.422286",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.0"
@@ -95,6 +95,16 @@
     "human - cram - to_index_cram_fasta": {
         "content": [
             {
+                "ch_fasta_fai": [
+                    [
+                        {
+                            "id": "fasta",
+                            "index": false
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta",
+                        "genome.fasta.fai:md5,3520cd30e1b100e55f578db9c855f685"
+                    ]
+                ],
                 "ch_input_indexed": [
                     [
                         {
@@ -104,20 +114,10 @@
                         "/nf-core/test-datasets/modules/data/genomics/homo_sapiens/illumina/cram/test.paired_end.sorted.cram",
                         "test.paired_end.sorted.cram.crai:md5,31ffc1b11f53210e4ac0d55092de0652"
                     ]
-                ],
-                "fasta_fai": [
-                    [
-                        {
-                            "id": "fasta",
-                            "index": false
-                        },
-                        "/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta",
-                        "genome.fasta.fai:md5,3520cd30e1b100e55f578db9c855f685"
-                    ]
                 ]
             }
         ],
-        "timestamp": "2026-05-06T16:31:44.676334",
+        "timestamp": "2026-05-13T11:46:01.342694",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.0"
