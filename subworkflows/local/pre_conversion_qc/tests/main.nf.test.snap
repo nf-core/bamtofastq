@@ -83,37 +83,55 @@
     },
     "sarscov2 - bam - single_end": {
         "content": [
-            [
-                [
-                    {
-                        "id": "test",
-                        "filetype": "bam"
-                    },
-                    "test.flagstat:md5,2191911d72575a2358b08b1df64ccb53"
+            {
+                "flagstat": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.flagstat:md5,2191911d72575a2358b08b1df64ccb53"
+                    ]
+                ],
+                "html": [
+                    [
+                        {
+                            "filetype": "bam",
+                            "id": "test"
+                        },
+                        "test.pre_conversion_fastqc.html"
+                    ]
+                ],
+                "idxstats": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.idxstats:md5,613e048487662c694aa4a2f73ca96a20"
+                    ]
+                ],
+                "stats": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.stats:md5,4f646400171c0f68d5b044dd702e860e"
+                    ]
+                ],
+                "zip": [
+                    [
+                        {
+                            "filetype": "bam",
+                            "id": "test"
+                        },
+                        "test.pre_conversion_fastqc.zip"
+                    ]
                 ]
-            ],
-            "test.pre_conversion_fastqc.html",
-            [
-                [
-                    {
-                        "id": "test",
-                        "filetype": "bam"
-                    },
-                    "test.idxstats:md5,613e048487662c694aa4a2f73ca96a20"
-                ]
-            ],
-            [
-                [
-                    {
-                        "id": "test",
-                        "filetype": "bam"
-                    },
-                    "test.stats:md5,4f646400171c0f68d5b044dd702e860e"
-                ]
-            ],
-            "test.pre_conversion_fastqc.zip"
+            }
         ],
-        "timestamp": "2026-05-06T16:53:16.412484",
+        "timestamp": "2026-05-13T11:34:35.764499",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.0"

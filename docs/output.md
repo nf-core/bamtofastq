@@ -56,13 +56,13 @@ The converted and gzipped fastq output reads are written to the directory `resul
 
 ### Fastq_utils
 
-Runs [`fastq_info`](https://github.com/nunofonseca/fastqutils). Will throw an error for invalid fastq files.
+Runs [`fastq_info`](https://github.com/nunofonseca/fastq_utils). Will throw an error for invalid fastq files.
 
 <details markdown="1">
 <summary>Output files</summary>
 
 - `fastutils/`
-  - `*.txt`: will contain "fastqutils fastq_info ran and found no issues with \*" if file is valid.
+  - `*.txt`: will contain "fastq_utils fastq_info ran and found no issues with \*" if file is valid.
 
 </details>
 
