@@ -72,7 +72,7 @@ workflow BAMTOFASTQ {
         fasta_fai
     )
 
-    ch_fasta_fai = PREPARE_INDICES.out.fasta_fai
+    ch_fasta_fai = PREPARE_INDICES.out.ch_fasta_fai
 
     // SUBWORKFLOW: Pre conversion QC and stats
     ch_input = PREPARE_INDICES.out.ch_input_indexed
@@ -129,16 +129,16 @@ workflow BAMTOFASTQ {
         ch_input_chr = samtools_chr_out.join(SAMTOOLS_CHR_INDEX.out.index)
 
         // Add chr names to id
-        ch_input_new = ch_input_chr.map { it ->
-            def new_id = it[1].baseName
+        ch_input_new = ch_input_chr.map { meta, file, index ->
+            def new_id = file.baseName
             [
                 [
                     id: new_id,
-                    filetype: it[0].filetype,
-                    single_end: it[0].single_end,
+                    filetype: meta.filetype,
+                    single_end: meta.single_end,
                 ],
-                it[1],
-                it[2],
+                file,
+                index,
             ]
         }
     }
@@ -147,9 +147,9 @@ workflow BAMTOFASTQ {
     def interleave = false
 
     ch_input_new
-        .branch { files ->
-            ch_single: files[0].single_end == true
-            ch_paired: files[0].single_end == false
+        .branch { meta, _file, _index ->
+            ch_single: meta.single_end == true
+            ch_paired: meta.single_end == false
         }
         .set { conversion_input }
 

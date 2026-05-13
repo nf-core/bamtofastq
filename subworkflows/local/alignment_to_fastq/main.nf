@@ -62,7 +62,7 @@ workflow ALIGNMENT_TO_FASTQ {
         interleave,
     )
 
-    // /SortExtractMapped: Collate & convert mapped
+    // SortExtractMapped: Collate & convert mapped
     COLLATE_FASTQ_MAP(
         SAMTOOLS_VIEW_MAP_MAP.out.cram.mix(SAMTOOLS_VIEW_MAP_MAP.out.bam),
         fasta_fai,

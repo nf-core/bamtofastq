@@ -59,5 +59,5 @@ workflow PREPARE_INDICES {
 
     emit:
     ch_input_indexed = ch_out
-    fasta_fai        = ch_fasta_fai
+    ch_fasta_fai     = ch_fasta_fai
 }

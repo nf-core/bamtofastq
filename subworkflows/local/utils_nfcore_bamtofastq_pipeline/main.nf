@@ -224,7 +224,7 @@ def toolBibliographyText() {
     // Uncomment function in methodsDescriptionText to render in MultiQC report
     def reference_text = [
         "<li>Andrews S, (2010) FastQC, URL: https://www.bioinformatics.babraham.ac.uk/projects/fastqc/).</li>",
-        "<li>Nuno Fonseca & Jonathan Manning (2023) fastq_utils v0.25.2, Zenodo. https://doi.org/10.5281/zenodo.7755574</li>",
+        "<li>Nuno Fonseca & Jonathan Manning (2023) fastq_utils v0.25.2, Zenodo. doi: 10.5281/zenodo.7755574</li>",
         "<li>Ewels, P., Magnusson, M., Lundin, S., & Käller, M. (2016). MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics , 32(19), 3047–3048. doi: 10.1093/bioinformatics/btw354</li>",
         "<li>Danecek, P., Bonfield, J. K., Liddle, J., Marshall, J., Ohan, V., Pollard, M. O., Whitwham, A., Keane, T., McCarthy, S. A., Davies, R. D., & Li, H. (2021). Twelve years of SAMtools and BCFtools. GigaScience, 10(2), giab008. doi: 10.1093/gigascience/giab008</li>",
     ].join(' ').trim()
