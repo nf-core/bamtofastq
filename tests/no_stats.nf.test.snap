@@ -6,14 +6,14 @@
                 "CAT_FASTQ": {
                     "cat": 9.5
                 },
-                "CHECK_IF_PAIRED_END": {
-                    "samtools": 1.21
+                "CHECKPAIREDEND": {
+                    "samtools": "1.23.1"
                 },
                 "COLLATE_FASTQ_MAP": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "COLLATE_FASTQ_UNMAP": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.12.1"
@@ -22,28 +22,25 @@
                     "fastqc": "0.12.1"
                 },
                 "FASTQUTILS_INFO": {
-                    "fastq_utils": "0.25.2"
+                    "fastqutils": "0.25.3"
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_MERGE_UNMAP": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_MAP_MAP": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_MAP_UNMAP": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_UNMAP_MAP": {
-                    "samtools": 1.21
+                    "samtools": "1.23.1"
                 },
                 "SAMTOOLS_VIEW_UNMAP_UNMAP": {
-                    "samtools": 1.21
-                },
-                "Workflow": {
-                    "nf-core/bamtofastq": "v2.2.0"
+                    "samtools": "1.23.1"
                 }
             },
             [
@@ -65,7 +62,9 @@
                 "fastqutils/test2.txt",
                 "multiqc",
                 "multiqc/multiqc_data",
+                "multiqc/multiqc_data/llms-full.txt",
                 "multiqc/multiqc_data/multiqc.log",
+                "multiqc/multiqc_data/multiqc.parquet",
                 "multiqc/multiqc_data/multiqc_citations.txt",
                 "multiqc/multiqc_data/multiqc_data.json",
                 "multiqc/multiqc_data/multiqc_software_versions.txt",
@@ -91,10 +90,10 @@
             "No BAM files",
             "No CRAM files"
         ],
+        "timestamp": "2026-05-04T14:56:26.499029",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "24.10.4"
-        },
-        "timestamp": "2025-05-20T13:22:51.134103"
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
     }
 }

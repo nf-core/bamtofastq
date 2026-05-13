@@ -12,7 +12,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - [FastQC](#fastqc) - Raw read QC
 - [Samtools](#samtools) - collate, extract reads and compute bam/cram stats
-- [Fastq_utils](#fastq_utils) - check whether the produced fastq files are valid (not empty or truncated)
+- [Fastq_utils](#fastqutils) - check whether the produced fastq files are valid (not empty or truncated)
 - [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
 - [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
 

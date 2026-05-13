@@ -3,6 +3,40 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v2.2.1 - Radia Perlman
+
+### `Added`
+
+### `Changed`
+
+- [#132](https://github.com/nf-core/bamtofastq/pull/132) - Template update for nf-core/tools v3.3.2
+- [#133](https://github.com/nf-core/bamtofastq/pull/133) - Template update for nf-core/tools v3.4.1
+- [#134](https://github.com/nf-core/bamtofastq/pull/134) - Template update for nf-core/tools v3.5.1
+- [#135](https://github.com/nf-core/bamtofastq/pull/135) - Fix nextflow lint and update all modules
+- [#138](https://github.com/nf-core/bamtofastq/pull/138) - Template update for nf-core/tools v4.0.2
+- [#139](https://github.com/nf-core/bamtofastq/pull/139) - Update all modules, adjust fasta_fai input channels, remove `{modules/subworkflows}/nf-core/**/tests/`
+- [#144](https://github.com/nf-core/bamtofastq/pull/144) - Prepare release 2.2.1
+
+### `Fixed`
+
+- [#137](https://github.com/nf-core/bamtofastq/pull/137) - Recover help message
+- [#141](https://github.com/nf-core/bamtofastq/pull/141) - Update local sbwf and module to adhere to directory structure, update nf-test plugins
+- [#142](https://github.com/nf-core/bamtofastq/pull/142) - Add tests to local subworkflows, improve `.fai` generation
+- [#143](https://github.com/nf-core/bamtofastq/pull/143) - Improve `fai` again and address review comments
+- [#147](https://github.com/nf-core/bamtofastq/pull/147) - Address review comments
+
+### `Dependencies`
+
+| Dependency  | Old version | New version |
+| ----------- | ----------- | ----------- |
+| fastq_utils | 0.25.2      | 0.25.3      |
+| multiqc     | 1.28        | 1.34        |
+| samtools    | 1.21        | 1.23.1      |
+| nft-utils   | 0.0.5       | 0.0.9       |
+| nft-bam     | 0.4.0       | 0.6.1       |
+
+Bump minimal Nextflow version to 25.10.4 and nf-schema to 2.6.1
+
 ## v2.2.0 - Kathleen Booth
 
 ### `Added`

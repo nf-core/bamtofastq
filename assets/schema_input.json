@@ -31,7 +31,7 @@
                 "type": "string",
                 "errorMessage": "Input filetypes must either be 'bam' or 'cram'",
                 "meta": ["filetype"],
-                "enums": ["bam", "cram"]
+                "enum": ["bam", "cram"]
             }
         },
         "required": ["sample_id", "mapped", "file_type"]

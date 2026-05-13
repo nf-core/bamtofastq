@@ -4,10 +4,10 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_bamtofastq_pipeline'
-include { paramsSummaryMap       } from 'plugin/nf-schema'
-include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { methodsDescriptionText                                    } from '../subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { paramsSummaryMap                                          } from 'plugin/nf-schema'
+include { paramsSummaryMultiqc                                      } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { softwareVersionsToYAML                                    } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,7 +15,7 @@ include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pi
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { CHECK_IF_PAIRED_END                                       } from '../modules/local/check_paired_end'
+include { CHECKPAIREDEND                                            } from '../modules/local/checkpairedend'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -26,13 +26,12 @@ include { CHECK_IF_PAIRED_END                                       } from '../m
 //
 // MODULE: Installed directly from nf-core/modules
 //
-include { FASTQC as FASTQC_POST_CONVERSION                          } from '../modules/nf-core/fastqc/main'
-include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info/main'
-include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view/main'
-include { SAMTOOLS_VIEW as SAMTOOLS_PE                              } from '../modules/nf-core/samtools/view/main'
-include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index/main'
-include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq/main'
-include { MULTIQC                                                   } from '../modules/nf-core/multiqc/main'
+include { FASTQC as FASTQC_POST_CONVERSION                          } from '../modules/nf-core/fastqc'
+include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info'
+include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view'
+include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index'
+include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq'
+include { MULTIQC                                                   } from '../modules/nf-core/multiqc'
 
 //
 // SUBWORKFLOWS: Installed directly from subworkflows/local
@@ -49,208 +48,196 @@ include { ALIGNMENT_TO_FASTQ                                        } from '../s
 */
 
 workflow BAMTOFASTQ {
-
     take:
     ch_samplesheet // channel: samplesheet read in from --input
+    multiqc_config
+    multiqc_logo
+    multiqc_methods_description
+    outdir
+
     main:
+    ch_multiqc_files = channel.empty()
 
-    // Initialize file channels based on params
-    fasta     = params.fasta     ? Channel.fromPath(params.fasta).collect()      : Channel.value([])
-
-    // Initialize value channels based on params
-    chr       = params.chr       ?: Channel.empty()
-
-    ch_versions = Channel.empty()
-    ch_multiqc_files = Channel.empty()
+    fasta_fai = params.fasta
+        ? channel.fromPath(params.fasta).map { fasta_file ->
+            def fai_file = params.fasta_fai ? file(params.fasta_fai, checkIfExists: true) : []
+            def has_fai  = !(fai_file instanceof List && fai_file.isEmpty())
+            [ [id: fasta_file.baseName, index: has_fai], fasta_file, fai_file ]
+        }.collect()
+        : channel.value([ [id:'none', index:false], [], [] ])
 
     // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
     PREPARE_INDICES(
         ch_samplesheet,
-        fasta
+        fasta_fai
     )
 
-    ch_versions = ch_versions.mix(PREPARE_INDICES.out.versions)
+    ch_fasta_fai = PREPARE_INDICES.out.ch_fasta_fai
 
     // SUBWORKFLOW: Pre conversion QC and stats
-
     ch_input = PREPARE_INDICES.out.ch_input_indexed
     PRE_CONVERSION_QC(
         ch_input,
-        fasta
+        ch_fasta_fai,
     )
 
-    ch_versions = ch_versions.mix(PRE_CONVERSION_QC.out.versions)
-
     // MODULE: Check if SINGLE or PAIRED-END
+    CHECKPAIREDEND(ch_input, ch_fasta_fai)
 
-    CHECK_IF_PAIRED_END(ch_input, fasta)
-
-    ch_paired_end = ch_input.join(CHECK_IF_PAIRED_END.out.paired_end)
-    ch_single_end = ch_input.join(CHECK_IF_PAIRED_END.out.single_end)
+    ch_paired_end = ch_input.join(CHECKPAIREDEND.out.paired_end)
+    ch_single_end = ch_input.join(CHECKPAIREDEND.out.single_end)
 
     // Combine channels into new input channel for conversion + add info about single/paired to meta map
-    ch_input_new = ch_single_end.map{ meta, bam, bai, _txt ->
-            [ [ id : meta.id,
-            filetype : meta.filetype,
-            single_end : true ],
-            bam,
-            bai
-            ] }
-        .mix(ch_paired_end.map{ meta, bam, bai, _txt ->
-            [ [ id : meta.id,
-            filetype : meta.filetype,
-            single_end : false ],
-            bam,
-            bai
-            ] })
-
-    ch_versions = ch_versions.mix(CHECK_IF_PAIRED_END.out.versions)
+    ch_input_new = ch_single_end
+        .map { meta, bam, bai, _txt ->
+            [
+                [
+                    id: meta.id,
+                    filetype: meta.filetype,
+                    single_end: true,
+                ],
+                bam,
+                bai,
+            ]
+        }
+        .mix(
+            ch_paired_end.map { meta, bam, bai, _txt ->
+                [
+                    [
+                        id: meta.id,
+                        filetype: meta.filetype,
+                        single_end: false,
+                    ],
+                    bam,
+                    bai,
+                ]
+            }
+        )
 
 
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input_new, fasta.map{ it -> [[:], it] }, [], [])
+        SAMTOOLS_CHR(ch_input_new, ch_fasta_fai, [[:], []], [[:], []], [])
 
-        samtools_chr_out = Channel.empty().mix( SAMTOOLS_CHR.out.bam,
-                                                SAMTOOLS_CHR.out.cram)
+        samtools_chr_out = channel.empty()
+            .mix(
+                SAMTOOLS_CHR.out.bam,
+                SAMTOOLS_CHR.out.cram,
+            )
         SAMTOOLS_CHR_INDEX(samtools_chr_out)
-        ch_input_chr = samtools_chr_out.join(Channel.empty().mix( SAMTOOLS_CHR_INDEX.out.bai,
-                                                                SAMTOOLS_CHR_INDEX.out.crai ))
+        ch_input_chr = samtools_chr_out.join(SAMTOOLS_CHR_INDEX.out.index)
 
         // Add chr names to id
-        ch_input_new = ch_input_chr.map{ it ->
-                def new_id = it[1].baseName
-                [[
-                    id : new_id,
-                    filetype : it[0].filetype,
-                    single_end: it[0].single_end
+        ch_input_new = ch_input_chr.map { meta, file, index ->
+            def new_id = file.baseName
+            [
+                [
+                    id: new_id,
+                    filetype: meta.filetype,
+                    single_end: meta.single_end,
                 ],
-                it[1],
-                it[2]] }
-
-        ch_versions = ch_versions.mix(SAMTOOLS_CHR.out.versions)
-        ch_versions = ch_versions.mix(SAMTOOLS_CHR_INDEX.out.versions)
-
+                file,
+                index,
+            ]
+        }
     }
 
     // MODULE: SINGLE-END Alignment to FastQ (SortExtractSingleEnd)
     def interleave = false
 
-    ch_input_new.branch{
-        ch_single:  it[0].single_end == true
-        ch_paired:  it[0].single_end == false
-    }.set{conversion_input}
+    ch_input_new
+        .branch { meta, _file, _index ->
+            ch_single: meta.single_end == true
+            ch_paired: meta.single_end == false
+        }
+        .set { conversion_input }
 
     // Module needs info about single-endedness
     SAMTOOLS_COLLATEFASTQ_SINGLE_END(
-        conversion_input.ch_single.map{ it -> [ it[0], it[1] ]}, // meta, bam/cram
-        fasta.map{ it ->                                         // meta, fasta
-            def new_id = ""
-            if(it) {
-                new_id = it[0].baseName
-            }
-            [[id:new_id], it] },
-        interleave)
-
-    ch_versions = ch_versions.mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.versions)
+        conversion_input.ch_single.map { it -> [it[0], it[1]] },
+        ch_fasta_fai,
+        interleave,
+    )
 
     //
     // SUBWORKFLOW: PAIRED-END Alignment to FastQ
     //
-
-    fasta_fai = params.fasta ? params.fasta_fai ? Channel.fromPath(params.fasta_fai).collect() : PREPARE_INDICES.out.fasta_fai : Channel.value([])
-    ALIGNMENT_TO_FASTQ (
+    ALIGNMENT_TO_FASTQ(
         conversion_input.ch_paired,
-        fasta,
-        fasta_fai
+        ch_fasta_fai,
     )
 
     // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
     // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]}) // there is not zip in the output of the subworkflow?
-    ch_versions = ch_versions.mix(ALIGNMENT_TO_FASTQ.out.versions)
 
 
     // MODULE: FastQC - Post conversion QC
     // famosab: swapped the output of SAMTOOLS_COLLATEFASTQ_SINGLE_END from fastq_singleton to fastq_other because otherwise the fatsq files had empty reads
     // coming from the samtools docs its not clear which file contains the expected reads
-    ch_reads_post_qc = Channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
+    ch_reads_post_qc = channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
 
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
-
-    ch_versions = ch_versions.mix(FASTQC_POST_CONVERSION.out.versions)
 
     // MODULE: fastq_utils - Post conversion checks for broken fastq files
     FASTQUTILS_INFO(ch_reads_post_qc)
 
-    ch_versions = ch_versions.mix(FASTQUTILS_INFO.out.versions)
-
     //
     // Collate and save software versions
     //
-    softwareVersionsToYAML(ch_versions)
-        .collectFile(
-            storeDir: "${params.outdir}/pipeline_info",
-            name: 'nf_core_'  +  'bamtofastq_software_'  + 'mqc_'  + 'versions.yml',
-            sort: true,
-            newLine: true
-        ).set { ch_collated_versions }
+    def topic_versions = channel.topic("versions")
+        .distinct()
+        .branch { entry ->
+            versions_file: entry instanceof Path
+            versions_tuple: true
+        }
 
+    def topic_versions_string = topic_versions.versions_tuple
+        .map { process, tool, version ->
+            [process[process.lastIndexOf(':') + 1..-1], "  ${tool}: ${version}"]
+        }
+        .groupTuple(by: 0)
+        .map { process, tool_versions ->
+            tool_versions.unique().sort()
+            "${process}:\n${tool_versions.join('\n')}"
+        }
+
+    def ch_collated_versions = softwareVersionsToYAML(topic_versions.versions_file)
+        .mix(topic_versions_string)
+        .collectFile(
+            storeDir: "${outdir}/pipeline_info",
+            name: 'nf_core_' + 'bamtofastq_software_' + 'mqc_' + 'versions.yml',
+            sort: true,
+            newLine: true,
+        )
 
     //
     // MODULE: MultiQC
     //
-    ch_multiqc_config        = Channel.fromPath(
-        "$projectDir/assets/multiqc_config.yml", checkIfExists: true)
-    ch_multiqc_custom_config = params.multiqc_config ?
-        Channel.fromPath(params.multiqc_config, checkIfExists: true) :
-        Channel.empty()
-    ch_multiqc_logo          = params.multiqc_logo ?
-        Channel.fromPath(params.multiqc_logo, checkIfExists: true) :
-        Channel.empty()
-
-    summary_params      = paramsSummaryMap(
-        workflow, parameters_schema: "nextflow_schema.json")
-    ch_workflow_summary = Channel.value(paramsSummaryMultiqc(summary_params))
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
-    ch_multiqc_custom_methods_description = params.multiqc_methods_description ?
-        file(params.multiqc_methods_description, checkIfExists: true) :
-        file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
-    ch_methods_description                = Channel.value(
-        methodsDescriptionText(ch_multiqc_custom_methods_description))
-
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    ch_multiqc_files = ch_multiqc_files.mix(
-        ch_methods_description.collectFile(
-            name: 'methods_description_mqc.yaml',
-            sort: true
-        )
-    )
-
-    MULTIQC (
-        ch_multiqc_files.collect(),
-        ch_multiqc_config.toList(),
-        ch_multiqc_custom_config.toList(),
-        ch_multiqc_logo.toList(),
-        [],
-        []
+    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
+    def ch_multiqc_custom_methods_description = multiqc_methods_description
+        ? file(multiqc_methods_description, checkIfExists: true)
+        : file("${projectDir}/assets/methods_description_template.yml", checkIfExists: true)
+    def ch_methods_description = channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
+    ch_multiqc_files = ch_multiqc_files.mix(ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: true))
+    MULTIQC(
+        ch_multiqc_files.flatten().collect().map { files ->
+            [
+                [id: 'bamtofastq'],
+                files,
+                multiqc_config
+                    ? file(multiqc_config, checkIfExists: true)
+                    : file("${projectDir}/assets/multiqc_config.yml", checkIfExists: true),
+                multiqc_logo ? file(multiqc_logo, checkIfExists: true) : [],
+                [],
+                [],
+            ]
+        }
     )
 
     emit:
-    multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
-
+    multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    THE END
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/

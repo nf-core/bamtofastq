@@ -21,15 +21,6 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamt
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-params.fasta     = getGenomeAttribute('fasta')
-params.fasta_fai = getGenomeAttribute('fasta_fai')
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -43,12 +34,18 @@ workflow NFCORE_BAMTOFASTQ {
     samplesheet // channel: samplesheet read in from --input
 
     main:
+    params.fasta     = params.fasta ?: getGenomeAttribute('fasta')
+    params.fasta_fai = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
 
     //
     // WORKFLOW: Run pipeline
     //
     BAMTOFASTQ (
-        samplesheet
+        samplesheet,
+        params.multiqc_config,
+        params.multiqc_logo,
+        params.multiqc_methods_description,
+        params.outdir,
     )
     emit:
     multiqc_report = BAMTOFASTQ.out.multiqc_report // channel: /path/to/multiqc_report.html
@@ -68,10 +65,13 @@ workflow {
     PIPELINE_INITIALISATION (
         params.version,
         params.validate_params,
-        params.monochrome_logs,
         args,
         params.outdir,
-        params.input
+        params.input,
+        params.help,
+        params.help_full,
+        params.show_hidden,
+        params.monochrome_logs
     )
 
     //
@@ -89,7 +89,6 @@ workflow {
         params.plaintext_email,
         params.outdir,
         params.monochrome_logs,
-        params.hook_url,
         NFCORE_BAMTOFASTQ.out.multiqc_report
     )
 }
