@@ -3,7 +3,7 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v2.3.0dev
+## v2.2.1 - Radia Perlman
 
 ### `Added`
 
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#135](https://github.com/nf-core/bamtofastq/pull/135) - Fix nextflow lint and update all modules
 - [#138](https://github.com/nf-core/bamtofastq/pull/138) - Template update for nf-core/tools v4.0.2
 - [#139](https://github.com/nf-core/bamtofastq/pull/139) - Update all modules, adjust fasta_fai input channels, remove `{modules/subworkflows}/nf-core/**/tests/`
+- [#144](https://github.com/nf-core/bamtofastq/pull/144) - Prepare release 2.2.1
 
 ### `Fixed`
 
