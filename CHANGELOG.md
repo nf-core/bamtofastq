@@ -9,12 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Changed`
 
+- [#150](https://github.com/nf-core/bamtofastq/pull/150) - Template update for nf-core/tools v4.0.3
+
 ### `Fixed`
 
 ### `Dependencies`
 
 | Dependency | Old version | New version |
 | ---------- | ----------- | ----------- |
+| multiqc    | 1.34        | 1.35        |
 
 ## v2.2.1 - Radia Perlman
 

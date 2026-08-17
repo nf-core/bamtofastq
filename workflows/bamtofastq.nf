@@ -61,15 +61,15 @@ workflow BAMTOFASTQ {
     fasta_fai = params.fasta
         ? channel.fromPath(params.fasta).map { fasta_file ->
             def fai_file = params.fasta_fai ? file(params.fasta_fai, checkIfExists: true) : []
-            def has_fai  = !(fai_file instanceof List && fai_file.isEmpty())
-            [ [id: fasta_file.baseName, index: has_fai], fasta_file, fai_file ]
+            def has_fai = !(fai_file instanceof List && fai_file.isEmpty())
+            [[id: fasta_file.baseName, index: has_fai], fasta_file, fai_file]
         }.collect()
-        : channel.value([ [id:'none', index:false], [], [] ])
+        : channel.value([[id: 'none', index: false], [], []])
 
     // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
     PREPARE_INDICES(
         ch_samplesheet,
-        fasta_fai
+        fasta_fai,
     )
 
     ch_fasta_fai = PREPARE_INDICES.out.ch_fasta_fai
