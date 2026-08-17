@@ -1,0 +1,181 @@
+{
+    "sarscov2 - bam - fasta - stub": {
+        "content": [
+            {
+                "flagstat": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.flagstat:md5,67394650dbae96d1a4fcc70484822159"
+                    ]
+                ],
+                "html": [
+                    
+                ],
+                "idxstats": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.idxstats:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "stats": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.stats:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "zip": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T15:02:20.552073",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "human - cram - fasta": {
+        "content": [
+            {
+                "flagstat": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.flagstat:md5,a53f3d26e2e9851f7d528442bbfe9781"
+                    ]
+                ],
+                "html": [
+                    
+                ],
+                "idxstats": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.idxstats:md5,e179601fa7b8ebce81ac3765206f6c15"
+                    ]
+                ],
+                "stats": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.stats:md5,fe30f8014c65fbcfbcbf4b28f8d9b1e1"
+                    ]
+                ],
+                "zip": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T15:01:57.127417",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "sarscov2 - bam - single_end": {
+        "content": [
+            {
+                "flagstat": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.flagstat:md5,2191911d72575a2358b08b1df64ccb53"
+                    ]
+                ],
+                "html": [
+                    [
+                        {
+                            "filetype": "bam",
+                            "id": "test"
+                        },
+                        "test.pre_conversion_fastqc.html"
+                    ]
+                ],
+                "idxstats": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.idxstats:md5,613e048487662c694aa4a2f73ca96a20"
+                    ]
+                ],
+                "stats": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.stats:md5,4f646400171c0f68d5b044dd702e860e"
+                    ]
+                ],
+                "zip": [
+                    [
+                        {
+                            "filetype": "bam",
+                            "id": "test"
+                        },
+                        "test.pre_conversion_fastqc.zip"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-13T11:34:35.764499",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "sarscov2 - bam - fasta": {
+        "content": [
+            {
+                "flagstat": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.flagstat:md5,4f7ffd1e6a5e85524d443209ac97d783"
+                    ]
+                ],
+                "html": [
+                    
+                ],
+                "idxstats": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.idxstats:md5,df60a8c8d6621100d05178c93fb053a2"
+                    ]
+                ],
+                "stats": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.stats:md5,d8a80c3dc9b5580ba07ea1214eb6300c"
+                    ]
+                ],
+                "zip": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T15:01:47.499801",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    }
+}
