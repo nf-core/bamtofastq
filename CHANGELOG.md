@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Fixed`
 
+- [#149](https://github.com/nf-core/bamtofastq/pull/149) - Fix test profile to contain fasta reference
+
 ### `Dependencies`
 
 | Dependency | Old version | New version |
