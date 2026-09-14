@@ -1,0 +1,73 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "alignment_to_fastq"
+description: |
+  Convert BAM/CRAM alignment files to paired FASTQ by collating mapped and
+  unmapped reads, merging where needed, and concatenating mapped/unmapped
+  read pairs.
+keywords:
+  - bam
+  - cram
+  - fastq
+  - samtools
+  - collate
+components:
+  - samtools/view
+  - samtools/merge
+  - samtools/collatefastq
+  - cat/fastq
+input:
+  - input:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, alignment (BAM or CRAM), index].
+      structure:
+        - meta:
+            type: map
+            description: |
+              Metadata map with sample information
+              e.g. [ id:'sample1', filetype:'bam', single_end:false ]
+        - alignment:
+            type: file
+            description: Alignment file (BAM or CRAM format)
+            pattern: "*.{bam,cram}"
+        - index:
+            type: file
+            description: Index file for alignment (BAI or CRAI format)
+            pattern: "*.{bai,crai}"
+  - fasta_fai:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, fasta, fai] for reference files (required when
+        converting CRAM inputs).
+      structure:
+        - meta:
+            type: map
+            description: Metadata map with id for the reference
+        - fasta:
+            type: file
+            description: Reference genome FASTA file
+            pattern: "*.{fa,fna,fasta}"
+        - fai:
+            type: file
+            description: Reference genome FASTA index file
+            pattern: "*.fai"
+output:
+  - reads:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, reads] where reads is a list of concatenated
+        FASTQ files (R1 and R2) produced by `CAT_FASTQ`.
+      structure:
+        - meta:
+            type: map
+            description: |
+              Metadata map with sample information
+              e.g. [ id:'sample1', filetype:'bam', single_end:false ]
+        - reads:
+            type: file
+            description: Concatenated FASTQ file(s) (paired-end R1 and R2)
+            pattern: "*.merged.fastq.gz"
+authors:
+  - "@FriederikeHanssen"
+maintainers:
+  - "@famosab"

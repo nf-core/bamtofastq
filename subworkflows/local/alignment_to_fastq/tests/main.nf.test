@@ -1,0 +1,112 @@
+nextflow_workflow {
+
+    name "Test Workflow ALIGNMENT_TO_FASTQ"
+    script "../main.nf"
+    workflow "ALIGNMENT_TO_FASTQ"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/alignment_to_fastq"
+    tag "alignment_to_fastq"
+
+    tag "samtools"
+    tag "samtools/view"
+    tag "samtools/merge"
+    tag "samtools/collatefastq"
+    tag "cat"
+    tag "cat/fastq"
+
+    test("sarscov2 - bam - fasta") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id:'test'],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam', checkIfExists:true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists:true)
+                ])
+                input[1] = channel.of([
+                    [id:'fasta'],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta', checkIfExists:true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta.fai', checkIfExists:true)
+                ])
+                """
+            }
+        }
+        then {
+            assert workflow.success
+            assert snapshot(sanitizeOutput(workflow.out)).match()
+        }
+    }
+
+    test("human - cram - fasta") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id:'test'],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/cram/test.paired_end.sorted.cram', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/cram/test.paired_end.sorted.cram.crai', checkIfExists: true)
+                ])
+                input[1] = channel.of([
+                    [id:'fasta'],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta.fai', checkIfExists: true)
+                ])
+                """
+            }
+        }
+        then {
+            assert workflow.success
+            assert snapshot(sanitizeOutput(workflow.out)).match()
+        }
+    }
+
+    test("sarscov2 - bam - single_end") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [ id:'test', filetype:'bam' ],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.single_end.sorted.bam', checkIfExists: true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.single_end.sorted.bam.bai', checkIfExists: true)
+                ])
+                input[1] = channel.of([
+                    [ id:'genome' ],
+                    [],
+                    []
+                ])
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(sanitizeOutput(workflow.out)).match()
+        }
+    }
+
+    test("sarscov2 - bam - fasta - stub") {
+        options "-stub"
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id:'test'],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam', checkIfExists:true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists:true)
+                ])
+                input[1] = channel.of([
+                    [id:'fasta'],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta', checkIfExists:true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta.fai', checkIfExists:true)
+                ])
+                """
+            }
+        }
+        then {
+            assert workflow.success
+            assert snapshot(sanitizeOutput(workflow.out)).match()
+        }
+    }
+}

@@ -44,6 +44,9 @@
                     "@id": "modules/"
                 },
                 {
+                    "@id": "modules/local/"
+                },
+                {
                     "@id": "modules/nf-core/"
                 },
                 {
@@ -121,8 +124,12 @@
         },
         {
             "@id": "main.nf",
-            "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
-            "contributor": [
+            "@type": [
+                "File",
+                "SoftwareSourceCode",
+                "ComputationalWorkflow"
+            ],
+            "author": [
                 {
                     "@id": "https://orcid.org/0009-0001-9875-5262"
                 },
@@ -130,20 +137,57 @@
                     "@id": "https://orcid.org/0009-0001-9152-7291"
                 }
             ],
+            "contributor": [
+                {
+                    "@id": "#b2b8a74f-f174-452c-bcf6-d08f74cf1ad8"
+                },
+                {
+                    "@id": "#8980a2bb-027f-4113-b3e4-5ed69e761f1c"
+                },
+                {
+                    "@id": "https://orcid.org/0000-0002-2450-6415"
+                }
+            ],
             "dateCreated": "",
             "dateModified": "2026-09-01T12:58:31Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
-            "keywords": ["nf-core", "nextflow", "bamtofastq", "conversion", "cramtofastq"],
-            "license": ["MIT"],
-            "name": ["nf-core/bamtofastq"],
+            "keywords": [
+                "nf-core",
+                "nextflow",
+                "bamtofastq",
+                "conversion",
+                "cramtofastq"
+            ],
+            "license": [
+                "MIT"
+            ],
+            "maintainer": [
+                {
+                    "@id": "https://orcid.org/0009-0001-9875-5262"
+                },
+                {
+                    "@id": "https://orcid.org/0000-0003-2827-9261"
+                },
+                {
+                    "@id": "https://orcid.org/0000-0003-1387-0251"
+                }
+            ],
+            "name": [
+                "nf-core/bamtofastq"
+            ],
             "programmingLanguage": {
                 "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
             },
             "sdPublisher": {
                 "@id": "https://nf-co.re/"
             },
-            "url": ["https://github.com/nf-core/bamtofastq", "https://nf-co.re/bamtofastq/dev/"],
-            "version": ["2.3.0dev"]
+            "url": [
+                "https://github.com/nf-core/bamtofastq",
+                "https://nf-co.re/bamtofastq/dev/"
+            ],
+            "version": [
+                "2.3.0dev"
+            ]
         },
         {
             "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",
@@ -212,6 +256,11 @@
             "@id": "modules/",
             "@type": "Dataset",
             "description": "Modules used by the pipeline"
+        },
+        {
+            "@id": "modules/local/",
+            "@type": "Dataset",
+            "description": "Pipeline-specific modules"
         },
         {
             "@id": "modules/nf-core/",
@@ -302,12 +351,56 @@
         {
             "@id": "https://orcid.org/0009-0001-9875-5262",
             "@type": "Person",
-            "name": "Friederike Hanssen"
+            "affiliation": "Seqera",
+            "email": "friederike.hanssen@seqera.io",
+            "name": "Friederike Hanssen",
+            "url": "https://github.com/FriederikeHanssen"
         },
         {
             "@id": "https://orcid.org/0009-0001-9152-7291",
             "@type": "Person",
-            "name": "Susanne Jodoin"
+            "affiliation": "Quantitative Biology Center (QBiC) T\u00fcbingen, University of T\u00fcbingen, Germany",
+            "email": "afijo01@rddsws.am10.uni-tuebingen.de",
+            "name": "Susanne Jodoin",
+            "url": "https://github.com/SusiJo"
+        },
+        {
+            "@id": "https://orcid.org/0000-0003-2827-9261",
+            "@type": "Person",
+            "affiliation": "Seqera",
+            "email": "maxime.garcia@seqera.io",
+            "name": "Maxime U Garcia",
+            "url": "https://github.com/maxulysse"
+        },
+        {
+            "@id": "https://orcid.org/0000-0003-1387-0251",
+            "@type": "Person",
+            "affiliation": "Quantitative Biology Center (QBiC) T\u00fcbingen, University of T\u00fcbingen, Germany",
+            "email": "famke.baeuerle@uni-tuebingen.de",
+            "name": "Famke B\u00e4uerle",
+            "url": "https://github.com/famosab"
+        },
+        {
+            "@id": "#b2b8a74f-f174-452c-bcf6-d08f74cf1ad8",
+            "@type": "Person",
+            "email": "gisela.gabernet@gmail.com",
+            "name": "Gisela Gabernet",
+            "url": "https://github.com/ggabernet"
+        },
+        {
+            "@id": "#8980a2bb-027f-4113-b3e4-5ed69e761f1c",
+            "@type": "Person",
+            "email": "37172585+asp8200@users.noreply.github.com",
+            "name": "Anders Sune Pedersen",
+            "url": "https://github.com/asp8200"
+        },
+        {
+            "@id": "https://orcid.org/0000-0002-2450-6415",
+            "@type": "Person",
+            "affiliation": "SNP&SEQ Technology Platform, Department of Medical Sciences, Uppsala University",
+            "email": "matilda.aslin@medsci.uu.se",
+            "name": "Matilda \u00c5slin",
+            "url": "https://github.com/matrulda"
         }
     ]
 }

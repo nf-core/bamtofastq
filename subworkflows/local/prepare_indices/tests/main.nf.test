@@ -1,0 +1,109 @@
+nextflow_workflow {
+
+    name "Test Workflow PREPARE_INDICES"
+    script "../main.nf"
+    workflow "PREPARE_INDICES"
+
+    tag "subworkflows"
+    tag "subworkflows_local"
+    tag "subworkflows/prepare_indices"
+    tag "prepare_indices"
+
+    tag "samtools"
+    tag "samtools/index"
+    tag "samtools/faidx"
+
+    test("sarscov2 - bam - indexed") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id:'test', index:true],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam', checkIfExists:true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists:true)
+                ])
+                input[1] = channel.of([
+                    [id:'fasta', index:true],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta', checkIfExists:true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta.fai', checkIfExists:true)
+                ])
+                """
+            }
+        }
+        then {
+            assert workflow.success
+            assert snapshot(sanitizeOutput(workflow.out)).match()
+        }
+    }
+
+    test("human - cram - to_index_cram_fasta") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id:'test', index:false],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/illumina/cram/test.paired_end.sorted.cram', checkIfExists: true),
+                    []
+                ])
+                input[1] = channel.of([
+                    [id:'fasta', index:false],
+                    file(params.modules_testdata_base_path + 'genomics/homo_sapiens/genome/genome.fasta', checkIfExists: true),
+                    []
+                ])
+                """
+            }
+        }
+        then {
+            assert workflow.success
+            assert snapshot(sanitizeOutput(workflow.out)).match()
+        }
+    }
+
+    test("sarscov2 - bam - to_index_bam_fasta") {
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id:'test', index:false],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam', checkIfExists:true),
+                    []
+                ])
+                input[1] = channel.of([
+                    [id:'fasta', index:false],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta', checkIfExists:true),
+                    []
+                ])
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(sanitizeOutput(workflow.out)).match()
+        }
+    }
+
+    test("sarscov2 - bam - indexed - stub") {
+        options "-stub"
+        when {
+            workflow {
+                """
+                input[0] = channel.of([
+                    [id:'test', index:true],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam', checkIfExists:true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/illumina/bam/test.paired_end.sorted.bam.bai', checkIfExists:true)
+                ])
+                input[1] = channel.of([
+                    [id:'fasta', index:true],
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta', checkIfExists:true),
+                    file(params.modules_testdata_base_path + 'genomics/sarscov2/genome/genome.fasta.fai', checkIfExists:true)
+                ])
+                """
+            }
+        }
+        then {
+            assert workflow.success
+            assert snapshot(sanitizeOutput(workflow.out)).match()
+        }
+    }
+}

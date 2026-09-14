@@ -1,0 +1,128 @@
+{
+    "paired_end_bam - stub": {
+        "content": [
+            {
+                "paired_end": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.paired.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "single_end": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.single.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions_samtools": [
+                    [
+                        "CHECKPAIREDEND",
+                        "samtools",
+                        "1.23.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T13:06:05.410235",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "paired_end_cram": {
+        "content": [
+            {
+                "paired_end": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "cram"
+                        },
+                        "test.paired.txt:md5,b026324c6904b2a9cb4b88d6d61c81d1"
+                    ]
+                ],
+                "single_end": [
+                    
+                ],
+                "versions_samtools": [
+                    [
+                        "CHECKPAIREDEND",
+                        "samtools",
+                        "1.23.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T13:05:59.100978",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "single_end_bam": {
+        "content": [
+            {
+                "paired_end": [
+                    
+                ],
+                "single_end": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.single.txt:md5,b026324c6904b2a9cb4b88d6d61c81d1"
+                    ]
+                ],
+                "versions_samtools": [
+                    [
+                        "CHECKPAIREDEND",
+                        "samtools",
+                        "1.23.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T13:05:51.984605",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    },
+    "paired_end_bam": {
+        "content": [
+            {
+                "paired_end": [
+                    [
+                        {
+                            "id": "test",
+                            "filetype": "bam"
+                        },
+                        "test.paired.txt:md5,b026324c6904b2a9cb4b88d6d61c81d1"
+                    ]
+                ],
+                "single_end": [
+                    
+                ],
+                "versions_samtools": [
+                    [
+                        "CHECKPAIREDEND",
+                        "samtools",
+                        "1.23.1"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-05-06T13:05:44.959311",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "26.04.0"
+        }
+    }
+}
