@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Changed`
 
+- [#150](https://github.com/nf-core/bamtofastq/pull/150) - Template update for nf-core/tools v4.0.3
+- [#152](https://github.com/nf-core/bamtofastq/pull/152) - Template update for nf-core/tools v4.1.0
+
 ### `Fixed`
 
 - [#149](https://github.com/nf-core/bamtofastq/pull/149) - Fix test profile to contain fasta reference
@@ -17,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Dependency | Old version | New version |
 | ---------- | ----------- | ----------- |
+| multiqc    | 1.34        | 1.35        |
 
 ## v2.2.1 - Radia Perlman
 
