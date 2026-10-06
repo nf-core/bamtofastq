@@ -1,5 +1,9 @@
 nf_core_version: 4.1.0
 repository_type: pipeline
+lint:
+  files_exist:
+    - conf/igenomes.config
+    - conf/igenomes_ignored.config
 template:
   author: Friederike Hanssen, Susanne Jodoin
   description: Workflow converts one or multiple bam/cram files to fastq format
@@ -8,4 +12,6 @@ template:
   name: bamtofastq
   org: nf-core
   outdir: .
+  skip_features:
+    - igenomes
   version: 2.3.0dev
