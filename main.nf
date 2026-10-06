@@ -16,6 +16,7 @@
 */
 
 include { BAMTOFASTQ              } from './workflows/bamtofastq'
+include { PREPARE_REFERENCE       } from './subworkflows/local/prepare_reference'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 
@@ -34,14 +35,23 @@ workflow NFCORE_BAMTOFASTQ {
     samplesheet // channel: samplesheet read in from --input
 
     main:
-    params.fasta     = params.fasta ?: getGenomeAttribute('fasta')
-    params.fasta_fai = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
+    def fasta_ref     = params.fasta ?: getGenomeAttribute('fasta')
+    def fasta_fai_ref = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
+
+    //
+    // SUBWORKFLOW: Prepare genome reference (build .fai if missing)
+    //
+    PREPARE_REFERENCE (
+        fasta_ref,
+        fasta_fai_ref,
+    )
 
     //
     // WORKFLOW: Run pipeline
     //
     BAMTOFASTQ (
         samplesheet,
+        PREPARE_REFERENCE.out.fasta_fai,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,
@@ -105,8 +115,9 @@ workflow {
 
 def getGenomeAttribute(attribute) {
     if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
-        if (params.genomes[ params.genome ].containsKey(attribute)) {
-            return params.genomes[ params.genome ][ attribute ]
+        def entry = params.genomes[ params.genome ]
+        if (entry != null && entry.containsKey(attribute)) {
+            return entry[ attribute ]
         }
     }
     return null

@@ -14,11 +14,11 @@
 
 ## Overview
 
-| Release | Theme | Type | Est. files | Gated by |
-| ------- | ----- | ---- | ---------- | -------- |
-| 2.3.0   | Prepare-reference split + iGenomes catalogue removal | minor | ~15 | none |
-| 2.4.0   | `--references` datasheet input (references-datasheets) | minor | ~12 | nf-core/references-datasheets raw URLs stable |
-| 3.0.0   | Drop dead iGenomes params / genome lookup helpers | major | ~8 | 2.4.0 released; docs migrated |
+| Release | Theme                                                  | Type  | Est. files | Gated by                                      |
+| ------- | ------------------------------------------------------ | ----- | ---------- | --------------------------------------------- |
+| 2.3.0   | Prepare-reference split + iGenomes catalogue removal   | minor | ~15        | none                                          |
+| 2.4.0   | `--references` datasheet input (references-datasheets) | minor | ~12        | nf-core/references-datasheets raw URLs stable |
+| 3.0.0   | Drop dead iGenomes params / genome lookup helpers      | major | ~8         | 2.4.0 released; docs migrated                 |
 
 ## 2.3.0 — Prepare-reference split + iGenomes removal
 
@@ -28,21 +28,21 @@
 
 ### Contract after 2.3.0
 
-| Input | Behaviour |
-| ----- | --------- |
-| BAM/CRAM + index | Used as-is; no `SAMTOOLS_INDEX` run |
-| BAM/CRAM without index | `SAMTOOLS_INDEX` runs inline in `BAMTOFASTQ` |
-| `--fasta` without `--fasta_fai` | `PREPARE_REFERENCE` runs `SAMTOOLS_FAIDX`, emits `[meta, fasta, fai]` |
-| `--fasta` + `--fasta_fai` | Emitted as provided; no `SAMTOOLS_FAIDX` |
-| No `--fasta` | Empty reference channel (`[meta:'none', [], []]`); conversion proceeds |
+| Input                           | Behaviour                                                                                                                 |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| BAM/CRAM + index                | Used as-is; no `SAMTOOLS_INDEX` run                                                                                       |
+| BAM/CRAM without index          | `SAMTOOLS_INDEX` runs inline in `BAMTOFASTQ`                                                                              |
+| `--fasta` without `--fasta_fai` | `PREPARE_REFERENCE` runs `SAMTOOLS_FAIDX`, emits `[meta, fasta, fai]`                                                     |
+| `--fasta` + `--fasta_fai`       | Emitted as provided; no `SAMTOOLS_FAIDX`                                                                                  |
+| No `--fasta`                    | Empty reference channel (`[meta:'none', [], []]`); conversion proceeds                                                    |
 | `--genome` + iGenomes catalogue | **No longer resolves** — `conf/igenomes*.config` removed; `getGenomeAttribute` / `genomeExistsError` are dead until 3.0.0 |
 
 ### PR plan
 
-| PR | Content | Est. files |
-| -- | ------- | ---------- |
-| A | Checkpoint: iGenomes config removal + this roadmap | 5 |
-| B | `subworkflows/local/prepare_reference/` (main.nf, meta.yml, tests); call from `main.nf`; `BAMTOFASTQ` takes prepared `fasta_fai`; inline `SAMTOOLS_INDEX`; delete `prepare_indices/`; CHANGELOG | ~12 |
+| PR  | Content                                                                                                                                                                                         | Est. files |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| A   | Checkpoint: iGenomes config removal + this roadmap                                                                                                                                              | 5          |
+| B   | `subworkflows/local/prepare_reference/` (main.nf, meta.yml, tests); call from `main.nf`; `BAMTOFASTQ` takes prepared `fasta_fai`; inline `SAMTOOLS_INDEX`; delete `prepare_indices/`; CHANGELOG | ~12        |
 
 **Done when.** `nextflow run . -profile test,docker` passes; `nf-test test subworkflows/local/prepare_reference` passes; no `PREPARE_INDICES` references remain; `prek` clean; CHANGELOG updated.
 
@@ -75,28 +75,28 @@
 
 ## Backlog
 
-| Item | Notes |
-| ---- | ----- |
-| #149 Fix test profile to contain fasta reference | Open PR; overlaps 2.3.0 test profile work — merge or rebase onto B |
-| #145 Use full path to the tool in the config files | Independent of references work |
-| #136 Mapping to chromosomes functionality? | Needs scoping; `--chr` already exists — clarify gap |
-| #121 Evaluate alternatives for transforming bams to fastqs | Research; do not block 2.3.0/2.4.0 |
-| #117 Remove params from all scripts except root `main.nf` | Aligns with passing paths into `PREPARE_REFERENCE` as `take:` inputs |
-| #106 Pipeline fails when too many chromosomes/regions | Bug; fix before or with any `--chr` docs rewrite |
-| #86 MultiQC error with test profile using kubernetes | Infra-specific |
-| #18 Replace some samtools command with seqkit | Research; out of scope for references releases |
-| #146 Why FASTQC only on BAM files? | Behaviour question; unrelated to references |
+| Item                                                       | Notes                                                                |
+| ---------------------------------------------------------- | -------------------------------------------------------------------- |
+| #149 Fix test profile to contain fasta reference           | Open PR; overlaps 2.3.0 test profile work — merge or rebase onto B   |
+| #145 Use full path to the tool in the config files         | Independent of references work                                       |
+| #136 Mapping to chromosomes functionality?                 | Needs scoping; `--chr` already exists — clarify gap                  |
+| #121 Evaluate alternatives for transforming bams to fastqs | Research; do not block 2.3.0/2.4.0                                   |
+| #117 Remove params from all scripts except root `main.nf`  | Aligns with passing paths into `PREPARE_REFERENCE` as `take:` inputs |
+| #106 Pipeline fails when too many chromosomes/regions      | Bug; fix before or with any `--chr` docs rewrite                     |
+| #86 MultiQC error with test profile using kubernetes       | Infra-specific                                                       |
+| #18 Replace some samtools command with seqkit              | Research; out of scope for references releases                       |
+| #146 Why FASTQC only on BAM files?                         | Behaviour question; unrelated to references                          |
 
 ## Traceability
 
-| Source | Release |
-| ------ | ------- |
-| Branch WIP `feat/references` (iGenomes config removal) | 2.3.0 PR A |
-| Prepare-reference refactor (maintainer agenda 2026-10-06) | 2.3.0 PR B |
-| References datasheet schema + `--references` (maintainer agenda 2026-10-06; paused mid-design) | 2.4.0 |
-| Dead iGenomes param removal | 3.0.0 |
-| #149 | 2.3.0 / backlog until rebased |
-| #145, #136, #121, #117, #106, #86, #18, #146 | Backlog |
+| Source                                                                                         | Release                       |
+| ---------------------------------------------------------------------------------------------- | ----------------------------- |
+| Branch WIP `feat/references` (iGenomes config removal)                                         | 2.3.0 PR A                    |
+| Prepare-reference refactor (maintainer agenda 2026-10-06)                                      | 2.3.0 PR B                    |
+| References datasheet schema + `--references` (maintainer agenda 2026-10-06; paused mid-design) | 2.4.0                         |
+| Dead iGenomes param removal                                                                    | 3.0.0                         |
+| #149                                                                                           | 2.3.0 / backlog until rebased |
+| #145, #136, #121, #117, #106, #86, #18, #146                                                   | Backlog                       |
 
 ## Decisions log
 

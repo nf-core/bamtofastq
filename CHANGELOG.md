@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#150](https://github.com/nf-core/bamtofastq/pull/150) - Template update for nf-core/tools v4.0.3
 - [#152](https://github.com/nf-core/bamtofastq/pull/152) - Template update for nf-core/tools v4.1.0
+- Move FASTA `.fai` generation into `PREPARE_REFERENCE` subworkflow, called outside `BAMTOFASTQ`; drop `PREPARE_INDICES` and run `SAMTOOLS_INDEX` only when a BAM/CRAM index is missing
+- Drop full iGenomes catalogue; restore minimal test-only `conf/igenomes.config` (`testdata.nf-core.bamtofastq`) so `-profile test` supplies fasta and fai
+- Add `ROADMAP.md` covering current state and the references / prepare-reference plan
 
 ### `Fixed`
 

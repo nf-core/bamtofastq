@@ -30,6 +30,7 @@ include { FASTQC as FASTQC_POST_CONVERSION                          } from '../m
 include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info'
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index'
+include { SAMTOOLS_INDEX                                            } from '../modules/nf-core/samtools/index'
 include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq'
 include { MULTIQC                                                   } from '../modules/nf-core/multiqc'
 
@@ -37,7 +38,6 @@ include { MULTIQC                                                   } from '../m
 // SUBWORKFLOWS: Installed directly from subworkflows/local
 //
 
-include { PREPARE_INDICES                                           } from '../subworkflows/local/prepare_indices'
 include { PRE_CONVERSION_QC                                         } from '../subworkflows/local/pre_conversion_qc'
 include { ALIGNMENT_TO_FASTQ                                        } from '../subworkflows/local/alignment_to_fastq'
 
@@ -50,6 +50,7 @@ include { ALIGNMENT_TO_FASTQ                                        } from '../s
 workflow BAMTOFASTQ {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
+    fasta_fai // channel: [meta, fasta, fai] from PREPARE_REFERENCE
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -58,31 +59,27 @@ workflow BAMTOFASTQ {
     main:
     ch_multiqc_files = channel.empty()
 
-    fasta_fai = params.fasta
-        ? channel.fromPath(params.fasta).map { fasta_file ->
-            def fai_file = params.fasta_fai ? file(params.fasta_fai, checkIfExists: true) : []
-            def has_fai = !(fai_file instanceof List && fai_file.isEmpty())
-            [[id: fasta_file.baseName, index: has_fai], fasta_file, fai_file]
-        }.collect()
-        : channel.value([[id: 'none', index: false], [], []])
+    // Index BAM/CRAM when an index was not provided
+    ch_samplesheet
+        .branch { meta, _bam, _bai ->
+            is_indexed: meta.index == true
+            to_index:   meta.index == false
+        }
+        .set { samtools_input }
 
-    // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
-    PREPARE_INDICES(
-        ch_samplesheet,
+    input_to_index = samtools_input.to_index.map { meta, bam, _bai -> [meta, bam] }
+    SAMTOOLS_INDEX(input_to_index)
+    ch_input = samtools_input.is_indexed
+        .mix(input_to_index.join(SAMTOOLS_INDEX.out.index))
+
+    // SUBWORKFLOW: Pre conversion QC and stats
+    PRE_CONVERSION_QC(
+        ch_input,
         fasta_fai,
     )
 
-    ch_fasta_fai = PREPARE_INDICES.out.ch_fasta_fai
-
-    // SUBWORKFLOW: Pre conversion QC and stats
-    ch_input = PREPARE_INDICES.out.ch_input_indexed
-    PRE_CONVERSION_QC(
-        ch_input,
-        ch_fasta_fai,
-    )
-
     // MODULE: Check if SINGLE or PAIRED-END
-    CHECKPAIREDEND(ch_input, ch_fasta_fai)
+    CHECKPAIREDEND(ch_input, fasta_fai)
 
     ch_paired_end = ch_input.join(CHECKPAIREDEND.out.paired_end)
     ch_single_end = ch_input.join(CHECKPAIREDEND.out.single_end)
@@ -118,7 +115,7 @@ workflow BAMTOFASTQ {
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input_new, ch_fasta_fai, [[:], []], [[:], []], [])
+        SAMTOOLS_CHR(ch_input_new, fasta_fai, [[:], []], [[:], []], [])
 
         samtools_chr_out = channel.empty()
             .mix(
@@ -156,7 +153,7 @@ workflow BAMTOFASTQ {
     // Module needs info about single-endedness
     SAMTOOLS_COLLATEFASTQ_SINGLE_END(
         conversion_input.ch_single.map { it -> [it[0], it[1]] },
-        ch_fasta_fai,
+        fasta_fai,
         interleave,
     )
 
@@ -165,7 +162,7 @@ workflow BAMTOFASTQ {
     //
     ALIGNMENT_TO_FASTQ(
         conversion_input.ch_paired,
-        ch_fasta_fai,
+        fasta_fai,
     )
 
     // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!

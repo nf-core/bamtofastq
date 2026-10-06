@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "prepare_reference"
+description: |
+  Prepare the genome FASTA reference: use a provided `.fai` index when
+  available, otherwise build it with `samtools faidx`. Follows the
+  nf-core/sarek `PREPARE_GENOME` pattern for FASTA/FAI handling.
+keywords:
+  - samtools
+  - faidx
+  - fasta
+  - reference
+components:
+  - samtools/faidx
+input:
+  - fasta_in:
+      type: value
+      description: |
+        Path to the genome FASTA file (`params.fasta`), or null when no
+        reference is required.
+      pattern: "*.{fa,fna,fasta}(.gz)"
+  - fasta_fai_in:
+      type: value
+      description: |
+        Path to a pre-built FASTA index (`params.fasta_fai`). When null and
+        `fasta_in` is set, the index is generated with `samtools faidx`.
+      pattern: "*.fai(.gz)"
+output:
+  - fasta:
+      type: channel
+      description: |
+        Collected channel emitting tuples: [meta, fasta]. Empty when no
+        `fasta_in` was provided.
+      structure:
+        - meta:
+            type: map
+            description: Metadata map with reference id
+        - fasta:
+            type: file
+            description: Reference genome FASTA file
+            pattern: "*.{fa,fna,fasta}"
+  - fasta_fai:
+      type: channel
+      description: |
+        Collected channel emitting tuples: [meta, fasta, fai]. Empty when
+        no `fasta_in` was provided. `.fai` is built when not supplied.
+      structure:
+        - meta:
+            type: map
+            description: Metadata map with reference id
+        - fasta:
+            type: file
+            description: Reference genome FASTA file
+            pattern: "*.{fa,fna,fasta}"
+        - fai:
+            type: file
+            description: Reference genome FASTA index file (built if absent)
+            pattern: "*.fai"
+authors:
+  - "@FriederikeHanssen"
+  - "@maxulysse"
+maintainers:
+  - "@famosab"
+  - "@maxulysse"
