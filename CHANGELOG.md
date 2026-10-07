@@ -7,14 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
+- [#154](https://github.com/nf-core/bamtofastq/pull/154) - Add manifest.diagram to nextflow.config
+
 ### `Changed`
 
 - [#150](https://github.com/nf-core/bamtofastq/pull/150) - Template update for nf-core/tools v4.0.3
 - [#152](https://github.com/nf-core/bamtofastq/pull/152) - Template update for nf-core/tools v4.1.0
+- [#156](https://github.com/nf-core/bamtofastq/pull/156) - Move FASTA `.fai` generation out of BAMTOFASTQ workflow
+- [#156](https://github.com/nf-core/bamtofastq/pull/156) - Move bam/cram indexing directly into BAMTOFASTQ workflow
 
 ### `Fixed`
 
 - [#149](https://github.com/nf-core/bamtofastq/pull/149) - Fix test profile to contain fasta reference
+
+### `Removed`
+
+- [#156](https://github.com/nf-core/bamtofastq/pull/156) - Remove PREPARE_INDICES subworkflow
 
 ### `Dependencies`
 
