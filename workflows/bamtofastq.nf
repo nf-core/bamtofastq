@@ -50,7 +50,7 @@ include { ALIGNMENT_TO_FASTQ                                        } from '../s
 workflow BAMTOFASTQ {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
-    fasta_fai // channel: [meta, fasta, fai] from PREPARE_REFERENCE
+    fasta_fai // channel: [meta, fasta, fai] from main.nf
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -63,14 +63,13 @@ workflow BAMTOFASTQ {
     ch_samplesheet
         .branch { meta, _bam, _bai ->
             is_indexed: meta.index == true
-            to_index:   meta.index == false
+            to_index: meta.index == false
         }
         .set { samtools_input }
 
     input_to_index = samtools_input.to_index.map { meta, bam, _bai -> [meta, bam] }
     SAMTOOLS_INDEX(input_to_index)
-    ch_input = samtools_input.is_indexed
-        .mix(input_to_index.join(SAMTOOLS_INDEX.out.index))
+    ch_input = samtools_input.is_indexed.mix(input_to_index.join(SAMTOOLS_INDEX.out.index))
 
     // SUBWORKFLOW: Pre conversion QC and stats
     PRE_CONVERSION_QC(

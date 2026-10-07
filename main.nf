@@ -16,7 +16,7 @@
 */
 
 include { BAMTOFASTQ              } from './workflows/bamtofastq'
-include { PREPARE_REFERENCE       } from './subworkflows/local/prepare_reference'
+include { SAMTOOLS_FAIDX          } from './modules/nf-core/samtools/faidx'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 
@@ -38,20 +38,31 @@ workflow NFCORE_BAMTOFASTQ {
     def fasta_ref     = params.fasta ?: getGenomeAttribute('fasta')
     def fasta_fai_ref = params.fasta_fai ?: getGenomeAttribute('fasta_fai')
 
-    //
-    // SUBWORKFLOW: Prepare genome reference (build .fai if missing)
-    //
-    PREPARE_REFERENCE (
-        fasta_ref,
-        fasta_fai_ref,
-    )
+    // [meta, fasta, fai] for the run; empty when no reference
+    if (!fasta_ref) {
+        fasta_fai = channel.empty()
+    }
+    else if (fasta_fai_ref) {
+        fasta_fai = channel.fromPath(fasta_ref).collect()
+            .combine(channel.fromPath(fasta_fai_ref))
+            .map { fasta_file, fai_file -> [[id: fasta_file.baseName], fasta_file, fai_file] }
+            .collect()
+    }
+    else {
+        ch_fasta = channel.fromPath(fasta_ref).collect()
+        SAMTOOLS_FAIDX(ch_fasta.map { fasta_file -> [[id: fasta_file.baseName], fasta_file, []] }, false)
+        fasta_fai = ch_fasta
+            .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fai_file -> fai_file })
+            .map { fasta_file, fai_file -> [[id: fasta_file.baseName], fasta_file, fai_file] }
+            .collect()
+    }
 
     //
     // WORKFLOW: Run pipeline
     //
     BAMTOFASTQ (
         samplesheet,
-        PREPARE_REFERENCE.out.fasta_fai,
+        fasta_fai,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,
