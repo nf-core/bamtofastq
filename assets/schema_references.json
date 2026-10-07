@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/bamtofastq/dev/assets/schema_references.json",
     "title": "nf-core/bamtofastq references datasheet schema",
-    "description": "Subset of nf-core/references schema_references.json for bamtofastq (--fasta / --fasta_fai plus reference meta)",
+    "description": "Datasheet schema for bamtofastq: genome plus optional fasta, fasta_fai, and reference meta",
     "type": "array",
     "items": {
         "type": "object",
@@ -39,13 +39,13 @@
                 "meta": ["fasta"],
                 "type": "string",
                 "pattern": "^\\S+\\.f(ast|n)?a(\\.gz)?$",
-                "errorMessage": "Fasta must be an existing file ending in '.fa', '.fasta' or '.fna' that does not contain spaces. This file can be gzipped."
+                "errorMessage": "Fasta must end in '.fa', '.fasta', or '.fna' (optionally .gz) and cannot contain spaces"
             },
             "fasta_fai": {
                 "meta": ["fasta_fai"],
                 "type": "string",
                 "pattern": "^\\S+\\.f(ast|n)?a\\.fai(\\.gz)?$",
-                "errorMessage": "Fasta index must end in a valid fasta extension followed by '.fai' and cannot contain spaces."
+                "errorMessage": "Fasta index must end in '.fa.fai', '.fasta.fai', or '.fna.fai' (optionally .gz) and cannot contain spaces"
             },
             "readme": {
                 "type": "string",

@@ -73,9 +73,9 @@
             "properties": {
                 "genome": {
                     "type": "string",
-                    "description": "Name of iGenomes reference, or references-datasheets path key when igenomes_ignore is set. Mutually exclusive with --references.",
+                    "description": "iGenomes catalogue key, or references-datasheets path when igenomes_ignore is set. Do not combine with --references.",
                     "fa_icon": "fas fa-book",
-                    "help_text": "With the iGenomes catalogue: genome key in conf/igenomes.config (e.g. GRCh38). With --igenomes_ignore: key under --references_base_path in nf-core/references-datasheets (e.g. GATK/GRCh38 or GATK.GRCh38 → igenomes/GATK/GRCh38.yml). Do not combine with --references."
+                    "help_text": "iGenomes: key in conf/igenomes.config (e.g. GRCh38). With --igenomes_ignore: path under --references_base_path (e.g. GATK/GRCh38 or GATK.GRCh38, file igenomes/GATK/GRCh38.yml)."
                 },
                 "fasta": {
                     "type": "string",
@@ -102,14 +102,14 @@
                     "format": "file-path",
                     "exists": true,
                     "pattern": "^\\S+\\.(yaml|yml)$",
-                    "description": "Path to YAML datasheet describing the reference genome (alternative to --genome). Mutually exclusive with --genome.",
-                    "help_text": "Datasheet from nf-core/references-datasheets (or compatible). Provides fasta, fasta_fai and meta (genome, source, species, ...). Takes precedence over the iGenomes catalogue; explicit --fasta/--fasta_fai still win. Do not combine with --genome. See [usage docs](https://nf-co.re/bamtofastq/usage).",
+                    "description": "Path to a references-datasheets YAML (or compatible). Do not combine with --genome.",
+                    "help_text": "Provides fasta, fasta_fai, and meta such as genome, source, and species. Wins over the iGenomes catalogue; --fasta/--fasta_fai win over this. See [usage docs](https://nf-co.re/bamtofastq/usage).",
                     "fa_icon": "fas fa-file-alt",
                     "schema": "assets/schema_references.json"
                 },
                 "references_base_path": {
                     "type": "string",
-                    "description": "Base URL or path for references-datasheets when --genome is used with --igenomes_ignore.",
+                    "description": "Base URL or path for references-datasheets files loaded via --genome with --igenomes_ignore.",
                     "default": "https://raw.githubusercontent.com/nf-core/references-datasheets/latest/igenomes",
                     "fa_icon": "fas fa-database",
                     "hidden": true

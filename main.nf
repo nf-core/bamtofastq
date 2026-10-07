@@ -129,7 +129,7 @@ workflow {
 
 def resolveReference() {
     if (params.references && params.genome) {
-        error("Use either --references or --genome, not both. --references loads a datasheet file; --genome selects an iGenomes catalogue key, or a references-datasheets path when --igenomes_ignore is set.")
+        error("Use either --references or --genome, not both.")
     }
 
     def meta = explicitReference()
@@ -188,7 +188,7 @@ def igenomesReference() {
 def referencesDatasheetUrl(genomeKey) {
     def base = (params.references_base_path ?: '').toString().replaceAll(/\/+$/, '')
     if (!base) {
-        error("--references_base_path is empty; cannot resolve --genome '${genomeKey}' as a references-datasheets key")
+        error("--references_base_path is empty; cannot load datasheet for --genome '${genomeKey}'")
     }
     def key = genomeKey.toString().replace('.', '/')
     return "${base}/${key}.yml"
@@ -203,7 +203,7 @@ def selectReferenceRow(rows, genomeKey) {
     }
     def names = rows.collect { row -> referenceMeta(row).genome }.findAll { name -> name }
     if (!genomeKey) {
-        error("Reference datasheet contains multiple genomes (${names.join(', ')}). Select one with --genome.")
+        error("Reference datasheet has multiple genomes (${names.join(', ')}). Use a datasheet with one genome record.")
     }
     def match = rows.find { row -> referenceMeta(row).genome == genomeKey }
         ?: rows.find { row -> referenceMeta(row).genome == genomeKey.toString().replace('/', '.') }
