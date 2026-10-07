@@ -201,12 +201,12 @@ def selectReferenceRow(rows, genomeKey) {
     if (rows.size() == 1) {
         return rows[0]
     }
-    def names = rows.collect { referenceMeta(it).genome }.findAll { it }
+    def names = rows.collect { row -> referenceMeta(row).genome }.findAll { name -> name }
     if (!genomeKey) {
         error("Reference datasheet contains multiple genomes (${names.join(', ')}). Select one with --genome.")
     }
-    def match = rows.find { referenceMeta(it).genome == genomeKey }
-        ?: rows.find { referenceMeta(it).genome == genomeKey.toString().replace('/', '.') }
+    def match = rows.find { row -> referenceMeta(row).genome == genomeKey }
+        ?: rows.find { row -> referenceMeta(row).genome == genomeKey.toString().replace('/', '.') }
     if (!match) {
         error("--genome '${genomeKey}' not found in reference datasheet. Available: ${names.join(', ')}")
     }
