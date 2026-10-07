@@ -120,38 +120,50 @@ workflow {
 */
 
 //
-// Resolve fasta / fasta_fai:
-//   explicit --fasta/--fasta_fai > --references datasheet > iGenomes catalogue
+// Resolve reference meta from the first source that provides a usable record.
+// Sources may contribute any subset of keys (fasta, fasta_fai, genome, species, ...).
+// Precedence: explicit params > --references > --genome+igenomes_ignore datasheet > iGenomes.
 //
 
 def resolveReference() {
-    def fasta = params.fasta
-    def fasta_fai = params.fasta_fai
+    def sources = [
+        explicitReference(),
+        params.references ? datasheetReference(params.references, params.genome) : null,
+        (params.genome && params.igenomes_ignore) ? datasheetReference(referencesDatasheetUrl(params.genome), params.genome) : null,
+        igenomesReference(),
+    ].findAll { it != null && !it.isEmpty() }
 
-    if (!fasta && params.references) {
-        def rows = samplesheetToList(params.references, "${projectDir}/assets/schema_references.json")
-        def row = selectReferenceRow(rows, params.genome)
-        def meta = referenceMeta(row)
-        fasta = meta.fasta ?: fasta
-        fasta_fai = meta.fasta_fai ?: fasta_fai
+    return sources.find { it.fasta } ?: sources.find { it.fasta_fai } ?: sources[0] ?: [:]
+}
+
+def explicitReference() {
+    def meta = [:]
+    if (params.fasta) {
+        meta.fasta = params.fasta
     }
-
-    // --genome as references-datasheets key when the iGenomes catalogue is ignored
-    if (!fasta && params.genome && params.igenomes_ignore) {
-        def url = referencesDatasheetUrl(params.genome)
-        def rows = samplesheetToList(url, "${projectDir}/assets/schema_references.json")
-        def row = selectReferenceRow(rows, params.genome)
-        def meta = referenceMeta(row)
-        fasta = meta.fasta ?: fasta
-        fasta_fai = meta.fasta_fai ?: fasta_fai
+    if (params.fasta_fai) {
+        meta.fasta_fai = params.fasta_fai
     }
+    return meta
+}
 
-    if (!fasta) {
-        fasta = getGenomeAttribute('fasta')
-        fasta_fai = getGenomeAttribute('fasta_fai')
+def datasheetReference(path, genomeKey) {
+    def rows = samplesheetToList(path, "${projectDir}/assets/schema_references.json")
+    def meta = referenceMeta(selectReferenceRow(rows, genomeKey))
+    return meta.findAll { _key, value -> value != null && value != '' }
+}
+
+def igenomesReference() {
+    def meta = [:]
+    def fasta = getGenomeAttribute('fasta')
+    def fasta_fai = getGenomeAttribute('fasta_fai')
+    if (fasta) {
+        meta.fasta = fasta
     }
-
-    return [fasta: fasta, fasta_fai: fasta_fai]
+    if (fasta_fai) {
+        meta.fasta_fai = fasta_fai
+    }
+    return meta
 }
 
 def referencesDatasheetUrl(genomeKey) {
