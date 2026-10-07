@@ -1,0 +1,131 @@
+{
+    "human - fasta - build fai": {
+        "content": [
+            {
+                "fasta": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta"
+                    ]
+                ],
+                "fasta_fai": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta",
+                        "genome.fasta.fai:md5,3520cd30e1b100e55f578db9c855f685"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-06T15:25:28.845533355",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    },
+    "sarscov2 - fasta - build fai": {
+        "content": [
+            {
+                "fasta": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta"
+                    ]
+                ],
+                "fasta_fai": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
+                        "genome.fasta.fai:md5,9da2a56e2853dc8c0b86a9e7229c9fe5"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-06T15:25:18.996874984",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    },
+    "no fasta - empty channels": {
+        "content": [
+            {
+                "fasta": [
+                    
+                ],
+                "fasta_fai": [
+                    
+                ]
+            }
+        ],
+        "timestamp": "2026-10-06T15:25:37.224387264",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    },
+    "sarscov2 - fasta - build fai - stub": {
+        "content": [
+            {
+                "fasta": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta"
+                    ]
+                ],
+                "fasta_fai": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
+                        "genome.fasta.fai:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-06T15:25:47.566939186",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    },
+    "sarscov2 - fasta - fasta_fai provided": {
+        "content": [
+            {
+                "fasta": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta"
+                    ]
+                ],
+                "fasta_fai": [
+                    [
+                        {
+                            "id": "genome"
+                        },
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta",
+                        "/nf-core/test-datasets/modules/data/genomics/sarscov2/genome/genome.fasta.fai"
+                    ]
+                ]
+            }
+        ],
+        "timestamp": "2026-10-06T15:25:08.509909939",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.4"
+        }
+    }
+}
