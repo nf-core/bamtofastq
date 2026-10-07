@@ -133,26 +133,25 @@ def resolveReference() {
     }
 
     def meta = explicitReference()
-    if (meta?.fasta) {
+    if (meta.fasta) {
         return meta
     }
 
     if (params.references) {
         meta = datasheetReference(params.references, null)
-        if (meta?.fasta) {
+        if (meta.fasta) {
             return meta
         }
     }
 
     if (params.genome && params.igenomes_ignore) {
         meta = datasheetReference(referencesDatasheetUrl(params.genome), null)
-        if (meta?.fasta) {
+        if (meta.fasta) {
             return meta
         }
     }
 
-    meta = igenomesReference()
-    return meta?.fasta ? meta : [:]
+    return igenomesReference()
 }
 
 def explicitReference() {
