@@ -50,7 +50,7 @@ include { ALIGNMENT_TO_FASTQ                                        } from '../s
 workflow BAMTOFASTQ {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
-    fasta_fai // channel: [meta, fasta, fai] from main.nf
+    ch_fasta_fai // channel: [meta, fasta, fai] from main.nf
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -60,12 +60,10 @@ workflow BAMTOFASTQ {
     ch_multiqc_files = channel.empty()
 
     // Index BAM/CRAM when an index was not provided
-    ch_samplesheet
-        .branch { meta, _bam, _bai ->
-            is_indexed: meta.index == true
-            to_index: meta.index == false
-        }
-        .set { samtools_input }
+    samtools_input = ch_samplesheet.branch { meta, _bam, _bai ->
+        is_indexed: meta.index == true
+        to_index: meta.index == false
+    }
 
     input_to_index = samtools_input.to_index.map { meta, bam, _bai -> [meta, bam] }
     SAMTOOLS_INDEX(input_to_index)
@@ -74,11 +72,11 @@ workflow BAMTOFASTQ {
     // SUBWORKFLOW: Pre conversion QC and stats
     PRE_CONVERSION_QC(
         ch_input,
-        fasta_fai,
+        ch_fasta_fai,
     )
 
     // MODULE: Check if SINGLE or PAIRED-END
-    CHECKPAIREDEND(ch_input, fasta_fai)
+    CHECKPAIREDEND(ch_input, ch_fasta_fai)
 
     ch_paired_end = ch_input.join(CHECKPAIREDEND.out.paired_end)
     ch_single_end = ch_input.join(CHECKPAIREDEND.out.single_end)
@@ -114,7 +112,7 @@ workflow BAMTOFASTQ {
     // Extract only reads mapping to a chromosome
     if (params.chr) {
 
-        SAMTOOLS_CHR(ch_input_new, fasta_fai, [[:], []], [[:], []], [])
+        SAMTOOLS_CHR(ch_input_new, ch_fasta_fai, [[:], []], [[:], []], [])
 
         samtools_chr_out = channel.empty()
             .mix(
@@ -152,7 +150,7 @@ workflow BAMTOFASTQ {
     // Module needs info about single-endedness
     SAMTOOLS_COLLATEFASTQ_SINGLE_END(
         conversion_input.ch_single.map { it -> [it[0], it[1]] },
-        fasta_fai,
+        ch_fasta_fai,
         interleave,
     )
 
@@ -161,7 +159,7 @@ workflow BAMTOFASTQ {
     //
     ALIGNMENT_TO_FASTQ(
         conversion_input.ch_paired,
-        fasta_fai,
+        ch_fasta_fai,
     )
 
     // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
