@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### `Added`
 
 - [#154](https://github.com/nf-core/bamtofastq/pull/154) - Add manifest.diagram to nextflow.config
-- [#149](https://github.com/nf-core/bamtofastq/pull/149) - Add fasta_fai for GATK.GRCh38
+- [#149](https://github.com/nf-core/bamtofastq/pull/149) - Add GATK.GRCh38 and test genome keys to igenomes.config
 
 ### `Changed`
 
