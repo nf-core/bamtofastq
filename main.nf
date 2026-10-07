@@ -138,14 +138,14 @@ def resolveReference() {
     }
 
     if (params.references) {
-        meta = datasheetReference(params.references, null)
+        meta = datasheetReference(params.references)
         if (meta.fasta) {
             return meta
         }
     }
 
     if (params.genome && params.igenomes_ignore) {
-        meta = datasheetReference(referencesDatasheetUrl(params.genome), null)
+        meta = datasheetReference(referencesDatasheetUrl(params.genome))
         if (meta.fasta) {
             return meta
         }
@@ -165,9 +165,9 @@ def explicitReference() {
     return meta
 }
 
-def datasheetReference(path, genomeKey) {
+def datasheetReference(path) {
     def rows = samplesheetToList(path, "${projectDir}/assets/schema_references.json")
-    def meta = referenceMeta(selectReferenceRow(rows, genomeKey))
+    def meta = referenceMeta(selectReferenceRow(rows))
     return meta.findAll { _key, value -> value != null && value != '' }
 }
 
@@ -193,23 +193,15 @@ def referencesDatasheetUrl(genomeKey) {
     return "${base}/${key}.yml"
 }
 
-def selectReferenceRow(rows, genomeKey) {
+def selectReferenceRow(rows) {
     if (!(rows instanceof List) || rows.isEmpty()) {
         error("Reference datasheet did not contain any genome records")
     }
-    if (rows.size() == 1) {
-        return rows[0]
-    }
-    def names = rows.collect { row -> referenceMeta(row).genome }.findAll { name -> name }
-    if (!genomeKey) {
+    if (rows.size() > 1) {
+        def names = rows.collect { row -> referenceMeta(row).genome }.findAll { name -> name }
         error("Reference datasheet has multiple genomes (${names.join(', ')}). Use a datasheet with one genome record.")
     }
-    def match = rows.find { row -> referenceMeta(row).genome == genomeKey }
-        ?: rows.find { row -> referenceMeta(row).genome == genomeKey.toString().replace('/', '.') }
-    if (!match) {
-        error("--genome '${genomeKey}' not found in reference datasheet. Available: ${names.join(', ')}")
-    }
-    return match
+    return rows[0]
 }
 
 def referenceMeta(row) {
