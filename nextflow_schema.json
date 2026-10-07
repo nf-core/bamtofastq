@@ -73,9 +73,9 @@
             "properties": {
                 "genome": {
                     "type": "string",
-                    "description": "Name of iGenomes reference.",
+                    "description": "Name of iGenomes reference, or references-datasheets key when igenomes_ignore is set.",
                     "fa_icon": "fas fa-book",
-                    "help_text": "If using a reference genome configured in the pipeline using iGenomes, use this parameter to give the ID for the reference. This is then used to build the full paths for all required reference genome files e.g. `--genome GRCh38`. \n\nSee the [nf-core website docs](https://nf-co.re/usage/reference_genomes) for more details."
+                    "help_text": "With the iGenomes catalogue: genome key in conf/igenomes.config (e.g. GRCh38). With --igenomes_ignore: key under --references_base_path in nf-core/references-datasheets (e.g. GATK/GRCh38 or GATK.GRCh38 → igenomes/GATK/GRCh38.yml). Also selects a record inside --references when that datasheet has multiple genomes."
                 },
                 "fasta": {
                     "type": "string",
@@ -96,6 +96,23 @@
                     "description": "Path to FASTA FAI genome index file.",
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
                     "fa_icon": "far fa-file-code"
+                },
+                "references": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "pattern": "^\\S+\\.(yaml|yml)$",
+                    "description": "Path to YAML datasheet describing the reference genome (alternative to --genome).",
+                    "help_text": "Datasheet from nf-core/references-datasheets (or compatible). Provides fasta, fasta_fai and meta (genome, source, species, ...). Takes precedence over the iGenomes catalogue; explicit --fasta/--fasta_fai still win. See [usage docs](https://nf-co.re/bamtofastq/usage).",
+                    "fa_icon": "fas fa-file-alt",
+                    "schema": "assets/schema_references.json"
+                },
+                "references_base_path": {
+                    "type": "string",
+                    "description": "Base URL or path for references-datasheets when --genome is used with --igenomes_ignore.",
+                    "default": "https://raw.githubusercontent.com/nf-core/references-datasheets/latest/igenomes",
+                    "fa_icon": "fas fa-database",
+                    "hidden": true
                 },
                 "igenomes_ignore": {
                     "type": "boolean",

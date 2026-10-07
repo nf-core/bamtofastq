@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#154](https://github.com/nf-core/bamtofastq/pull/154) - Add manifest.diagram to nextflow.config
 - [#158](https://github.com/nf-core/bamtofastq/pull/158) - Add fasta_fai for iGenomes entries
+- Add `--references` datasheet input as an alternative to the iGenomes catalogue
 
 ### `Changed`
 
