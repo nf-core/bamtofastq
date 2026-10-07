@@ -14,10 +14,6 @@ nextflow_pipeline {
                 // Input data
                 input  = params.pipelines_testdata_base_path + 'samplesheet/test_chr_samplesheet.csv'
 
-                // Genome references
-                genome = null
-                igenomes_ignore = true
-
                 // Other parameters
                 chr = 'chrX chrY X Y'
             }

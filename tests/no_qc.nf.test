@@ -14,10 +14,6 @@ nextflow_pipeline {
                 // Input data
                 input = "https://raw.githubusercontent.com/nf-core/test-datasets/bamtofastq/samplesheet/test_bam_samplesheet.csv"
 
-                // Genome references
-                genome = null
-                igenomes_ignore = true
-
                 // Other parameters
                 no_read_qc = true
             }
