@@ -73,9 +73,9 @@
             "properties": {
                 "genome": {
                     "type": "string",
-                    "description": "Name of iGenomes reference, or references-datasheets key when igenomes_ignore is set.",
+                    "description": "Name of iGenomes reference, or references-datasheets path key when igenomes_ignore is set. Mutually exclusive with --references.",
                     "fa_icon": "fas fa-book",
-                    "help_text": "With the iGenomes catalogue: genome key in conf/igenomes.config (e.g. GRCh38). With --igenomes_ignore: key under --references_base_path in nf-core/references-datasheets (e.g. GATK/GRCh38 or GATK.GRCh38 → igenomes/GATK/GRCh38.yml). Also selects a record inside --references when that datasheet has multiple genomes."
+                    "help_text": "With the iGenomes catalogue: genome key in conf/igenomes.config (e.g. GRCh38). With --igenomes_ignore: key under --references_base_path in nf-core/references-datasheets (e.g. GATK/GRCh38 or GATK.GRCh38 → igenomes/GATK/GRCh38.yml). Do not combine with --references."
                 },
                 "fasta": {
                     "type": "string",
@@ -102,8 +102,8 @@
                     "format": "file-path",
                     "exists": true,
                     "pattern": "^\\S+\\.(yaml|yml)$",
-                    "description": "Path to YAML datasheet describing the reference genome (alternative to --genome).",
-                    "help_text": "Datasheet from nf-core/references-datasheets (or compatible). Provides fasta, fasta_fai and meta (genome, source, species, ...). Takes precedence over the iGenomes catalogue; explicit --fasta/--fasta_fai still win. See [usage docs](https://nf-co.re/bamtofastq/usage).",
+                    "description": "Path to YAML datasheet describing the reference genome (alternative to --genome). Mutually exclusive with --genome.",
+                    "help_text": "Datasheet from nf-core/references-datasheets (or compatible). Provides fasta, fasta_fai and meta (genome, source, species, ...). Takes precedence over the iGenomes catalogue; explicit --fasta/--fasta_fai still win. Do not combine with --genome. See [usage docs](https://nf-co.re/bamtofastq/usage).",
                     "fa_icon": "fas fa-file-alt",
                     "schema": "assets/schema_references.json"
                 },

@@ -123,17 +123,36 @@ workflow {
 // Resolve reference meta from the first source that provides a usable record.
 // Sources may contribute any subset of keys (fasta, fasta_fai, genome, species, ...).
 // Precedence: explicit params > --references > --genome+igenomes_ignore datasheet > iGenomes.
+// --references and --genome are mutually exclusive.
+// Each source runs only if the previous ones did not supply fasta (avoids extra datasheet fetches).
 //
 
 def resolveReference() {
-    def sources = [
-        explicitReference(),
-        params.references ? datasheetReference(params.references, params.genome) : null,
-        (params.genome && params.igenomes_ignore) ? datasheetReference(referencesDatasheetUrl(params.genome), params.genome) : null,
-        igenomesReference(),
-    ].findAll { it != null && !it.isEmpty() }
+    if (params.references && params.genome) {
+        error("Use either --references or --genome, not both. --references loads a datasheet file; --genome selects an iGenomes catalogue key, or a references-datasheets path when --igenomes_ignore is set.")
+    }
 
-    return sources.find { it.fasta } ?: sources.find { it.fasta_fai } ?: sources[0] ?: [:]
+    def meta = explicitReference()
+    if (meta?.fasta) {
+        return meta
+    }
+
+    if (params.references) {
+        meta = datasheetReference(params.references, null)
+        if (meta?.fasta) {
+            return meta
+        }
+    }
+
+    if (params.genome && params.igenomes_ignore) {
+        meta = datasheetReference(referencesDatasheetUrl(params.genome), null)
+        if (meta?.fasta) {
+            return meta
+        }
+    }
+
+    meta = igenomesReference()
+    return meta?.fasta ? meta : [:]
 }
 
 def explicitReference() {
