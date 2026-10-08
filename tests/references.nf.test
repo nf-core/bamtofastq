@@ -6,11 +6,12 @@ nextflow_pipeline {
     tag "pipeline_bamtofastq"
     tag "cpu"
 
-    test("-profile test | --references fasta and fasta_fai") {
+    test("-profile test --references fasta and fasta_fai") {
 
         when {
             params {
                 outdir     = "$outputDir"
+                genome     = null
                 references = 'https://raw.githubusercontent.com/nf-core/references-datasheets/latest/genomes/Homo_sapiens/nf-core/GRCh38_chr21.yml'
             }
         }
@@ -35,7 +36,7 @@ nextflow_pipeline {
         }
     }
 
-    test("-profile test | --genome + igenomes_ignore") {
+    test("-profile test --genome with igenomes_ignore") {
 
         when {
             params {

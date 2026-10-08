@@ -1,5 +1,5 @@
 {
-    "-profile test | --genome + igenomes_ignore": {
+    "-profile test --genome with igenomes_ignore": {
         "content": [
             31,
             {
@@ -115,7 +115,7 @@
             "nextflow": "25.10.4"
         }
     },
-    "-profile test | --references fasta and fasta_fai": {
+    "-profile test --references fasta and fasta_fai": {
         "content": [
             31,
             {
