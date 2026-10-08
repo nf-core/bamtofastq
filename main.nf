@@ -31,7 +31,6 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamt
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
 workflow NFCORE_BAMTOFASTQ {
-
     take:
     samplesheet // channel: samplesheet read in from --input
 
@@ -133,25 +132,14 @@ def resolveReference() {
     }
 
     def meta = explicitReference()
-    if (meta.fasta) {
-        return meta
-    }
 
-    if (params.references) {
-        meta = datasheetReference(params.references)
-        if (meta.fasta) {
-            return meta
-        }
-    }
-
-    if (params.genome && params.igenomes_ignore) {
-        meta = datasheetReference(referencesDatasheetUrl(params.genome))
-        if (meta.fasta) {
-            return meta
-        }
-    }
-
-    return igenomesReference()
+    return meta.fasta
+        ? meta
+        : params.references
+            ? datasheetReference(params.references)
+            : params.genome && params.igenomes_ignore
+                ? datasheetReference(referencesDatasheetUrl(params.genome))
+                : igenomesReference()
 }
 
 def explicitReference() {
