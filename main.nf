@@ -11,19 +11,11 @@
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-params.fasta     = getGenomeAttribute('fasta')
-params.fasta_fai = getGenomeAttribute('fasta_fai')
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+include { samplesheetToList       } from 'plugin/nf-schema'
 include { BAMTOFASTQ              } from './workflows/bamtofastq'
 include { SAMTOOLS_FAIDX          } from './modules/nf-core/samtools/faidx'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
@@ -43,20 +35,22 @@ workflow NFCORE_BAMTOFASTQ {
     samplesheet // channel: samplesheet read in from --input
 
     main:
+    def reference = resolveReference()
+
     // [meta, fasta, fai] for the run; empty when no reference
-    if (!params.fasta) {
+    if (!reference.fasta) {
         ch_references = channel.empty()
     }
-    else if (params.fasta_fai) {
-        ch_references = channel.fromPath(params.fasta)
+    else if (reference.fasta_fai) {
+        ch_references = channel.fromPath(reference.fasta)
             .collect()
-            .combine(channel.fromPath(params.fasta_fai))
+            .combine(channel.fromPath(reference.fasta_fai))
             .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
             .collect()
     }
     else {
-        SAMTOOLS_FAIDX(channel.fromPath(params.fasta).map { fasta -> [[id: fasta.baseName], fasta, []] }, false)
-        ch_references = channel.fromPath(params.fasta)
+        SAMTOOLS_FAIDX(channel.fromPath(reference.fasta).map { fasta -> [[id: fasta.baseName], fasta, []] }, false)
+        ch_references = channel.fromPath(reference.fasta)
             .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fasta_fai -> fasta_fai })
             .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
             .collect()
@@ -123,6 +117,90 @@ workflow {
     FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
+//
+// Resolve reference meta from the first source that provides a usable record.
+// Sources may contribute any subset of keys (fasta, fasta_fai, genome, species, ...).
+// Precedence: explicit params > --references > --genome+igenomes_ignore datasheet > iGenomes.
+// --references and --genome are mutually exclusive.
+// Each source runs only if the previous ones did not supply fasta (avoids extra datasheet fetches).
+//
+
+def resolveReference() {
+    if (params.references && params.genome) {
+        error("Use either --references or --genome, not both.")
+    }
+
+    def meta = explicitReference()
+
+    return meta.fasta
+        ? meta
+        : params.references
+            ? datasheetReference(params.references)
+            : params.genome && params.igenomes_ignore
+                ? datasheetReference(referencesDatasheetUrl(params.genome))
+                : igenomesReference()
+}
+
+def explicitReference() {
+    def meta = [:]
+    if (params.fasta) {
+        meta.fasta = params.fasta
+    }
+    if (params.fasta_fai) {
+        meta.fasta_fai = params.fasta_fai
+    }
+    return meta
+}
+
+def datasheetReference(path) {
+    def rows = samplesheetToList(path, "${projectDir}/assets/schema_references.json")
+    def meta = referenceMeta(selectReferenceRow(rows))
+    return meta.findAll { _key, value -> value != null && value != '' }
+}
+
+def igenomesReference() {
+    def meta = [:]
+    def fasta = getGenomeAttribute('fasta')
+    def fasta_fai = getGenomeAttribute('fasta_fai')
+    if (fasta) {
+        meta.fasta = fasta
+    }
+    if (fasta_fai) {
+        meta.fasta_fai = fasta_fai
+    }
+    return meta
+}
+
+def referencesDatasheetUrl(genomeKey) {
+    def base = (params.references_base_path ?: '').toString().replaceAll(/\/+$/, '')
+    if (!base) {
+        error("--references_base_path is empty; cannot load datasheet for --genome '${genomeKey}'")
+    }
+    def key = genomeKey.toString().replace('.', '/')
+    return "${base}/${key}.yml"
+}
+
+def selectReferenceRow(rows) {
+    if (!(rows instanceof List) || rows.isEmpty()) {
+        error("Reference datasheet did not contain any genome records")
+    }
+    if (rows.size() > 1) {
+        def names = rows.collect { row -> referenceMeta(row).genome }.findAll { name -> name }
+        error("Reference datasheet has multiple genomes (${names.join(', ')}). Use a datasheet with one genome record.")
+    }
+    return rows[0]
+}
+
+def referenceMeta(row) {
+    if (row instanceof Map) {
+        return row
+    }
+    if (row instanceof List && row && row[0] instanceof Map) {
+        return row[0]
+    }
+    return [:]
+}
 
 //
 // Get attribute from genome config file e.g. fasta

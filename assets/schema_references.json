@@ -1,0 +1,57 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/nf-core/bamtofastq/dev/assets/schema_references.json",
+    "title": "nf-core/bamtofastq references datasheet schema",
+    "description": "References datasheet schema for bamtofastq",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "genome": {
+                "meta": ["genome", "id"],
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Genome name must be provided and cannot contain spaces"
+            },
+            "site": {
+                "meta": ["site"],
+                "type": "string",
+                "pattern": "^\\S+$",
+                "default": "unknown"
+            },
+            "source": {
+                "meta": ["source"],
+                "type": "string",
+                "pattern": "^\\S+$"
+            },
+            "source_version": {
+                "meta": ["source_version"],
+                "type": "string",
+                "pattern": "^\\S+$",
+                "default": "unknown"
+            },
+            "species": {
+                "meta": ["species"],
+                "type": "string",
+                "pattern": "^\\S+$"
+            },
+            "fasta": {
+                "meta": ["fasta"],
+                "type": "string",
+                "pattern": "^\\S+\\.f(ast|n)?a(\\.gz)?$",
+                "errorMessage": "Fasta must end in '.fa', '.fasta', or '.fna' (optionally .gz) and cannot contain spaces"
+            },
+            "fasta_fai": {
+                "meta": ["fasta_fai"],
+                "type": "string",
+                "pattern": "^\\S+\\.f(ast|n)?a\\.fai(\\.gz)?$",
+                "errorMessage": "Fasta index must end in '.fa.fai', '.fasta.fai', or '.fna.fai' (optionally .gz) and cannot contain spaces"
+            },
+            "readme": {
+                "type": "string",
+                "pattern": "^\\S+\\.(md|txt)$"
+            }
+        },
+        "required": ["genome"]
+    }
+}
