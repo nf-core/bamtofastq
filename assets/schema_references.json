@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/nf-core/bamtofastq/dev/assets/schema_references.json",
     "title": "nf-core/bamtofastq references datasheet schema",
-    "description": "Datasheet schema for bamtofastq: genome plus optional fasta, fasta_fai, and reference meta",
+    "description": "References datasheet schema for bamtofastq",
     "type": "array",
     "items": {
         "type": "object",
