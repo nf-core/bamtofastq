@@ -173,9 +173,9 @@ def igenomesReference() {
 }
 
 def referencesDatasheetUrl(genomeKey) {
-    def base = (params.references_base_path ?: '').toString().replaceAll(/\/+$/, '')
+    def base = (params.references_datasheets_path ?: '').toString().replaceAll(/\/+$/, '')
     if (!base) {
-        error("--references_base_path is empty; cannot load datasheet for --genome '${genomeKey}'")
+        error("--references_datasheets_path is empty; cannot load datasheet for --genome '${genomeKey}'")
     }
     def key = genomeKey.toString().replace('.', '/')
     return "${base}/${key}.yml"
