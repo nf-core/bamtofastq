@@ -177,8 +177,7 @@ def referencesDatasheetUrl(genomeKey) {
     if (!base) {
         error("--references_datasheets_path is empty; cannot load datasheet for --genome '${genomeKey}'")
     }
-    def key = genomeKey.toString().replace('.', '/')
-    return "${base}/${key}.yml"
+    return "${base}/${genomeKey}.yml"
 }
 
 def selectReferenceRow(rows) {

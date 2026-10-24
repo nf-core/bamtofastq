@@ -75,7 +75,7 @@
                     "type": "string",
                     "description": "iGenomes catalogue key, or references-datasheets path when igenomes_ignore is set. Do not combine with --references.",
                     "fa_icon": "fas fa-book",
-                    "help_text": "iGenomes: key in conf/igenomes.config (e.g. GRCh38). With --igenomes_ignore: path under --references_datasheets_path (e.g. GATK/GRCh38 or GATK.GRCh38, file igenomes/GATK/GRCh38.yml)."
+                    "help_text": "iGenomes: key in conf/igenomes.config (e.g. GRCh38). With --igenomes_ignore: path under --references_datasheets_path (e.g. GATK/GRCh38, file igenomes/GATK/GRCh38.yml)."
                 },
                 "fasta": {
                     "type": "string",
