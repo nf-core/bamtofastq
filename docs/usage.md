@@ -165,13 +165,13 @@ To specify a reference genome FASTA you can follow the command below:
 
 ### Reference selection
 
-The reference is resolved from the first source that supplies a usable record:
+Reference attributes (`--fasta` and `--fasta_fai`) are each resolved from the first source that supplies them:
 
-- Explicit parameters: `--fasta` and `--fasta_fai`.
-- A references datasheet, passed with `--references`, or located from `references_datasheets_path` with `--genome` and `--igenomes_ignore`.
-- An iGenomes catalogue entry for `--genome`.
+1. Explicit parameters.
+2. A references datasheet, passed with `--references`, or located from `references_datasheets_path` with `--genome` and `--igenomes_ignore`.
+3. An iGenomes catalogue entry for `--genome`.
 
-Each source runs only when the previous ones did not supply `fasta`, so an explicit parameter prevents an unnecessary datasheet fetch. `--references` and `--genome` are mutually exclusive: passing both is an error.
+`--references` and `--genome` are mutually exclusive: passing both is an error.
 
 Datasheet paths may carry `${params.references_base_path}` placeholders, resolved against this pipeline's `references_base_path` when the datasheet loads. The shared resolution order and the datasheet format behind it are documented in the [nf-core/references usage documentation](https://nf-co.re/references/usage).
 

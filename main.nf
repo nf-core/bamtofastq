@@ -16,6 +16,10 @@
 */
 
 include { samplesheetToList       } from 'plugin/nf-schema'
+
+params.fasta     = resolveReferenceAttribute('fasta')
+params.fasta_fai = resolveReferenceAttribute('fasta_fai')
+
 include { BAMTOFASTQ              } from './workflows/bamtofastq'
 include { SAMTOOLS_FAIDX          } from './modules/nf-core/samtools/faidx'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
@@ -35,7 +39,7 @@ workflow NFCORE_BAMTOFASTQ {
     samplesheet // channel: samplesheet read in from --input
 
     main:
-    def reference = resolveReference()
+    def reference = [fasta: params.fasta, fasta_fai: params.fasta_fai]
 
     // [meta, fasta, fai] for the run; empty when no reference
     if (!reference.fasta) {
@@ -119,57 +123,40 @@ workflow {
 */
 
 //
-// Resolve reference meta from the first source that provides a usable record.
-// Sources may contribute any subset of keys (fasta, fasta_fai, genome, species, ...).
-// Precedence: explicit params > --references > --genome+igenomes_ignore datasheet > iGenomes.
-// --references and --genome are mutually exclusive.
-// Each source runs only if the previous ones did not supply fasta (avoids extra datasheet fetches).
+// Resolve a reference attribute from the highest-priority source that defines it.
+// Precedence: explicit params > --references datasheet, or --genome (iGenomes
+// catalogue, or a datasheet under --references_datasheets_path with igenomes_ignore).
+// --references and --genome are mutually exclusive. Explicit params win because
+// Nextflow keeps CLI values over assignments made in the script. The datasheet
+// loads once and caches in params: both top-level declarations share it.
 //
 
-def resolveReference() {
-    if (params.references && params.genome) {
+def resolveReferenceAttribute(String name) {
+    if (!params.containsKey('__reference_sheet')) {
+        params.__reference_sheet = referenceDatasheet()
+    }
+    def value = params.__reference_sheet[name]
+    return value ?: getGenomeAttribute(name)
+}
+
+def referenceDatasheet() {
+    def genome = params.genome in [null, 'null'] ? null : params.genome
+    if (params.references && genome) {
         error("Use either --references or --genome, not both.")
     }
-
-    def meta = explicitReference()
-
-    return meta.fasta
-        ? meta
-        : params.references
-            ? datasheetReference(params.references)
-            : params.genome && params.igenomes_ignore
-                ? datasheetReference(referencesDatasheetUrl(params.genome))
-                : igenomesReference()
+    if (params.references) {
+        return loadReferenceDatasheet(params.references)
+    }
+    if (genome && params.igenomes_ignore) {
+        return loadReferenceDatasheet(referencesDatasheetUrl(genome))
+    }
+    return [:]
 }
 
-def explicitReference() {
-    def meta = [:]
-    if (params.fasta) {
-        meta.fasta = params.fasta
-    }
-    if (params.fasta_fai) {
-        meta.fasta_fai = params.fasta_fai
-    }
-    return meta
-}
-
-def datasheetReference(path) {
+def loadReferenceDatasheet(path) {
     def rows = samplesheetToList(path, "${projectDir}/assets/schema_references.json")
     def meta = referenceMeta(selectReferenceRow(rows))
     return meta.findAll { _key, value -> value != null && value != '' }
-}
-
-def igenomesReference() {
-    def meta = [:]
-    def fasta = getGenomeAttribute('fasta')
-    def fasta_fai = getGenomeAttribute('fasta_fai')
-    if (fasta) {
-        meta.fasta = fasta
-    }
-    if (fasta_fai) {
-        meta.fasta_fai = fasta_fai
-    }
-    return meta
 }
 
 def referencesDatasheetUrl(genomeKey) {
