@@ -42,9 +42,10 @@ workflow NFCORE_BAMTOFASTQ {
 
     main:
 
-    // REFERENCES
-    params.fasta = getReferenceAttribute('fasta')
-    params.fasta_fai = getReferenceAttribute('fasta_fai')
+    // REFERENCES: Load sheet once, resolve attributes
+    def referenceSheet = loadReferences()
+    params.fasta = getReferenceAttribute('fasta', referenceSheet)
+    params.fasta_fai = getReferenceAttribute('fasta_fai', referenceSheet)
 
     // [meta, fasta, fai] for the run; empty when no reference
     if (!params.fasta) {
@@ -129,16 +130,26 @@ FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 
-def getReferenceAttribute(name: String) {
+def getReferenceAttribute(name: String, sheet) {
     def genome = params.genome in [null, 'null'] ? null : params.genome
     if (params.references && genome) {
         error("Use either --references or --genome, not both.")
     }
-    def sheet = [:]
-    if (params.references || genome && params.igenomes_ignore) {
-        sheet = loadDatasheetFile(params.references ?: referencesDatasheetUrl(genome, params.references_datasheets_path))
+    if (sheet && sheet[name]) {
+        return sheet[name]
     }
-    return sheet[name] ?: getGenomeAttributeStatic(name, params.genomes, genome)
+    return getGenomeAttributeStatic(name, params.genomes, genome)
+}
+
+def loadReferences() {
+    def genome = params.genome in [null, 'null'] ? null : params.genome
+    if (params.references) {
+        return loadDatasheetFile(params.references)
+    }
+    if (genome && params.igenomes_ignore) {
+        return loadDatasheetFile(referencesDatasheetUrl(genome, params.references_datasheets_path))
+    }
+    return null
 }
 
 def loadDatasheetFile(path: String) {
