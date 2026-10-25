@@ -1,21 +1,93 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/bamtofastq
+nf-core/bamtofastq
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/bamtofastq
-    Website: https://nf-co.re/bamtofastq
-    Slack  : https://nfcore.slack.com/channels/bamtofastq
+Github : https://github.com/nf-core/bamtofastq
+Website: https://nf-co.re/bamtofastq
+Slack  : https://nfcore.slack.com/channels/bamtofastq
 ----------------------------------------------------------------------------------------
-*/
+ */
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
+IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+ */
 
 include { samplesheetToList       } from 'plugin/nf-schema'
+
+//
+// Reference helper functions. These are reference implementations; identical versions
+// exist in nf-core-utils plugin (ReferenceHelpers class) for use in other contexts.
+//
+
+def referencesDatasheetUrl(genomeKey: String) {
+    def base = (params.references_datasheets_path ?: '').toString().replaceAll(/\/+$/, '')
+    if (!base) {
+        error("--references_datasheets_path is empty; cannot load datasheet for --genome '${genomeKey}'")
+    }
+    return "${base}/${genomeKey}.yml"
+}
+
+def selectReferenceRow(rows: List) {
+    if (!(rows instanceof List) || rows.isEmpty()) {
+        error("Reference datasheet did not contain any genome records")
+    }
+    if (rows.size() > 1) {
+        def names = rows.collect { row -> referenceMeta(row).genome }.findAll { name -> name }
+        error("Reference datasheet has multiple genomes (${names.join(', ')}). Use a datasheet with one genome record.")
+    }
+    return rows[0]
+}
+
+def referenceMeta(row) {
+    if (row instanceof Map) {
+        return row.findAll { _key, value -> value != null && value != '' }
+    }
+    if (row instanceof List && row && row[0] instanceof Map) {
+        Map meta = row[0] as Map
+        return meta.findAll { _key, value -> value != null && value != '' }
+    }
+    return [:]
+}
+
+def getGenomeAttribute(attribute: String) {
+    if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
+        if (params.genomes[params.genome].containsKey(attribute)) {
+            return params.genomes[params.genome][attribute]
+        }
+    }
+    return null
+}
+
+def getReferenceAttribute(name: String) {
+    def genome = params.genome in [null, 'null'] ? null : params.genome
+    if (params.references && genome) {
+        error("Use either --references or --genome, not both.")
+    }
+    def sheet = [:]
+    if (params.references) {
+        sheet = loadDatasheetFile(params.references)
+    }
+    else if (genome && params.igenomes_ignore) {
+        sheet = loadDatasheetFile(referencesDatasheetUrl(genome))
+    }
+    return sheet[name] ?: getGenomeAttribute(name)
+}
+
+def loadDatasheetFile(path: String) {
+    def rows = samplesheetToList(path, "${projectDir}/assets/schema_references.json")
+    def row = selectReferenceRow(rows)
+    def meta = referenceMeta(row)
+    return meta.findAll { _key, value -> value != null && value != '' }
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+HANDLE REFERENCES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 
 params.fasta     = getReferenceAttribute('fasta')
 params.fasta_fai = getReferenceAttribute('fasta_fai')
@@ -27,9 +99,9 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamt
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    NAMED WORKFLOWS FOR PIPELINE
+NAMED WORKFLOWS FOR PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+ */
 
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
@@ -75,11 +147,12 @@ workflow NFCORE_BAMTOFASTQ {
     emit:
     multiqc_report = BAMTOFASTQ.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN MAIN WORKFLOW
+RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+ */
 
 workflow {
     //
@@ -114,83 +187,4 @@ workflow {
         params.monochrome_logs,
         NFCORE_BAMTOFASTQ.out.multiqc_report,
     )
-}
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-//
-// Get reference attributes by resolving from the highest-priority source.
-// The plugin provides the precedence logic and helper functions;
-// we provide the datasheet loader that calls samplesheetToList (pipeline-only).
-//
-
-def getReferenceAttribute(String name) {
-    // Can't access plugin static methods directly in Groovy Nextflow scripts.
-    // Instead, inline the orchestration logic here but delegate to plugin helpers.
-    def genome = params.genome in [null, 'null'] ? null : params.genome
-    if (params.references && genome) {
-        error("Use either --references or --genome, not both.")
-    }
-    def sheet = [:]
-    if (params.references) {
-        sheet = loadDatasheetFile(params.references)
-    } else if (genome && params.igenomes_ignore) {
-        sheet = loadDatasheetFile(referencesDatasheetUrl(genome))
-    }
-    return sheet[name] ?: getGenomeAttribute(name)
-}
-
-def referencesDatasheetUrl(String genomeKey) {
-    def base = (params.references_datasheets_path ?: '').toString().replaceAll(/\/+$/, '')
-    if (!base) {
-        error("--references_datasheets_path is empty; cannot load datasheet for --genome '${genomeKey}'")
-    }
-    return "${base}/${genomeKey}.yml"
-}
-
-def selectReferenceRow(List rows) {
-    if (!(rows instanceof List) || rows.isEmpty()) {
-        error("Reference datasheet did not contain any genome records")
-    }
-    if (rows.size() > 1) {
-        def names = rows.collect { row -> referenceMeta(row).genome }.findAll { name -> name }
-        error("Reference datasheet has multiple genomes (${names.join(', ')}). Use a datasheet with one genome record.")
-    }
-    return rows[0]
-}
-
-def referenceMeta(row) {
-    if (row instanceof Map) {
-        return row
-    }
-    if (row instanceof List && row && row[0] instanceof Map) {
-        return row[0]
-    }
-    return [:]
-}
-
-def getGenomeAttribute(String attribute) {
-    if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
-        if (params.genomes[params.genome].containsKey(attribute)) {
-            return params.genomes[params.genome][attribute]
-        }
-    }
-    return null
-}
-
-//
-// Load a reference datasheet from a file path.
-// This stays in the pipeline because it must call samplesheetToList(),
-// which is a workflow-level function from nf-schema and only available in pipeline context.
-//
-
-def loadDatasheetFile(String path) {
-    def rows = samplesheetToList(path, "${projectDir}/assets/schema_references.json")
-    def row = selectReferenceRow(rows)
-    def meta = referenceMeta(row)
-    return meta.findAll { _key, value -> value != null && value != '' }
 }
