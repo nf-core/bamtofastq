@@ -16,50 +16,7 @@ IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
  */
 
 include { samplesheetToList       } from 'plugin/nf-schema'
-
-//
-// Reference helper functions. These are reference implementations; identical versions
-// exist in nf-core-utils plugin (ReferenceHelpers class) for use in other contexts.
-//
-
-def referencesDatasheetUrl(genomeKey: String) {
-    def base = (params.references_datasheets_path ?: '').replaceAll(/\/+$/, '')
-    if (!base) {
-        error("--references_datasheets_path is empty; cannot load datasheet for --genome '${genomeKey}'")
-    }
-    return "${base}/${genomeKey}.yml"
-}
-
-def selectReferenceRow(rows: List) {
-    if (!(rows instanceof List) || rows.isEmpty()) {
-        error("Reference datasheet did not contain any genome records")
-    }
-    if (rows.size() > 1) {
-        def names = rows.collect { row -> referenceMeta(row).genome }.findAll { name -> name }
-        error("Reference datasheet has multiple genomes (${names.join(', ')}). Use a datasheet with one genome record.")
-    }
-    return rows[0]
-}
-
-def referenceMeta(row) {
-    if (row instanceof Map) {
-        return row.findAll { _key, value -> value != null && value != '' }
-    }
-    if (row instanceof List && row && row[0] instanceof Map) {
-        Map meta = row[0] as Map
-        return meta.findAll { _key, value -> value != null && value != '' }
-    }
-    error("Reference datasheet record is not a genome mapping: ${row}")
-}
-
-def getGenomeAttribute(attribute: String) {
-    if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
-        if (params.genomes[params.genome].containsKey(attribute)) {
-            return params.genomes[params.genome][attribute]
-        }
-    }
-    return null
-}
+include { referencesDatasheetUrl; selectReferenceRow; referenceMeta; getGenomeAttributeStatic } from 'plugin/nf-core-utils'
 
 def getReferenceAttribute(name: String) {
     def genome = params.genome in [null, 'null'] ? null : params.genome
@@ -71,9 +28,9 @@ def getReferenceAttribute(name: String) {
         sheet = loadDatasheetFile(params.references)
     }
     else if (genome && params.igenomes_ignore) {
-        sheet = loadDatasheetFile(referencesDatasheetUrl(genome))
+        sheet = loadDatasheetFile(referencesDatasheetUrl(genome, params.references_datasheets_path))
     }
-    return sheet[name] ?: getGenomeAttribute(name)
+    return sheet[name] ?: getGenomeAttributeStatic(name, params.genomes, genome)
 }
 
 def loadDatasheetFile(path: String) {
