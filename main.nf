@@ -123,43 +123,28 @@ workflow {
 */
 
 //
-// Resolve a reference attribute from the highest-priority source that defines it.
-// Precedence: explicit params > --references datasheet, or --genome (iGenomes
-// catalogue, or a datasheet under --references_datasheets_path with igenomes_ignore).
-// --references and --genome are mutually exclusive. Explicit params win because
-// Nextflow keeps CLI values over assignments made in the script. The datasheet
-// loads once and caches in params: both top-level declarations share it.
+// Resolve reference attributes using the plugin orchestration.
+// The plugin provides the precedence logic and helper functions;
+// we provide the datasheet loader that calls samplesheetToList (pipeline-only).
 //
 
 def resolveReferenceAttribute(String name) {
-    if (!params.containsKey('__reference_sheet')) {
-        params.__reference_sheet = referenceDatasheet()
-    }
-    def value = params.__reference_sheet[name]
-    return value ?: getGenomeAttribute(name)
-}
-
-def referenceDatasheet() {
+    // Can't access plugin static methods directly in Groovy Nextflow scripts.
+    // Instead, inline the orchestration logic here but delegate to plugin helpers.
     def genome = params.genome in [null, 'null'] ? null : params.genome
     if (params.references && genome) {
         error("Use either --references or --genome, not both.")
     }
+    def sheet = [:]
     if (params.references) {
-        return loadReferenceDatasheet(params.references)
+        sheet = loadDatasheetFile(params.references)
+    } else if (genome && params.igenomes_ignore) {
+        sheet = loadDatasheetFile(referencesDatasheetUrl(genome))
     }
-    if (genome && params.igenomes_ignore) {
-        return loadReferenceDatasheet(referencesDatasheetUrl(genome))
-    }
-    return [:]
+    return sheet[name] ?: getGenomeAttribute(name)
 }
 
-def loadReferenceDatasheet(path) {
-    def rows = samplesheetToList(path, "${projectDir}/assets/schema_references.json")
-    def meta = referenceMeta(selectReferenceRow(rows))
-    return meta.findAll { _key, value -> value != null && value != '' }
-}
-
-def referencesDatasheetUrl(genomeKey) {
+def referencesDatasheetUrl(String genomeKey) {
     def base = (params.references_datasheets_path ?: '').toString().replaceAll(/\/+$/, '')
     if (!base) {
         error("--references_datasheets_path is empty; cannot load datasheet for --genome '${genomeKey}'")
@@ -167,7 +152,7 @@ def referencesDatasheetUrl(genomeKey) {
     return "${base}/${genomeKey}.yml"
 }
 
-def selectReferenceRow(rows) {
+def selectReferenceRow(List rows) {
     if (!(rows instanceof List) || rows.isEmpty()) {
         error("Reference datasheet did not contain any genome records")
     }
@@ -188,15 +173,24 @@ def referenceMeta(row) {
     return [:]
 }
 
-//
-// Get attribute from genome config file e.g. fasta
-//
-
-def getGenomeAttribute(attribute) {
+def getGenomeAttribute(String attribute) {
     if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
         if (params.genomes[params.genome].containsKey(attribute)) {
             return params.genomes[params.genome][attribute]
         }
     }
     return null
+}
+
+//
+// Load a reference datasheet from a file path.
+// This stays in the pipeline because it must call samplesheetToList(),
+// which is a workflow-level function from nf-schema and only available in pipeline context.
+//
+
+def loadDatasheetFile(String path) {
+    def rows = samplesheetToList(path, "${projectDir}/assets/schema_references.json")
+    def row = selectReferenceRow(rows)
+    def meta = referenceMeta(row)
+    return meta.findAll { _key, value -> value != null && value != '' }
 }
