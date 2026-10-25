@@ -135,11 +135,8 @@ def getReferenceAttribute(name: String) {
         error("Use either --references or --genome, not both.")
     }
     def sheet = [:]
-    if (params.references) {
-        sheet = loadDatasheetFile(params.references)
-    }
-    else if (genome && params.igenomes_ignore) {
-        sheet = loadDatasheetFile(referencesDatasheetUrl(genome, params.references_datasheets_path))
+    if (params.references || genome && params.igenomes_ignore) {
+        sheet = loadDatasheetFile(params.references ?: referencesDatasheetUrl(genome, params.references_datasheets_path))
     }
     return sheet[name] ?: getGenomeAttributeStatic(name, params.genomes, genome)
 }
