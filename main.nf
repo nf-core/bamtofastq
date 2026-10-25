@@ -17,8 +17,8 @@
 
 include { samplesheetToList       } from 'plugin/nf-schema'
 
-params.fasta     = resolveReferenceAttribute('fasta')
-params.fasta_fai = resolveReferenceAttribute('fasta_fai')
+params.fasta     = getReferenceAttribute('fasta')
+params.fasta_fai = getReferenceAttribute('fasta_fai')
 
 include { BAMTOFASTQ              } from './workflows/bamtofastq'
 include { SAMTOOLS_FAIDX          } from './modules/nf-core/samtools/faidx'
@@ -123,12 +123,12 @@ workflow {
 */
 
 //
-// Resolve reference attributes using the plugin orchestration.
+// Get reference attributes by resolving from the highest-priority source.
 // The plugin provides the precedence logic and helper functions;
 // we provide the datasheet loader that calls samplesheetToList (pipeline-only).
 //
 
-def resolveReferenceAttribute(String name) {
+def getReferenceAttribute(String name) {
     // Can't access plugin static methods directly in Groovy Nextflow scripts.
     // Instead, inline the orchestration logic here but delegate to plugin helpers.
     def genome = params.genome in [null, 'null'] ? null : params.genome
