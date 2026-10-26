@@ -9,7 +9,7 @@ IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
  */
 
 include { getReferencePath } from 'plugin/nf-core-utils'
-include { loadDatasheetFile } from 'plugin/nf-core-utils'
+include { getReferenceMetadata } from 'plugin/nf-core-utils'
 include { paramsHelp } from 'plugin/nf-schema'
 include { paramsSummaryMap } from 'plugin/nf-schema'
 include { samplesheetToList } from 'plugin/nf-schema'
@@ -133,7 +133,7 @@ workflow PIPELINE_INITIALISATION {
     // REFERENCES: Load datasheet
     //
     def referenceSheet = referencePath
-        ? loadDatasheetFile(datasheet: samplesheetToList(referencePath, "${projectDir}/assets/schema_references.json"))
+        ? getReferenceMetadata(rows: samplesheetToList(referencePath, "${projectDir}/assets/schema_references.json"))
         : null
 
     emit:
