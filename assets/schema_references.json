@@ -48,6 +48,7 @@
                 "errorMessage": "Fasta index must end in '.fa.fai', '.fasta.fai', or '.fna.fai' (optionally .gz) and cannot contain spaces"
             },
             "readme": {
+                "meta": ["readme"],
                 "type": "string",
                 "pattern": "^\\S+\\.(md|txt)$"
             }

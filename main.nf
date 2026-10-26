@@ -15,17 +15,13 @@ IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 
-include { getGenomeAttributeStatic } from 'plugin/nf-core-utils'
-include { referenceMeta            } from 'plugin/nf-core-utils'
-include { referencesDatasheetUrl   } from 'plugin/nf-core-utils'
-include { selectReferenceRow       } from 'plugin/nf-core-utils'
-include { samplesheetToList        } from 'plugin/nf-schema'
+include { getReferenceAttribute } from 'plugin/nf-core-utils'
+include { samplesheetToList } from 'plugin/nf-schema'
 
-
-include { BAMTOFASTQ               } from './workflows/bamtofastq'
-include { SAMTOOLS_FAIDX           } from './modules/nf-core/samtools/faidx'
-include { PIPELINE_INITIALISATION  } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
-include { PIPELINE_COMPLETION      } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { BAMTOFASTQ } from './workflows/bamtofastq'
+include { SAMTOOLS_FAIDX } from './modules/nf-core/samtools/faidx'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { PIPELINE_COMPLETION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,13 +35,12 @@ NAMED WORKFLOWS FOR PIPELINE
 workflow NFCORE_BAMTOFASTQ {
     take:
     samplesheet // channel: samplesheet read in from --input
+    datasheet // channel: datasheet read in from direct yml or via genome key
 
     main:
-
-    // REFERENCES: Load sheet once, resolve attributes
-    def referenceSheet = loadReferences()
-    params.fasta = getReferenceAttribute('fasta', referenceSheet)
-    params.fasta_fai = getReferenceAttribute('fasta_fai', referenceSheet)
+    // REFERENCES: Resolve attributes from datasheet
+    params.fasta = getReferenceAttribute(param: 'fasta', datasheet: datasheet, genomeMap: params.genomes, genomeKey: params.genome)
+    params.fasta_fai = getReferenceAttribute(param: 'fasta_fai', datasheet: datasheet, genomeMap: params.genomes, genomeKey: params.genome)
 
     // [meta, fasta, fai] for the run; empty when no reference
     if (!params.fasta) {
@@ -55,14 +50,14 @@ workflow NFCORE_BAMTOFASTQ {
         ch_references = channel.fromPath(params.fasta)
             .collect()
             .combine(channel.fromPath(params.fasta_fai))
-            .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
+            .map { fa, fai -> [[id: fa.baseName], fa, fai] }
             .collect()
     }
     else {
-        SAMTOOLS_FAIDX(channel.fromPath(params.fasta).map { fasta -> [[id: fasta.baseName], fasta, []] }, false)
+        SAMTOOLS_FAIDX(channel.fromPath(params.fasta).map { fa -> [[id: fa.baseName], fa, []] }, false)
         ch_references = channel.fromPath(params.fasta)
-            .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fasta_fai -> fasta_fai })
-            .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
+            .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai })
+            .map { fa, fai -> [[id: fa.baseName], fa, fai] }
             .collect()
     }
 
@@ -108,8 +103,10 @@ workflow {
     // WORKFLOW: Run main workflow
     //
     NFCORE_BAMTOFASTQ(
-        PIPELINE_INITIALISATION.out.samplesheet
+        PIPELINE_INITIALISATION.out.samplesheet,
+        PIPELINE_INITIALISATION.out.datasheet.getVal(),
     )
+
     //
     // SUBWORKFLOW: Run completion tasks
     //
@@ -121,37 +118,4 @@ workflow {
         params.monochrome_logs,
         NFCORE_BAMTOFASTQ.out.multiqc_report,
     )
-}
-
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
-
-def getReferenceAttribute(name: String, sheet) {
-    def genome = params.genome in [null, 'null'] ? null : params.genome
-    if (params.references && genome) {
-        error("Use either --references or --genome, not both.")
-    }
-    if (sheet && sheet[name]) {
-        return sheet[name]
-    }
-    return getGenomeAttributeStatic(name, params.genomes, genome)
-}
-
-def loadReferences() {
-    def genome = params.genome in [null, 'null'] ? null : params.genome
-    if (params.references) {
-        return loadDatasheetFile(params.references)
-    }
-    if (genome && params.igenomes_ignore) {
-        return loadDatasheetFile(referencesDatasheetUrl(genome, params.references_datasheets_path))
-    }
-    return null
-}
-
-def loadDatasheetFile(path: String) {
-    return referenceMeta(selectReferenceRow(samplesheetToList(path, "${projectDir}/assets/schema_references.json")))
 }
