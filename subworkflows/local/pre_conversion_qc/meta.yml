@@ -1,0 +1,117 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: "pre_conversion_qc"
+description: |
+  Run pre-conversion QC on alignment files: `samtools idxstats`, `flagstat`,
+  `stats` and `fastqc` (fastqc only for BAM inputs).
+keywords:
+  - samtools
+  - fastqc
+  - qc
+  - bam
+  - cram
+components:
+  - samtools/flagstat
+  - samtools/idxstats
+  - samtools/stats
+  - fastqc
+input:
+  - input:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, alignment (BAM or CRAM), index].
+      structure:
+        - meta:
+            type: map
+            description: |
+              Metadata map with sample information
+              e.g. [ id:'sample1', filetype:'bam' ]
+        - alignment:
+            type: file
+            description: Alignment file (BAM or CRAM format)
+            pattern: "*.{bam,cram}"
+        - index:
+            type: file
+            description: Index file for alignment (BAI or CRAI format)
+            pattern: "*.{bai,crai}"
+  - fasta_fai:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, fasta, fai] for reference files (required when
+        running `samtools stats` on CRAM inputs).
+      structure:
+        - meta:
+            type: map
+            description: Metadata map with id for the reference
+        - fasta:
+            type: file
+            description: Reference genome FASTA file
+            pattern: "*.{fa,fna,fasta}"
+        - fai:
+            type: file
+            description: Reference genome FASTA index file
+            pattern: "*.fai"
+output:
+  - flagstat:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, flagstat_file] from `SAMTOOLS_FLAGSTAT`.
+      structure:
+        - meta:
+            type: map
+            description: Metadata map
+        - flagstat:
+            type: file
+            description: Flagstat output file
+            pattern: "*.flagstat"
+  - idxstats:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, idxstats_file] from `SAMTOOLS_IDXSTATS`.
+      structure:
+        - meta:
+            type: map
+            description: Metadata map
+        - idxstats:
+            type: file
+            description: Idxstats output file
+            pattern: "*.idxstats"
+  - stats:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, stats_file] from `SAMTOOLS_STATS`.
+      structure:
+        - meta:
+            type: map
+            description: Metadata map
+        - stats:
+            type: file
+            description: Stats output file
+            pattern: "*.stats"
+  - zip:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, zip_file] from FASTQC (only for BAM inputs).
+      structure:
+        - meta:
+            type: map
+            description: Metadata map
+        - zip:
+            type: file
+            description: FASTQC zip archive
+            pattern: "*_fastqc.zip"
+  - html:
+      type: channel
+      description: |
+        Channel emitting tuples: [meta, html_file] from FASTQC (only for BAM inputs).
+      structure:
+        - meta:
+            type: map
+            description: Metadata map
+        - html:
+            type: file
+            description: FASTQC HTML report
+            pattern: "*_fastqc.html"
+authors:
+  - "@FriederikeHanssen"
+maintainers:
+  - "@famosab"
