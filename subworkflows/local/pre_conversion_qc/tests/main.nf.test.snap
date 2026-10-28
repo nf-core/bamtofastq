@@ -87,8 +87,8 @@
                 "flagstat": [
                     [
                         {
-                            "id": "test",
-                            "filetype": "bam"
+                            "filetype": "bam",
+                            "id": "test"
                         },
                         "test.flagstat:md5,2191911d72575a2358b08b1df64ccb53"
                     ]
@@ -105,8 +105,8 @@
                 "idxstats": [
                     [
                         {
-                            "id": "test",
-                            "filetype": "bam"
+                            "filetype": "bam",
+                            "id": "test"
                         },
                         "test.idxstats:md5,613e048487662c694aa4a2f73ca96a20"
                     ]
@@ -114,8 +114,8 @@
                 "stats": [
                     [
                         {
-                            "id": "test",
-                            "filetype": "bam"
+                            "filetype": "bam",
+                            "id": "test"
                         },
                         "test.stats:md5,4f646400171c0f68d5b044dd702e860e"
                     ]
@@ -131,10 +131,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-05-13T11:34:35.764499",
+        "timestamp": "2026-10-27T11:21:36.775455631",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.0"
+            "nextflow": "26.10.0"
         }
     },
     "sarscov2 - bam - fasta": {

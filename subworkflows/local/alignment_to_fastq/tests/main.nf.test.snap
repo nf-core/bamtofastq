@@ -49,8 +49,8 @@
                 "reads": [
                     [
                         {
-                            "id": "test",
-                            "filetype": "bam"
+                            "filetype": "bam",
+                            "id": "test"
                         },
                         [
                             "test_1.merged.fastq.gz:md5,d41d8cd98f00b204e9800998ecf8427e",
@@ -60,10 +60,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-05-06T14:31:06.045315",
+        "timestamp": "2026-10-27T11:21:03.532864538",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.0"
+            "nextflow": "26.10.0"
         }
     },
     "sarscov2 - bam - fasta": {
