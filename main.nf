@@ -1,39 +1,33 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    nf-core/bamtofastq
+nf-core/bamtofastq
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/nf-core/bamtofastq
-    Website: https://nf-co.re/bamtofastq
-    Slack  : https://nfcore.slack.com/channels/bamtofastq
+Github : https://github.com/nf-core/bamtofastq
+Website: https://nf-co.re/bamtofastq
+Slack  : https://nfcore.slack.com/channels/bamtofastq
 ----------------------------------------------------------------------------------------
-*/
+ */
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
+IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+ */
 
-params.fasta     = getGenomeAttribute('fasta')
-params.fasta_fai = getGenomeAttribute('fasta_fai')
+include { getReferenceAttribute } from 'plugin/nf-core-utils'
+include { samplesheetToList } from 'plugin/nf-schema'
 
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-include { BAMTOFASTQ              } from './workflows/bamtofastq'
-include { SAMTOOLS_FAIDX          } from './modules/nf-core/samtools/faidx'
+include { BAMTOFASTQ } from './workflows/bamtofastq'
+include { SAMTOOLS_FAIDX } from './modules/nf-core/samtools/faidx'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { PIPELINE_COMPLETION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    NAMED WORKFLOWS FOR PIPELINE
+NAMED WORKFLOWS FOR PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+ */
 
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
@@ -41,8 +35,13 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamt
 workflow NFCORE_BAMTOFASTQ {
     take:
     samplesheet // channel: samplesheet read in from --input
+    datasheet // channel: datasheet read in from direct yml or via genome key
 
     main:
+    // REFERENCES: Resolve attributes from datasheet
+    params.fasta = getReferenceAttribute(param: 'fasta', datasheet: datasheet, genomeMap: params.genomes, genomeKey: params.genome)
+    params.fasta_fai = getReferenceAttribute(param: 'fasta_fai', datasheet: datasheet, genomeMap: params.genomes, genomeKey: params.genome)
+
     // [meta, fasta, fai] for the run; empty when no reference
     if (!params.fasta) {
         ch_references = channel.empty()
@@ -51,14 +50,14 @@ workflow NFCORE_BAMTOFASTQ {
         ch_references = channel.fromPath(params.fasta)
             .collect()
             .combine(channel.fromPath(params.fasta_fai))
-            .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
+            .map { fa, fai -> [[id: fa.baseName], fa, fai] }
             .collect()
     }
     else {
-        SAMTOOLS_FAIDX(channel.fromPath(params.fasta).map { fasta -> [[id: fasta.baseName], fasta, []] }, false)
+        SAMTOOLS_FAIDX(channel.fromPath(params.fasta).map { fa -> [[id: fa.baseName], fa, []] }, false)
         ch_references = channel.fromPath(params.fasta)
-            .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fasta_fai -> fasta_fai })
-            .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
+            .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai })
+            .map { fa, fai -> [[id: fa.baseName], fa, fai] }
             .collect()
     }
 
@@ -77,11 +76,12 @@ workflow NFCORE_BAMTOFASTQ {
     emit:
     multiqc_report = BAMTOFASTQ.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    RUN MAIN WORKFLOW
+RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
+ */
 
 workflow {
     //
@@ -103,8 +103,10 @@ workflow {
     // WORKFLOW: Run main workflow
     //
     NFCORE_BAMTOFASTQ(
-        PIPELINE_INITIALISATION.out.samplesheet
+        PIPELINE_INITIALISATION.out.samplesheet,
+        PIPELINE_INITIALISATION.out.datasheet.getVal(),
     )
+
     //
     // SUBWORKFLOW: Run completion tasks
     //
@@ -116,23 +118,4 @@ workflow {
         params.monochrome_logs,
         NFCORE_BAMTOFASTQ.out.multiqc_report,
     )
-}
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-//
-// Get attribute from genome config file e.g. fasta
-//
-
-def getGenomeAttribute(attribute) {
-    if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
-        if (params.genomes[params.genome].containsKey(attribute)) {
-            return params.genomes[params.genome][attribute]
-        }
-    }
-    return null
 }

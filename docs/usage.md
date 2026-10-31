@@ -163,6 +163,18 @@ To specify a reference genome FASTA you can follow the command below:
 --input 'path/to/samplesheet.csv' --fasta 'ftp://ftp.broadinstitute.org/pub/seq/references/Homo_sapiens_assembly19.fasta'
 ```
 
+### Reference selection
+
+Reference attributes (`--fasta` and `--fasta_fai`) are each resolved from the first source that supplies them:
+
+1. Explicit parameters.
+2. A references datasheet, passed with `--references`, or located from `references_datasheets_path` with `--genome` and `--igenomes_ignore`.
+3. An iGenomes catalogue entry for `--genome`.
+
+`--references` and `--genome` are mutually exclusive: passing both is an error.
+
+Datasheet paths may carry `${params.references_base_path}` placeholders, resolved against this pipeline's `references_base_path` when the datasheet loads. The shared resolution order and the datasheet format behind it are documented in the [nf-core/references usage documentation](https://nf-co.re/references/usage).
+
 ### `--chr` (optional)
 
 Use to only obtain reads mapping to a specific chromosome or region.
