@@ -16,10 +16,10 @@
                     "samtools": "1.23.1"
                 },
                 "FASTQC_POST_CONVERSION": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "FASTQC_PRE_CONVERSION": {
-                    "fastqc": "0.12.1"
+                    "fastqc": "0.13.0"
                 },
                 "FASTQUTILS_INFO": {
                     "fastqutils": "0.25.3"
@@ -132,10 +132,10 @@
             "No BAM files",
             "No CRAM files"
         ],
-        "timestamp": "2026-05-04T15:40:55.255167",
+        "timestamp": "2026-10-27T10:10:39.608537941",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.0"
+            "nextflow": "26.10.0"
         }
     }
 }

@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#150](https://github.com/nf-core/bamtofastq/pull/150) - Template update for nf-core/tools v4.0.3
 - [#152](https://github.com/nf-core/bamtofastq/pull/152) - Template update for nf-core/tools v4.1.0
+- [#161](https://github.com/nf-core/bamtofastq/pull/161) - Template update for nf-core/tools v4.2.1
 - [#156](https://github.com/nf-core/bamtofastq/pull/156) - Move FASTA `.fai` generation out of BAMTOFASTQ workflow
 - [#156](https://github.com/nf-core/bamtofastq/pull/156) - Move bam/cram indexing directly into BAMTOFASTQ workflow
 
@@ -31,7 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Dependency | Old version | New version |
 | ---------- | ----------- | ----------- |
+| fastqc     | 0.12.1      | 0.13.0      |
 | multiqc    | 1.34        | 1.35        |
+| nf-schema  | 2.6.1       | 2.7.3       |
+| nft-utils  | 0.0.9       | 1.2.1       |
 
 ## v2.2.1 - Radia Perlman
 
