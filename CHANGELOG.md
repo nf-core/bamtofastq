@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Added`
 
-- [#154](https://github.com/nf-core/bamtofastq/pull/154) - Add manifest.diagram to nextflow.config
 - [#149](https://github.com/nf-core/bamtofastq/pull/149) - Add GATK.GRCh38 and test genome keys to igenomes.config
+- [#154](https://github.com/nf-core/bamtofastq/pull/154) - Add manifest.diagram to nextflow.config
 - [#158](https://github.com/nf-core/bamtofastq/pull/158) - Add fasta_fai for iGenomes entries
 - [#159](https://github.com/nf-core/bamtofastq/pull/159) - Add `--references` datasheet input (alternative to iGenomes)
 
@@ -16,10 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#150](https://github.com/nf-core/bamtofastq/pull/150) - Template update for nf-core/tools v4.0.3
 - [#152](https://github.com/nf-core/bamtofastq/pull/152) - Template update for nf-core/tools v4.1.0
-- [#161](https://github.com/nf-core/bamtofastq/pull/161) - Template update for nf-core/tools v4.2.1
 - [#156](https://github.com/nf-core/bamtofastq/pull/156) - Move FASTA `.fai` generation out of BAMTOFASTQ workflow
 - [#156](https://github.com/nf-core/bamtofastq/pull/156) - Move bam/cram indexing directly into BAMTOFASTQ workflow
 - [#159](https://github.com/nf-core/bamtofastq/pull/159) - Bump minimal Nextflow version to 26.04.0
+- [#161](https://github.com/nf-core/bamtofastq/pull/161) - Template update for nf-core/tools v4.2.1
 
 ### `Fixed`
 
