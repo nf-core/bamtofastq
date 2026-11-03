@@ -38,24 +38,25 @@ workflow NFCORE_BAMTOFASTQ {
     datasheet // channel: datasheet read in from direct yml or via genome key
 
     main:
-    // REFERENCES: Resolve attributes from datasheet
-    params.fasta = getReferenceAttribute(param: 'fasta', datasheet: datasheet, genomeMap: params.genomes, genomeKey: params.genome)
-    params.fasta_fai = getReferenceAttribute(param: 'fasta_fai', datasheet: datasheet, genomeMap: params.genomes, genomeKey: params.genome)
+    // References come from --genome (iGenomes) or from a references datasheet; an explicit parameter, even null, wins
+    def references = ['fasta', 'fasta_fai'].collectEntries { name ->
+        [name, params.containsKey(name) ? params[name] : getReferenceAttribute(param: name, datasheet: datasheet, genomeMap: params.genomes, genomeKey: params.genome)]
+    }
 
     // [meta, fasta, fai] for the run; empty when no reference
-    if (!params.fasta) {
+    if (!references.fasta) {
         ch_references = channel.empty()
     }
-    else if (params.fasta_fai) {
-        ch_references = channel.fromPath(params.fasta)
+    else if (references.fasta_fai) {
+        ch_references = channel.fromPath(references.fasta)
             .collect()
-            .combine(channel.fromPath(params.fasta_fai))
+            .combine(channel.fromPath(references.fasta_fai))
             .map { fa, fai -> [[id: fa.baseName], fa, fai] }
             .collect()
     }
     else {
-        SAMTOOLS_FAIDX(channel.fromPath(params.fasta).map { fa -> [[id: fa.baseName], fa, []] }, false)
-        ch_references = channel.fromPath(params.fasta)
+        SAMTOOLS_FAIDX(channel.fromPath(references.fasta).map { fa -> [[id: fa.baseName], fa, []] }, false)
+        ch_references = channel.fromPath(references.fasta)
             .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai })
             .map { fa, fai -> [[id: fa.baseName], fa, fai] }
             .collect()
