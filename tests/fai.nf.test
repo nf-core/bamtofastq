@@ -6,7 +6,7 @@ nextflow_pipeline {
     tag "pipeline_bamtofastq"
     tag "cpu"
 
-    test("-profile test | with fasta and fasta_fai") {
+    test("-profile test with fasta and fasta_fai") {
 
         when {
             params {
