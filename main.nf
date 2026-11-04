@@ -15,13 +15,13 @@ IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 
-include { getReferenceAttribute } from 'plugin/nf-core-utils'
 include { samplesheetToList } from 'plugin/nf-schema'
 
 include { BAMTOFASTQ } from './workflows/bamtofastq'
 include { SAMTOOLS_FAIDX } from './modules/nf-core/samtools/faidx'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 include { PIPELINE_COMPLETION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { referenceParams } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,14 +35,9 @@ NAMED WORKFLOWS FOR PIPELINE
 workflow NFCORE_BAMTOFASTQ {
     take:
     samplesheet // channel: samplesheet read in from --input
-    datasheet // channel: datasheet read in from direct yml or via genome key
+    references // map: resolved reference files
 
     main:
-    // References come from --genome (iGenomes) or from a references datasheet; an explicit parameter, even null, wins
-    def references = ['fasta', 'fasta_fai'].collectEntries { name ->
-        [name, params.containsKey(name) ? params[name] : getReferenceAttribute(param: name, datasheet: datasheet, genomeMap: params.genomes, genomeKey: params.genome)]
-    }
-
     // [meta, fasta, fai] for the run; empty when no reference
     if (!references.fasta) {
         ch_references = channel.empty()
@@ -98,6 +93,12 @@ workflow {
         params.help_full,
         params.show_hidden,
         params.monochrome_logs,
+        params.genome,
+        params.genomes,
+        params.igenomes_ignore,
+        params.references,
+        params.references_datasheets_path,
+        params.subMap(referenceParams()),
     )
 
     //
@@ -105,7 +106,7 @@ workflow {
     //
     NFCORE_BAMTOFASTQ(
         PIPELINE_INITIALISATION.out.samplesheet,
-        PIPELINE_INITIALISATION.out.datasheet.getVal(),
+        PIPELINE_INITIALISATION.out.references.getVal(),
     )
 
     //

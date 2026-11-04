@@ -8,6 +8,7 @@ IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 
+include { getReferenceAttribute } from 'plugin/nf-core-utils'
 include { getReferencePath } from 'plugin/nf-core-utils'
 include { getReferenceMetadata } from 'plugin/nf-core-utils'
 include { paramsHelp } from 'plugin/nf-schema'
@@ -36,6 +37,12 @@ workflow PIPELINE_INITIALISATION {
     help_full // boolean: Show the full help message
     show_hidden // boolean: Show hidden parameters in the help message
     monochrome_logs // boolean: Disable ANSI colour codes in log output
+    genome // string: iGenomes key, or datasheet path with igenomes_ignore
+    genomes // map: iGenomes catalogue
+    igenomes_ignore // boolean: Read --genome as a datasheet path
+    references_datasheet // string: Path to a references datasheet
+    references_datasheets_path // string: Location of the datasheets used with igenomes_ignore
+    explicit_references // map: Reference parameters set by the user, even to null
 
     main:
 
@@ -103,7 +110,7 @@ workflow PIPELINE_INITIALISATION {
     //
     // Custom validation for pipeline parameters
     //
-    validateInputParameters()
+    validateInputParameters(genome, genomes)
 
     //
     // Create channel from input file provided through input
@@ -121,23 +128,23 @@ workflow PIPELINE_INITIALISATION {
         }
 
     //
-    // REFERENCES: Determine path to datasheet
+    // References come from --genome (iGenomes) or from a references datasheet; an explicit parameter, even null, wins
     //
     def referencePath = getReferencePath(
-        datasheetPath: params.references_datasheets_path,
-        genome: params.genome,
-        igenomesIgnore: params.igenomes_ignore,
-        references: params.references,
+        datasheetPath: references_datasheets_path,
+        genome: genome,
+        igenomesIgnore: igenomes_ignore,
+        references: references_datasheet,
     )
-    //
-    // REFERENCES: Load datasheet
-    //
     def referenceSheet = referencePath
         ? getReferenceMetadata(rows: samplesheetToList(referencePath, "${projectDir}/assets/schema_references.json"))
         : null
+    def resolvedReferences = referenceParams().collectEntries { name ->
+        [name, explicit_references.containsKey(name) ? explicit_references[name] : getReferenceAttribute(param: name, datasheet: referenceSheet, genomeMap: genomes, genomeKey: genome)]
+    }
 
     emit:
-    datasheet = referenceSheet
+    references = resolvedReferences
     samplesheet = ch_samplesheet
     versions = ch_versions
 }
@@ -191,10 +198,17 @@ FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
 //
+// Reference parameters that a references datasheet can provide
+//
+def referenceParams() {
+    return ['fasta', 'fasta_fai']
+}
+
+//
 // Check and validate pipeline parameters
 //
-def validateInputParameters() {
-    genomeExistsError()
+def validateInputParameters(genome, genomes) {
+    genomeExistsError(genome, genomes)
 }
 
 //
@@ -215,9 +229,9 @@ def validateInputSamplesheet(input) {
 //
 // Exit pipeline if incorrect --genome key provided
 //
-def genomeExistsError() {
-    if (params.genomes && params.genome && !params.genomes.containsKey(params.genome)) {
-        def error_string = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + "  Genome '${params.genome}' not found in any config files provided to the pipeline.\n" + "  Currently, the available genome keys are:\n" + "  ${params.genomes.keySet().join(", ")}\n" + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+def genomeExistsError(genome, genomes) {
+    if (genomes && genome && !genomes.containsKey(genome)) {
+        def error_string = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + "  Genome '${genome}' not found in any config files provided to the pipeline.\n" + "  Currently, the available genome keys are:\n" + "  ${genomes.keySet().join(", ")}\n" + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         error(error_string)
     }
 }
