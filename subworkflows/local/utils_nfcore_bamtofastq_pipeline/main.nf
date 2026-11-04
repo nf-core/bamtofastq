@@ -110,7 +110,23 @@ workflow PIPELINE_INITIALISATION {
     //
     // Custom validation for pipeline parameters
     //
-    validateInputParameters(genome, genomes)
+    validateInputParameters(genome, genomes, references_datasheet)
+
+    //
+    // References come from --genome (iGenomes) or from a references datasheet; an explicit parameter, even null, wins
+    //
+    def reference_path = getReferencePath(
+        references: references_datasheet,
+        genome: genome,
+        igenomesIgnore: igenomes_ignore,
+        datasheetPath: references_datasheets_path,
+    )
+    def datasheet = reference_path
+        ? getReferenceMetadata(rows: samplesheetToList(reference_path, "${projectDir}/assets/schema_references.json"))
+        : null
+    def resolved_references = referenceParams().collectEntries { name ->
+        [name, explicit_references.containsKey(name) ? explicit_references[name] : getReferenceAttribute(param: name, datasheet: datasheet, genomeMap: genomes, genomeKey: genome)]
+    }
 
     //
     // Create channel from input file provided through input
@@ -127,24 +143,8 @@ workflow PIPELINE_INITIALISATION {
             return [meta, mapped, index]
         }
 
-    //
-    // References come from --genome (iGenomes) or from a references datasheet; an explicit parameter, even null, wins
-    //
-    def referencePath = getReferencePath(
-        datasheetPath: references_datasheets_path,
-        genome: genome,
-        igenomesIgnore: igenomes_ignore,
-        references: references_datasheet,
-    )
-    def referenceSheet = referencePath
-        ? getReferenceMetadata(rows: samplesheetToList(referencePath, "${projectDir}/assets/schema_references.json"))
-        : null
-    def resolvedReferences = referenceParams().collectEntries { name ->
-        [name, explicit_references.containsKey(name) ? explicit_references[name] : getReferenceAttribute(param: name, datasheet: referenceSheet, genomeMap: genomes, genomeKey: genome)]
-    }
-
     emit:
-    references = resolvedReferences
+    references = resolved_references
     samplesheet = ch_samplesheet
     versions = ch_versions
 }
@@ -197,18 +197,19 @@ workflow PIPELINE_COMPLETION {
 FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  */
-//
-// Reference parameters that a references datasheet can provide
-//
+// Reference params resolved from --references, a genome datasheet, or params.genomes
 def referenceParams() {
-    return ['fasta', 'fasta_fai']
+    return [
+        'fasta',
+        'fasta_fai',
+    ]
 }
 
 //
 // Check and validate pipeline parameters
 //
-def validateInputParameters(genome, genomes) {
-    genomeExistsError(genome, genomes)
+def validateInputParameters(genome, genomes, references_datasheet) {
+    genomeExistsError(genome, genomes, references_datasheet)
 }
 
 //
@@ -229,7 +230,11 @@ def validateInputSamplesheet(input) {
 //
 // Exit pipeline if incorrect --genome key provided
 //
-def genomeExistsError(genome, genomes) {
+def genomeExistsError(genome, genomes, references_datasheet) {
+    // Skip with --references: --genome must be unset there, and "--genome null" is a truthy string the key check would reject
+    if (references_datasheet) {
+        return null
+    }
     if (genomes && genome && !genomes.containsKey(genome)) {
         def error_string = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + "  Genome '${genome}' not found in any config files provided to the pipeline.\n" + "  Currently, the available genome keys are:\n" + "  ${genomes.keySet().join(", ")}\n" + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         error(error_string)

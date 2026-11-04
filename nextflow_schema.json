@@ -73,9 +73,9 @@
             "properties": {
                 "genome": {
                     "type": "string",
-                    "description": "iGenomes catalogue key, or references-datasheets path when igenomes_ignore is set. Do not combine with --references.",
+                    "description": "Reference genome name: an iGenomes catalogue key, or a references-datasheets path when igenomes_ignore is set. Do not combine with --references.",
                     "fa_icon": "fas fa-book",
-                    "help_text": "iGenomes: key in conf/igenomes.config (e.g. GRCh38). With --igenomes_ignore: path under --references_datasheets_path (e.g. GATK/GRCh38, file igenomes/GATK/GRCh38.yml)."
+                    "help_text": "iGenomes: key in conf/igenomes.config. With --igenomes_ignore: path under --references_datasheets_path, without `.yml` (e.g. GATK/GRCh38 for igenomes/GATK/GRCh38.yml)."
                 },
                 "fasta": {
                     "type": "string",
@@ -102,25 +102,25 @@
                     "format": "file-path",
                     "exists": true,
                     "pattern": "^\\S+\\.(yaml|yml)$",
-                    "description": "Path to a references-datasheets YAML (or compatible). Do not combine with --genome.",
-                    "help_text": "Provides fasta, fasta_fai, and meta such as genome, source, and species. Wins over the iGenomes catalogue; --fasta/--fasta_fai win over this. See [usage docs](https://nf-co.re/bamtofastq/usage).",
-                    "fa_icon": "fas fa-file-alt",
-                    "schema": "assets/schema_references.json"
+                    "schema": "assets/schema_references.json",
+                    "description": "Path to a references-datasheets YAML supplying reference files and metadata. Do not combine with --genome.",
+                    "help_text": "Provides reference files and metadata from a single datasheet. Explicit reference parameters such as `--fasta` win over it. See [nf-core/references-datasheets](https://github.com/nf-core/references-datasheets).",
+                    "fa_icon": "fas fa-file-alt"
                 },
                 "references_datasheets_path": {
                     "type": "string",
                     "description": "Base URL or path for references-datasheets files loaded via --genome with --igenomes_ignore.",
                     "default": "https://raw.githubusercontent.com/nf-core/references-datasheets/latest/igenomes",
-                    "fa_icon": "fas fa-database",
+                    "fa_icon": "fas fa-folder-open",
                     "hidden": true
                 },
                 "references_base_path": {
                     "type": "string",
                     "format": "directory-path",
                     "description": "Base path substituted for ${params.references_base_path} placeholders in datasheet paths.",
-                    "help_text": "Datasheet paths may carry a ${params.references_base_path} placeholder instead of a hardcoded root. The placeholder is replaced by this parameter when the datasheet loads, so one datasheet works against any mirror of the reference files. The default is s3://ngi-igenomes/igenomes, the root that published datasheets are written against. The placeholder carries the leading slash, so the value must not end with one. This parameter only rewrites paths inside the datasheet; the location of the datasheet itself is set with --references_datasheets_path.",
+                    "help_text": "The default fits the `igenomes/` datasheets. Use `s3://nf-core-references` for the `genomes/` datasheets.",
                     "default": "s3://ngi-igenomes/igenomes",
-                    "fa_icon": "fas fa-ban"
+                    "fa_icon": "fas fa-folder-open"
                 },
                 "igenomes_ignore": {
                     "type": "boolean",

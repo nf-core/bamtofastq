@@ -42,8 +42,8 @@ nextflow_pipeline {
             params {
                 outdir                     = "$outputDir"
                 igenomes_ignore            = true
-                references_datasheets_path = 'https://raw.githubusercontent.com/nf-core/references-datasheets/latest/genomes/Homo_sapiens/nf-core'
-                genome                     = 'GRCh38_chr21'
+                references_datasheets_path = 'https://raw.githubusercontent.com/nf-core/references-datasheets/latest/genomes/Homo_sapiens'
+                genome                     = 'nf-core/GRCh38_chr21'
             }
         }
 
