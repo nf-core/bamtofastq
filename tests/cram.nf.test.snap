@@ -4,7 +4,7 @@
             16,
             {
                 "CHECKPAIREDEND": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.13.0"
@@ -13,19 +13,19 @@
                     "fastqutils": "0.25.3"
                 },
                 "SAMTOOLS_COLLATEFASTQ_PAIRED_END": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_FLAGSTAT": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_IDXSTATS": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_STATS": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 }
             },
             [
@@ -76,15 +76,15 @@
                 "test_2.fq.gz:md5,70ef5d106a5974a211ac885e703cdbd0",
                 "test.flagstat:md5,a53f3d26e2e9851f7d528442bbfe9781",
                 "test.idxstats:md5,e179601fa7b8ebce81ac3765206f6c15",
-                "test.stats:md5,fe30f8014c65fbcfbcbf4b28f8d9b1e1",
+                "test.stats:md5,686a4e449bb088f207b15ee99e39b3c3",
                 "test2.flagstat:md5,acbd95030a362a7e6491faa87d1b9c2c",
                 "test2.idxstats:md5,90f01313bc89c7fd096aad051cd71b66",
-                "test2.stats:md5,2da3f0d5ac1a7cde836d879e7b0a54d4"
+                "test2.stats:md5,4e30ebdb96f5f5e6c53cfaaf50a75fd0"
             ],
             "No BAM files",
             "No CRAM files"
         ],
-        "timestamp": "2026-11-11T12:03:44.236248485",
+        "timestamp": "2026-11-11T12:11:36.13448058",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
