@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#156](https://github.com/nf-core/bamtofastq/pull/156) - Move FASTA `.fai` generation out of BAMTOFASTQ workflow
 - [#156](https://github.com/nf-core/bamtofastq/pull/156) - Move bam/cram indexing directly into BAMTOFASTQ workflow
 - [#164](https://github.com/nf-core/bamtofastq/pull/164) - Update nf-core modules and subworkflows
-- [#164](https://github.com/nf-core/bamtofastq/pull/164) - Bump nf-schema to 3.0.0 and minimal Nextflow version to 26.04.0
+- [#165](https://github.com/nf-core/bamtofastq/pull/165) - Bump minimal Nextflow version to 26.04.0, nf-schema to 3.0.0 and update subworkflow utils_nfschema_plugin
 
 ### `Fixed`
 
