@@ -15,7 +15,7 @@
                 "FASTQUTILS_INFO": {
                     "fastqutils": "0.25.3"
                 },
-                "SAMTOOLS_COLLATEFASTQ_PAIRED_END": {
+                "SAMTOOLS_COLLATEFASTQ": {
                     "samtools": 1.25
                 },
                 "SAMTOOLS_FAIDX": {
@@ -91,7 +91,7 @@
             "No BAM files",
             "No CRAM files"
         ],
-        "timestamp": "2026-11-11T12:12:02.286154665",
+        "timestamp": "2026-11-11T13:01:15.185310656",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
