@@ -32,6 +32,7 @@ include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../m
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index'
 include { SAMTOOLS_INDEX                                            } from '../modules/nf-core/samtools/index'
 include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq'
+include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_PAIRED_END } from '../modules/nf-core/samtools/collatefastq'
 include { MULTIQC                                                   } from '../modules/nf-core/multiqc'
 
 //
@@ -39,7 +40,6 @@ include { MULTIQC                                                   } from '../m
 //
 
 include { PRE_CONVERSION_QC                                         } from '../subworkflows/local/pre_conversion_qc'
-include { ALIGNMENT_TO_FASTQ                                        } from '../subworkflows/local/alignment_to_fastq'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -154,22 +154,17 @@ workflow BAMTOFASTQ {
         interleave,
     )
 
-    //
-    // SUBWORKFLOW: PAIRED-END Alignment to FastQ
-    //
-    ALIGNMENT_TO_FASTQ(
-        conversion_input.ch_paired,
+    // MODULE: PAIRED-END Alignment to FastQ
+    SAMTOOLS_COLLATEFASTQ_PAIRED_END(
+        conversion_input.ch_paired.map { it -> [it[0], it[1]] },
         ch_fasta_fai,
+        interleave,
     )
-
-    // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
-    // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]}) // there is not zip in the output of the subworkflow?
-
 
     // MODULE: FastQC - Post conversion QC
     // famosab: swapped the output of SAMTOOLS_COLLATEFASTQ_SINGLE_END from fastq_singleton to fastq_other because otherwise the fatsq files had empty reads
     // coming from the samtools docs its not clear which file contains the expected reads
-    ch_reads_post_qc = channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
+    ch_reads_post_qc = channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, SAMTOOLS_COLLATEFASTQ_PAIRED_END.out.fastq)
 
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
 

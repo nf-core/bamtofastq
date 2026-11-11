@@ -49,7 +49,7 @@ The converted and gzipped fastq output reads are written to the directory `resul
 <summary>Read files</summary>
 
 - `reads/`
-  - `*.merged.fastq.gz`: Paired-end read files
+  - `*_{1,2}.fq.gz`: Paired-end read files
   - `*.other.fq.gz` : Single-end read files
 
 </details>
