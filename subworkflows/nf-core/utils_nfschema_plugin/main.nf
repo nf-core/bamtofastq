@@ -1,3 +1,6 @@
+// Copyright (c) the nf-core community under an open-source MIT license.
+// See https://github.com/nf-core/modules for full license, file patching instructions and upstream contributing.
+
 //
 // Subworkflow that uses the nf-schema plugin to validate parameters and render the parameter summary
 //
@@ -28,6 +31,7 @@ workflow UTILS_NFSCHEMA_PLUGIN {
 
     if(help || help_full) {
         help_options = [
+            parameter: (help instanceof String && help != "true") ? help : null,
             beforeText: before_text,
             afterText: after_text,
             command: command,
@@ -54,7 +58,7 @@ workflow UTILS_NFSCHEMA_PLUGIN {
         summary_options << [parameters_schema: parameters_schema]
     }
     log.info before_text
-    log.info paramsSummaryLog(summary_options, input_workflow)
+    log.info paramsSummaryLog(summary_options)
     log.info after_text
 
     //

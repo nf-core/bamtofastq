@@ -10,3 +10,7 @@ null/
 .lineage/
 .nf-test/
 .nf-test.log
+*.fasta
+*.fai
+modules/nf-core/**/tests/
+subworkflows/nf-core/**/tests/

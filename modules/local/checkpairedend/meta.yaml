@@ -1,0 +1,78 @@
+name: checkpairedend
+description: Detects whether an alignment file contains paired-end or single-end reads by sampling reads with samtools.
+keywords:
+  - samtools
+  - paired
+  - single_end
+  - check
+tools:
+  - samtools:
+      description: |
+        Samtools provides utilities for manipulating alignments in the SAM/BAM/CRAM formats.
+      documentation: https://www.htslib.org/
+      licence: ["MIT"]
+      identifier: ""
+input:
+  - - meta:
+        type: map
+        description: |
+          Groovy Map containing sample information
+    - input:
+        type: file
+        description: |
+          Alignment input file to check (BAM or CRAM).
+    - index:
+        type: file
+        description: Index for the input alignment (BAM .bai or CRAM .crai).
+  - - meta2:
+        type: map
+        description: |
+          Groovy Map containing reference information when checking CRAM files
+    - fasta:
+        type: file
+        description: Reference fasta (required when input is CRAM).
+    - fai:
+        type: file
+        description: Fasta index for the reference.
+output:
+  single_end:
+    - - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*single.txt":
+          type: file
+          description: File containing a single-end indicator (one if single-end reads)
+  paired_end:
+    - - meta:
+          type: map
+          description: Groovy Map containing sample information
+      - "*paired.txt":
+          type: file
+          description: File containing a paired-end indicator (one if paired-end reads)
+  versions_samtools:
+    - - ${task.process}:
+          type: string
+          description: The process the versions were collected from
+      - samtools:
+          type: string
+          description: The tool name
+      - samtools version | sed '1!d;s/.* //':
+          type: eval
+          description: The expression to obtain the version of samtools
+
+topics:
+  versions:
+    - - ${task.process}:
+          type: string
+          description: The process the versions were collected from
+      - samtools:
+          type: string
+          description: The tool name
+      - samtools version | sed '1!d;s/.* //':
+          type: eval
+          description: The expression to obtain the version of samtools
+
+authors:
+  - "@FriederikeHanssen"
+maintainers:
+  - "@famosab"
