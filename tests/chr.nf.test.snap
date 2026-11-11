@@ -4,7 +4,7 @@
             13,
             {
                 "CHECKPAIREDEND": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "FASTQC_POST_CONVERSION": {
                     "fastqc": "0.13.0"
@@ -16,28 +16,28 @@
                     "fastqutils": "0.25.3"
                 },
                 "SAMTOOLS_CHR": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_CHR_INDEX": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_COLLATEFASTQ_SINGLE_END": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_FAIDX": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_FLAGSTAT": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_IDXSTATS": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_INDEX": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 },
                 "SAMTOOLS_STATS": {
-                    "samtools": "1.23.1"
+                    "samtools": 1.25
                 }
             },
             [
@@ -74,17 +74,17 @@
                 "test3.chrX_chrY_X_Y_other.fq.gz:md5,6f79ab14a70e174ef178469e3a5febdd",
                 "test3.flagstat:md5,7b43b975b0a395040bf1ee3c48f058e7",
                 "test3.idxstats:md5,094096b6f303cc18892e1e027c87f273",
-                "test3.stats:md5,28954b3c5a6050edfbbe5899ca6aa23e"
+                "test3.stats:md5,f649b490ae78c3a6fb5d609c9373d199"
             ],
             [
                 "test3.chrX_chrY_X_Y.bam:md5,ab0ddbdbb098c2c0a07988645c0e5d08"
             ],
             "No CRAM files"
         ],
-        "timestamp": "2026-10-27T10:08:30.253056034",
+        "timestamp": "2026-11-11T11:15:20.2963",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.0"
+            "nextflow": "26.04.0"
         }
     }
 }
