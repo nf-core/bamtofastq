@@ -41,10 +41,8 @@ workflow UTILS_NFSCHEMA_PLUGIN {
         if(parameters_schema) {
             help_options << [parameters_schema: parameters_schema]
         }
-        log.info paramsHelp(
-            help_options,
-            (help instanceof String && help != "true") ? help : "",
-        )
+
+        log.info paramsHelp(help_options)
         exit 0
     }
 
