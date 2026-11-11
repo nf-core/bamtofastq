@@ -24,15 +24,15 @@
                     [
                         "CHECKPAIREDEND",
                         "samtools",
-                        "1.23.1"
+                        "1.25"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-27T11:20:33.266945144",
+        "timestamp": "2026-11-11T11:43:38.098356",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.0"
+            "nextflow": "26.04.0"
         }
     },
     "paired_end_cram": {
@@ -54,15 +54,15 @@
                     [
                         "CHECKPAIREDEND",
                         "samtools",
-                        "1.23.1"
+                        "1.25"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-27T11:20:26.936593817",
+        "timestamp": "2026-11-11T11:43:32.592958",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.0"
+            "nextflow": "26.04.0"
         }
     },
     "single_end_bam": {
@@ -84,15 +84,15 @@
                     [
                         "CHECKPAIREDEND",
                         "samtools",
-                        "1.23.1"
+                        "1.25"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-27T11:20:20.23245325",
+        "timestamp": "2026-11-11T11:43:25.456849",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.0"
+            "nextflow": "26.04.0"
         }
     },
     "paired_end_bam": {
@@ -114,15 +114,15 @@
                     [
                         "CHECKPAIREDEND",
                         "samtools",
-                        "1.23.1"
+                        "1.25"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-10-27T11:20:13.85338087",
+        "timestamp": "2026-11-11T11:43:19.042565",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.10.0"
+            "nextflow": "26.04.0"
         }
     }
 }
