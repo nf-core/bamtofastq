@@ -4,27 +4,27 @@
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
+    IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
+*/
 
-include { getReferenceAttribute } from 'plugin/nf-core-utils'
-include { getReferencePath } from 'plugin/nf-core-utils'
-include { getReferenceMetadata } from 'plugin/nf-core-utils'
-include { paramsHelp } from 'plugin/nf-schema'
-include { paramsSummaryMap } from 'plugin/nf-schema'
-include { samplesheetToList } from 'plugin/nf-schema'
-include { completionEmail } from '../../nf-core/utils_nfcore_pipeline'
-include { completionSummary } from '../../nf-core/utils_nfcore_pipeline'
-include { UTILS_NFSCHEMA_PLUGIN } from '../../nf-core/utils_nfschema_plugin'
-include { UTILS_NFCORE_PIPELINE } from '../../nf-core/utils_nfcore_pipeline'
+include { UTILS_NFSCHEMA_PLUGIN   } from '../../nf-core/utils_nfschema_plugin'
+include { paramsSummaryMap        } from 'plugin/nf-schema'
+include { samplesheetToList       } from 'plugin/nf-schema'
+include { paramsHelp              } from 'plugin/nf-schema'
+include { completionEmail         } from '../../nf-core/utils_nfcore_pipeline'
+include { completionSummary       } from '../../nf-core/utils_nfcore_pipeline'
+include { UTILS_NFCORE_PIPELINE   } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NEXTFLOW_PIPELINE } from '../../nf-core/utils_nextflow_pipeline'
+include { getReferenceAttribute   } from 'plugin/nf-core-utils'
+include { getReferencePath        } from 'plugin/nf-core-utils'
+include { getReferenceMetadata    } from 'plugin/nf-core-utils'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SUBWORKFLOW TO INITIALISE PIPELINE
+    SUBWORKFLOW TO INITIALISE PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
+*/
 
 workflow PIPELINE_INITIALISATION {
     take:
@@ -132,7 +132,7 @@ workflow PIPELINE_INITIALISATION {
     // Create channel from input file provided through input
     //
 
-    ch_samplesheet = channel.fromList(samplesheetToList(input, "${projectDir}/assets/schema_input.json"))
+    channel.fromList(samplesheetToList(input, "${projectDir}/assets/schema_input.json"))
         .map { meta, mapped, index ->
             if (meta.filetype != mapped.getExtension().toString()) {
                 error('The file extension does not fit the specified file_type.\n' + mapped.toString())
@@ -142,18 +142,19 @@ workflow PIPELINE_INITIALISATION {
 
             return [meta, mapped, index]
         }
+        .set { ch_samplesheet }
 
     emit:
-    references = resolved_references
+    references  = resolved_references
     samplesheet = ch_samplesheet
-    versions = ch_versions
+    versions    = ch_versions
 }
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SUBWORKFLOW FOR PIPELINE COMPLETION
+    SUBWORKFLOW FOR PIPELINE COMPLETION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
+*/
 
 workflow PIPELINE_COMPLETION {
     take:
@@ -194,9 +195,9 @@ workflow PIPELINE_COMPLETION {
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-FUNCTIONS
+    FUNCTIONS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
+*/
 // Reference params resolved from --references, a genome datasheet, or params.genomes
 def referenceParams() {
     return [

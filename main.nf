@@ -1,33 +1,31 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-nf-core/bamtofastq
+    nf-core/bamtofastq
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Github : https://github.com/nf-core/bamtofastq
-Website: https://nf-co.re/bamtofastq
-Slack  : https://nfcore.slack.com/channels/bamtofastq
+    Github : https://github.com/nf-core/bamtofastq
+    Website: https://nf-co.re/bamtofastq
+    Slack  : https://nfcore.slack.com/channels/bamtofastq
 ----------------------------------------------------------------------------------------
- */
+*/
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
+    IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
+*/
 
-include { samplesheetToList } from 'plugin/nf-schema'
-
-include { BAMTOFASTQ } from './workflows/bamtofastq'
-include { SAMTOOLS_FAIDX } from './modules/nf-core/samtools/faidx'
+include { BAMTOFASTQ              } from './workflows/bamtofastq'
+include { SAMTOOLS_FAIDX          } from './modules/nf-core/samtools/faidx'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
-include { PIPELINE_COMPLETION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
-include { referenceParams } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { referenceParams         } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-NAMED WORKFLOWS FOR PIPELINE
+    NAMED WORKFLOWS FOR PIPELINE
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
+*/
 
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
@@ -46,14 +44,14 @@ workflow NFCORE_BAMTOFASTQ {
         ch_references = channel.fromPath(references.fasta)
             .collect()
             .combine(channel.fromPath(references.fasta_fai))
-            .map { fa, fai -> [[id: fa.baseName], fa, fai] }
+            .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
             .collect()
     }
     else {
-        SAMTOOLS_FAIDX(channel.fromPath(references.fasta).map { fa -> [[id: fa.baseName], fa, []] }, false)
+        SAMTOOLS_FAIDX(channel.fromPath(references.fasta).map { fasta -> [[id: fasta.baseName], fasta, []] }, false)
         ch_references = channel.fromPath(references.fasta)
-            .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fai -> fai })
-            .map { fa, fai -> [[id: fa.baseName], fa, fai] }
+            .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fasta_fai -> fasta_fai })
+            .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
             .collect()
     }
 
@@ -72,12 +70,11 @@ workflow NFCORE_BAMTOFASTQ {
     emit:
     multiqc_report = BAMTOFASTQ.out.multiqc_report // channel: /path/to/multiqc_report.html
 }
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-RUN MAIN WORKFLOW
+    RUN MAIN WORKFLOW
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- */
+*/
 
 workflow {
     //
@@ -108,7 +105,6 @@ workflow {
         PIPELINE_INITIALISATION.out.samplesheet,
         PIPELINE_INITIALISATION.out.references.getVal(),
     )
-
     //
     // SUBWORKFLOW: Run completion tasks
     //
