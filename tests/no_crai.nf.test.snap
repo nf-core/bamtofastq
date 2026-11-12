@@ -106,11 +106,9 @@
                 "test2.stats:md5,4e30ebdb96f5f5e6c53cfaaf50a75fd0"
             ],
             "No BAM files",
-            [
-                "WARN: The following invalid input values have been detected:"
-            ]
+            "No warnings"
         ],
-        "timestamp": "2026-11-12T19:11:34.607257758",
+        "timestamp": "2026-11-12T19:23:42.376059989",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"

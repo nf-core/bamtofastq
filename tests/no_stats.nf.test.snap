@@ -88,11 +88,9 @@
                 "test_2.merged.fastq.gz:md5,40e17982d1231e561d6420234ae29357"
             ],
             "No BAM files",
-            [
-                "WARN: The following invalid input values have been detected:"
-            ]
+            "No warnings"
         ],
-        "timestamp": "2026-11-12T19:12:18.013240467",
+        "timestamp": "2026-11-12T19:24:39.197090286",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
