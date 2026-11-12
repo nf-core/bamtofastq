@@ -33,11 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### `Parameters`
 
-| Params                       | Status |
-| ---------------------------- | ------ |
-| `references`                 | New    |
-| `references_base_path`       | New    |
-| `references_datasheets_path` | New    |
+| Params                         | Status |
+| ------------------------------ | ------ |
+| `--references`                 | Added  |
+| `--references_base_path`       | Added  |
+| `--references_datasheets_path` | Added  |
 
 ### `Dependencies`
 
