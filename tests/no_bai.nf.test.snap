@@ -130,12 +130,14 @@
                 "test3.stats:md5,f649b490ae78c3a6fb5d609c9373d199"
             ],
             "No BAM files",
-            "No CRAM files"
+            [
+                "WARN: The following invalid input values have been detected:"
+            ]
         ],
-        "timestamp": "2026-11-11T11:33:15.016695",
+        "timestamp": "2026-11-12T19:11:13.638503015",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.0"
+            "nextflow": "26.10.0"
         }
     }
 }
