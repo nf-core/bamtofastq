@@ -79,12 +79,12 @@
             [
                 "test3.chrX_chrY_X_Y.bam:md5,ab0ddbdbb098c2c0a07988645c0e5d08"
             ],
-            "No CRAM files"
+            "No warnings"
         ],
-        "timestamp": "2026-11-11T11:15:20.2963",
+        "timestamp": "2026-11-12T19:20:58.089022591",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "26.04.0"
+            "nextflow": "26.10.0"
         }
     }
 }
