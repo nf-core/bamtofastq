@@ -31,7 +31,7 @@ include { FASTQUTILS_INFO                                           } from '../m
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index'
 include { SAMTOOLS_INDEX                                            } from '../modules/nf-core/samtools/index'
-include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq'
+include { SAMTOOLS_COLLATEFASTQ                                     } from '../modules/nf-core/samtools/collatefastq'
 include { MULTIQC                                                   } from '../modules/nf-core/multiqc'
 
 //
@@ -39,7 +39,6 @@ include { MULTIQC                                                   } from '../m
 //
 
 include { PRE_CONVERSION_QC                                         } from '../subworkflows/local/pre_conversion_qc'
-include { ALIGNMENT_TO_FASTQ                                        } from '../subworkflows/local/alignment_to_fastq'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -137,40 +136,18 @@ workflow BAMTOFASTQ {
         }
     }
 
-    // MODULE: SINGLE-END Alignment to FastQ (SortExtractSingleEnd)
-    def interleave = false
-
-    ch_input_new
-        .branch { meta, _file, _index ->
-            ch_single: meta.single_end == true
-            ch_paired: meta.single_end == false
-        }
-        .set { conversion_input }
-
-    // Module needs info about single-endedness
-    SAMTOOLS_COLLATEFASTQ_SINGLE_END(
-        conversion_input.ch_single.map { it -> [it[0], it[1]] },
+    // MODULE: Alignment to FastQ
+    SAMTOOLS_COLLATEFASTQ(
+        ch_input_new.map { meta, file, _index -> [meta, file] },
         ch_fasta_fai,
-        interleave,
+        false,
     )
 
-    //
-    // SUBWORKFLOW: PAIRED-END Alignment to FastQ
-    //
-    ALIGNMENT_TO_FASTQ(
-        conversion_input.ch_paired,
-        ch_fasta_fai,
-    )
-
-    // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
-    // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]}) // there is not zip in the output of the subworkflow?
-
+    // samtools fastq writes reads without the READ1/READ2 flags to the _other file
+    ch_reads_post_qc = SAMTOOLS_COLLATEFASTQ.out.fastq.filter { meta, _reads -> !meta.single_end }
+        .mix(SAMTOOLS_COLLATEFASTQ.out.fastq_other.filter { meta, _reads -> meta.single_end })
 
     // MODULE: FastQC - Post conversion QC
-    // famosab: swapped the output of SAMTOOLS_COLLATEFASTQ_SINGLE_END from fastq_singleton to fastq_other because otherwise the fatsq files had empty reads
-    // coming from the samtools docs its not clear which file contains the expected reads
-    ch_reads_post_qc = channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
-
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
 
     // MODULE: fastq_utils - Post conversion checks for broken fastq files
