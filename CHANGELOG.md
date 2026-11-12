@@ -31,16 +31,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#156](https://github.com/nf-core/bamtofastq/pull/156) - Remove PREPARE_INDICES subworkflow
 
+### `Parameters`
+
+| Params                       | Status |
+| ---------------------------- | ------ |
+| `references`                 | New    |
+| `references_base_path`       | New    |
+| `references_datasheets_path` | New    |
+
 ### `Dependencies`
 
-| Dependency | Old version | New version |
-| ---------- | ----------- | ----------- |
-| fastqc     | 0.12.1      | 0.13.0      |
-| htslib     | 1.23.1      | 1.25        |
-| multiqc    | 1.34        | 1.35        |
-| nf-schema  | 2.6.1       | 3.0.0       |
-| nft-utils  | 0.0.9       | 1.2.1       |
-| samtools   | 1.23.1      | 1.25        |
+| Dependency    | Old version | New version |
+| ------------- | ----------- | ----------- |
+| fastqc        | 0.12.1      | 0.13.0      |
+| htslib        | 1.23.1      | 1.25        |
+| multiqc       | 1.34        | 1.35        |
+| nf-core-utils |             | 0.7.0       |
+| nf-schema     | 2.6.1       | 3.0.0       |
+| nft-utils     | 0.0.9       | 1.2.1       |
+| samtools      | 1.23.1      | 1.25        |
 
 ## v2.2.1 - Radia Perlman
 
@@ -70,8 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | ----------- | ----------- | ----------- |
 | fastq_utils | 0.25.2      | 0.25.3      |
 | multiqc     | 1.28        | 1.34        |
-| samtools    | 1.21        | 1.23.1      |
-| nft-utils   | 0.0.5       | 0.0.9       |
+| samtools      | 1.21        | 1.23.1      |
+| nft-utils     | 0.0.5       | 0.0.9       |
 | nft-bam     | 0.4.0       | 0.6.1       |
 
 Bump minimal Nextflow version to 25.10.4 and nf-schema to 2.6.1
