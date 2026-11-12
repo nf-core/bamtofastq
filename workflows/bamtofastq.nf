@@ -149,7 +149,7 @@ workflow BAMTOFASTQ {
 
     // Module needs info about single-endedness
     SAMTOOLS_COLLATEFASTQ_SINGLE_END(
-        conversion_input.ch_single.map { it -> [it[0], it[1]] },
+        conversion_input.ch_single.map { entry -> [entry[0], entry[1]] },
         ch_fasta_fai,
         interleave,
     )

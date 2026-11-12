@@ -1,3 +1,5 @@
+lint:
+  schema_params: false
 nf_core_version: 4.2.2
 repository_type: pipeline
 template:

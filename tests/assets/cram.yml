@@ -1,0 +1,5 @@
+- genome: testdata
+  fasta: ${params.references_base_path}/genomics/homo_sapiens/genome/genome.fasta
+  fasta_fai: ${params.references_base_path}/genomics/homo_sapiens/genome/genome.fasta.fai
+  reference_source: nf-core
+  species: Homo_sapiens
