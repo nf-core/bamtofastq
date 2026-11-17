@@ -5,11 +5,6 @@
         "https://github.com/nf-core/modules.git": {
             "modules": {
                 "nf-core": {
-                    "cat/fastq": {
-                        "branch": "master",
-                        "git_sha": "3ed7dbab112fa8802f0affff345b8fa2ac935e5c",
-                        "installed_by": ["modules"]
-                    },
                     "fastqc": {
                         "branch": "master",
                         "git_sha": "7b3452a23773f687ededb4befd037920e5a51341",
@@ -46,11 +41,6 @@
                         "installed_by": ["modules"]
                     },
                     "samtools/index": {
-                        "branch": "master",
-                        "git_sha": "80eb474060aa4aa6d7b4b00e0dc785174f156a28",
-                        "installed_by": ["modules"]
-                    },
-                    "samtools/merge": {
                         "branch": "master",
                         "git_sha": "80eb474060aa4aa6d7b4b00e0dc785174f156a28",
                         "installed_by": ["modules"]
