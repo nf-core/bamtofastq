@@ -30,16 +30,15 @@ include { FASTQC as FASTQC_POST_CONVERSION                          } from '../m
 include { FASTQUTILS_INFO                                           } from '../modules/nf-core/fastqutils/info'
 include { SAMTOOLS_VIEW as SAMTOOLS_CHR                             } from '../modules/nf-core/samtools/view'
 include { SAMTOOLS_INDEX as SAMTOOLS_CHR_INDEX                      } from '../modules/nf-core/samtools/index'
-include { SAMTOOLS_COLLATEFASTQ as SAMTOOLS_COLLATEFASTQ_SINGLE_END } from '../modules/nf-core/samtools/collatefastq'
+include { SAMTOOLS_INDEX                                            } from '../modules/nf-core/samtools/index'
+include { SAMTOOLS_COLLATEFASTQ                                     } from '../modules/nf-core/samtools/collatefastq'
 include { MULTIQC                                                   } from '../modules/nf-core/multiqc'
 
 //
 // SUBWORKFLOWS: Installed directly from subworkflows/local
 //
 
-include { PREPARE_INDICES                                           } from '../subworkflows/local/prepare_indices'
 include { PRE_CONVERSION_QC                                         } from '../subworkflows/local/pre_conversion_qc'
-include { ALIGNMENT_TO_FASTQ                                        } from '../subworkflows/local/alignment_to_fastq'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -50,6 +49,7 @@ include { ALIGNMENT_TO_FASTQ                                        } from '../s
 workflow BAMTOFASTQ {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
+    ch_fasta_fai // channel: [meta, fasta, fai] from main.nf
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -58,24 +58,17 @@ workflow BAMTOFASTQ {
     main:
     ch_multiqc_files = channel.empty()
 
-    fasta_fai = params.fasta
-        ? channel.fromPath(params.fasta).map { fasta_file ->
-            def fai_file = params.fasta_fai ? file(params.fasta_fai, checkIfExists: true) : []
-            def has_fai  = !(fai_file instanceof List && fai_file.isEmpty())
-            [ [id: fasta_file.baseName, index: has_fai], fasta_file, fai_file ]
-        }.collect()
-        : channel.value([ [id:'none', index:false], [], [] ])
+    // Index BAM/CRAM when an index was not provided
+    samtools_input = ch_samplesheet.branch { meta, _bam, _bai ->
+        is_indexed: meta.index == true
+        to_index: meta.index == false
+    }
 
-    // SUBWORKFLOW: Prepare indices bai/crai/fai if not provided
-    PREPARE_INDICES(
-        ch_samplesheet,
-        fasta_fai
-    )
-
-    ch_fasta_fai = PREPARE_INDICES.out.ch_fasta_fai
+    input_to_index = samtools_input.to_index.map { meta, bam, _bai -> [meta, bam] }
+    SAMTOOLS_INDEX(input_to_index)
+    ch_input = samtools_input.is_indexed.mix(input_to_index.join(SAMTOOLS_INDEX.out.index))
 
     // SUBWORKFLOW: Pre conversion QC and stats
-    ch_input = PREPARE_INDICES.out.ch_input_indexed
     PRE_CONVERSION_QC(
         ch_input,
         ch_fasta_fai,
@@ -143,40 +136,18 @@ workflow BAMTOFASTQ {
         }
     }
 
-    // MODULE: SINGLE-END Alignment to FastQ (SortExtractSingleEnd)
-    def interleave = false
-
-    ch_input_new
-        .branch { meta, _file, _index ->
-            ch_single: meta.single_end == true
-            ch_paired: meta.single_end == false
-        }
-        .set { conversion_input }
-
-    // Module needs info about single-endedness
-    SAMTOOLS_COLLATEFASTQ_SINGLE_END(
-        conversion_input.ch_single.map { it -> [it[0], it[1]] },
+    // MODULE: Alignment to FastQ
+    SAMTOOLS_COLLATEFASTQ(
+        ch_input_new.map { meta, file, _index -> [meta, file] },
         ch_fasta_fai,
-        interleave,
+        false,
     )
 
-    //
-    // SUBWORKFLOW: PAIRED-END Alignment to FastQ
-    //
-    ALIGNMENT_TO_FASTQ(
-        conversion_input.ch_paired,
-        ch_fasta_fai,
-    )
-
-    // NOTE: TEMPORARILY DISABLED BY ASP FOR DEBUGGING!!!!
-    // ch_multiqc_files = ch_multiqc_files.mix(ALIGNMENT_TO_FASTQ.out.zip.collect{it[1]}) // there is not zip in the output of the subworkflow?
-
+    // samtools fastq writes reads without the READ1/READ2 flags to the _other file
+    ch_reads_post_qc = SAMTOOLS_COLLATEFASTQ.out.fastq.filter { meta, _reads -> !meta.single_end }
+        .mix(SAMTOOLS_COLLATEFASTQ.out.fastq_other.filter { meta, _reads -> meta.single_end })
 
     // MODULE: FastQC - Post conversion QC
-    // famosab: swapped the output of SAMTOOLS_COLLATEFASTQ_SINGLE_END from fastq_singleton to fastq_other because otherwise the fatsq files had empty reads
-    // coming from the samtools docs its not clear which file contains the expected reads
-    ch_reads_post_qc = channel.empty().mix(SAMTOOLS_COLLATEFASTQ_SINGLE_END.out.fastq_other, ALIGNMENT_TO_FASTQ.out.reads)
-
     FASTQC_POST_CONVERSION(ch_reads_post_qc)
 
     // MODULE: fastq_utils - Post conversion checks for broken fastq files
@@ -215,7 +186,7 @@ workflow BAMTOFASTQ {
     // MODULE: MultiQC
     //
     ch_multiqc_files = ch_multiqc_files.mix(ch_collated_versions)
-    def ch_summary_params = paramsSummaryMap(workflow, parameters_schema: "nextflow_schema.json")
+    def ch_summary_params = paramsSummaryMap(parameters_schema: "nextflow_schema.json")
     def ch_workflow_summary = channel.value(paramsSummaryMultiqc(ch_summary_params))
     ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
     def ch_multiqc_custom_methods_description = multiqc_methods_description

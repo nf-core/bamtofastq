@@ -136,7 +136,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `apptainer`
   - A generic configuration profile to be used with [Apptainer](https://apptainer.org/)
 - `wave`
-  - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
+  - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow `24.03.0-edge` or later).
 - `conda`
   - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter or Charliecloud.
 
@@ -192,11 +192,11 @@ Use to skip `FastQC` on obtained reads. This is useful, when the reads are used 
 
 ### `--samtools_collate_fast` (optional)
 
-Use to specify the fast mode for the `samtools collate` command in the processes `COLLATE_FASTQ_MAP`, `COLLATE_FASTQ_UNMAP` and `SAMTOOLS_COLLATEFASTQ_SINGLE_END`. This option relies on the samtools command line flags `-f -r INT` and will output primary alignments only. For full documentation of this mode please refer to the [samtools documentation](http://www.htslib.org/doc/samtools-collate.html#OPTIONS).
+Use to specify the fast mode for the `samtools collate` command in the process `SAMTOOLS_COLLATEFASTQ`. This option relies on the samtools command line flags `-f -r INT` and will output primary alignments only. For full documentation of this mode please refer to the [samtools documentation](http://www.htslib.org/doc/samtools-collate.html#OPTIONS).
 
 ### `--reads_in_memory` (optional)
 
-Only relevant in combination with `--samtools_collate_fast`. It specifies how many alignment reads are kept in memory [default = '100000']. This is useful for speeding up the processes `COLLATE_FASTQ_MAP`, `COLLATE_FASTQ_UNMAP` and `SAMTOOLS_COLLATEFASTQ_SINGLE_END`.
+Only relevant in combination with `--samtools_collate_fast`. It specifies how many alignment reads are kept in memory [default = '100000']. This is useful for speeding up the process `SAMTOOLS_COLLATEFASTQ`.
 
 Example:
 

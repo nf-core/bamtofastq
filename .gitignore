@@ -8,9 +8,9 @@ testing*
 *.pyc
 null/
 .lineage/
+.nf-test/
+.nf-test.log
 *.fasta
 *.fai
-.nf-test*
-.nf-test/
 modules/nf-core/**/tests/
 subworkflows/nf-core/**/tests/

@@ -12,12 +12,8 @@ nextflow_pipeline {
             params {
                 outdir = "$outputDir"
                 // Input data
-                input = "https://raw.githubusercontent.com/nf-core/test-datasets/bamtofastq/samplesheet/test_bam_samplesheet_no_bai.csv"
-                fasta = 'https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta'
-
-                // Genome references
-                genome = null
-                igenomes_ignore = true
+                pipelines_testdata_base_path = 'https://raw.githubusercontent.com/nf-core/test-datasets/bamtofastq/'
+                input = params.pipelines_testdata_base_path + 'samplesheet/test_bam_samplesheet_no_bai.csv'
             }
         }
 

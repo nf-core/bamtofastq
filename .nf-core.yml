@@ -1,4 +1,4 @@
-nf_core_version: 4.0.2
+nf_core_version: 4.2.2
 repository_type: pipeline
 template:
   author: Friederike Hanssen, Susanne Jodoin
@@ -8,10 +8,4 @@ template:
   name: bamtofastq
   org: nf-core
   outdir: .
-  version: 2.2.1
-lint:
-  files_exist:
-    - .github/workflows/linting_comment.yml
-  files_unchanged:
-    - .github/workflows/branch.yml
-    - .github/workflows/linting.yml
+  version: 2.3.0dev
