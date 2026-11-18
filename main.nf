@@ -98,12 +98,14 @@ workflow {
         params.subMap(referenceParams()),
     )
 
+    def references = PIPELINE_INITIALISATION.out.references.getVal()
+
     //
     // WORKFLOW: Run main workflow
     //
     NFCORE_BAMTOFASTQ(
         PIPELINE_INITIALISATION.out.samplesheet,
-        PIPELINE_INITIALISATION.out.references.getVal(),
+        references,
     )
     //
     // SUBWORKFLOW: Run completion tasks

@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#165](https://github.com/nf-core/bamtofastq/pull/165) - Bump minimal Nextflow version to 26.04.0, nf-schema to 3.0.0 and update subworkflow utils_nfschema_plugin
 - [#168](https://github.com/nf-core/bamtofastq/pull/168) - Template update for nf-core/tools v4.2.2
 - [#166](https://github.com/nf-core/bamtofastq/pull/166) - Convert paired-end input with a single `samtools collate | samtools fastq` pass, replacing the `ALIGNMENT_TO_FASTQ` subworkflow; paired-end reads are now published as `*_{1,2}.fq.gz` instead of `*_{1,2}.merged.fastq.gz`
+- [#159](https://github.com/nf-core/bamtofastq/pull/159) - Update nf-schema to 3.1.0 and add the nf-core-utils 0.7.0 plugin
 
 ### `Fixed`
 
