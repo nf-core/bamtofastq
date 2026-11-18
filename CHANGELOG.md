@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | htslib        | 1.23.1      | 1.25        |
 | multiqc       | 1.34        | 1.35        |
 | nf-core-utils |             | 0.7.0       |
-| nf-schema     | 2.6.1       | 3.0.0       |
+| nf-schema     | 2.6.1       | 3.1.0       |
 | nft-utils     | 0.0.9       | 1.2.1       |
 | samtools      | 1.23.1      | 1.25        |
 
