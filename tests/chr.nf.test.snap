@@ -21,7 +21,7 @@
                 "SAMTOOLS_CHR_INDEX": {
                     "samtools": 1.25
                 },
-                "SAMTOOLS_COLLATEFASTQ_SINGLE_END": {
+                "SAMTOOLS_COLLATEFASTQ": {
                     "samtools": 1.25
                 },
                 "SAMTOOLS_FAIDX": {
@@ -81,7 +81,7 @@
             ],
             "No warnings"
         ],
-        "timestamp": "2026-11-12T19:20:58.089022591",
+        "timestamp": "2026-11-18T13:26:22.763758885",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
