@@ -1,16 +1,10 @@
 {
-    "-profile test --no_read_qc": {
+    "-profile test --no_read_QC": {
         "content": [
-            18,
+            14,
             {
                 "CHECKPAIREDEND": {
                     "samtools": 1.25
-                },
-                "FASTQC_POST_CONVERSION": {
-                    "fastqc": "0.13.0"
-                },
-                "FASTQC_PRE_CONVERSION": {
-                    "fastqc": "0.13.0"
                 },
                 "FASTQUTILS_INFO": {
                     "fastqutils": "0.25.3"
@@ -32,19 +26,6 @@
                 }
             },
             [
-                "fastqc",
-                "fastqc/test.post_conversion_1_fastqc.html",
-                "fastqc/test.post_conversion_1_fastqc.zip",
-                "fastqc/test.post_conversion_2_fastqc.html",
-                "fastqc/test.post_conversion_2_fastqc.zip",
-                "fastqc/test.pre_conversion_fastqc.html",
-                "fastqc/test.pre_conversion_fastqc.zip",
-                "fastqc/test2.post_conversion_1_fastqc.html",
-                "fastqc/test2.post_conversion_1_fastqc.zip",
-                "fastqc/test2.post_conversion_2_fastqc.html",
-                "fastqc/test2.post_conversion_2_fastqc.zip",
-                "fastqc/test2.pre_conversion_fastqc.html",
-                "fastqc/test2.pre_conversion_fastqc.zip",
                 "fastqutils",
                 "fastqutils/test.txt",
                 "fastqutils/test2.txt",
@@ -89,9 +70,9 @@
                 "test2.stats:md5,20051479fcd863823a1b27b2064d5c15"
             ],
             "No BAM files",
-            "No CRAM files"
+            "No warnings"
         ],
-        "timestamp": "2026-11-11T13:02:46.541398085",
+        "timestamp": "2026-11-18T13:36:02.585593422",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"

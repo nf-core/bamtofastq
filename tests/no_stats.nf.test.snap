@@ -67,9 +67,9 @@
                 "test_2.fq.gz:md5,70ef5d106a5974a211ac885e703cdbd0"
             ],
             "No BAM files",
-            "No CRAM files"
+            "No warnings"
         ],
-        "timestamp": "2026-11-11T13:03:08.881201426",
+        "timestamp": "2026-11-18T13:28:41.811843314",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
