@@ -42,7 +42,7 @@ workflow PIPELINE_INITIALISATION {
     references_datasheet // string: Path to a references datasheet
     references_datasheets_path // string: Location of the datasheets used with igenomes_ignore
     references_schema // string: Path to the references datasheet schema
-    references_params // map: Reference params set by the user, even to null
+    references_params // map: Reference params: null reads the datasheet or genome config, false turns one off
 
     main:
 
@@ -108,7 +108,7 @@ workflow PIPELINE_INITIALISATION {
     )
 
     //
-    // References come from --genome (iGenomes) or from a references datasheet; an explicit parameter, even null, wins
+    // References come from --genome (iGenomes) or from a references datasheet; a non-null parameter wins, false turns it off
     //
     def references_path = getReferencePath(
         references: references_datasheet,

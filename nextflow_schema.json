@@ -78,21 +78,37 @@
                     "help_text": "iGenomes: key in conf/igenomes.config. With --igenomes_ignore: path under --references_datasheets_path, without `.yml` (e.g. GATK/GRCh38 for igenomes/GATK/GRCh38.yml)."
                 },
                 "fasta": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
+                    "type": ["string", "boolean"],
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "format": "file-path",
+                            "exists": true,
+                            "mimetype": "text/plain",
+                            "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$"
+                        },
+                        {
+                            "enum": ["false", false]
+                        }
+                    ],
                     "description": "Path to FASTA genome file.",
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
                     "fa_icon": "far fa-file-code"
                 },
                 "fasta_fai": {
-                    "type": "string",
-                    "format": "file-path",
-                    "exists": true,
-                    "mimetype": "text/plain",
-                    "pattern": "^\\S+\\.fn?a(sta)?.fai(\\.gz)?$",
+                    "type": ["string", "boolean"],
+                    "anyOf": [
+                        {
+                            "type": "string",
+                            "format": "file-path",
+                            "exists": true,
+                            "mimetype": "text/plain",
+                            "pattern": "^\\S+\\.fn?a(sta)?.fai(\\.gz)?$"
+                        },
+                        {
+                            "enum": ["false", false]
+                        }
+                    ],
                     "description": "Path to FASTA FAI genome index file.",
                     "help_text": "This parameter is *mandatory* if `--genome` is not specified. If you don't have a BWA index available this will be generated for you automatically. Combine with `--save_reference` to save BWA index for future runs.",
                     "fa_icon": "far fa-file-code"
