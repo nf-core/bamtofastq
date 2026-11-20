@@ -18,8 +18,8 @@
 include { BAMTOFASTQ              } from './workflows/bamtofastq'
 include { SAMTOOLS_FAIDX          } from './modules/nf-core/samtools/faidx'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { getReferenceNames       } from 'plugin/nf-core-utils'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
-include { referenceParams         } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,6 +77,8 @@ workflow NFCORE_BAMTOFASTQ {
 */
 
 workflow {
+    def references_schema = "${projectDir}/assets/schema_references.json"
+
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
@@ -95,7 +97,8 @@ workflow {
         params.igenomes_ignore,
         params.references,
         params.references_datasheets_path,
-        params.subMap(referenceParams()),
+        references_schema,
+        params.subMap(getReferenceNames(schema: references_schema)),
     )
 
     def references = PIPELINE_INITIALISATION.out.references.getVal()
