@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#154](https://github.com/nf-core/bamtofastq/pull/154) - Add manifest.diagram to nextflow.config
 - [#149](https://github.com/nf-core/bamtofastq/pull/149) - Add GATK.GRCh38 and test genome keys to igenomes.config
 - [#158](https://github.com/nf-core/bamtofastq/pull/158) - Add fasta_fai for iGenomes entries
+- [#159](https://github.com/nf-core/bamtofastq/pull/159) - Add `--references` datasheet input (alternative to iGenomes)
 
 ### `Changed`
 
@@ -22,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#165](https://github.com/nf-core/bamtofastq/pull/165) - Bump minimal Nextflow version to 26.04.0, nf-schema to 3.0.0 and update subworkflow utils_nfschema_plugin
 - [#168](https://github.com/nf-core/bamtofastq/pull/168) - Template update for nf-core/tools v4.2.2
 - [#166](https://github.com/nf-core/bamtofastq/pull/166) - Convert paired-end input with a single `samtools collate | samtools fastq` pass, replacing the `ALIGNMENT_TO_FASTQ` subworkflow; paired-end reads are now published as `*_{1,2}.fq.gz` instead of `*_{1,2}.merged.fastq.gz`
+- [#159](https://github.com/nf-core/bamtofastq/pull/159) - Update nf-schema to 3.1.0 and add the nf-core-utils 0.7.0 plugin
 
 ### `Fixed`
 
@@ -31,16 +33,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#156](https://github.com/nf-core/bamtofastq/pull/156) - Remove PREPARE_INDICES subworkflow
 
+### `Parameters`
+
+| Params                         | Status |
+| ------------------------------ | ------ |
+| `--references`                 | Added  |
+| `--references_base_path`       | Added  |
+| `--references_datasheets_path` | Added  |
+
 ### `Dependencies`
 
-| Dependency | Old version | New version |
-| ---------- | ----------- | ----------- |
-| fastqc     | 0.12.1      | 0.13.0      |
-| htslib     | 1.23.1      | 1.25        |
-| multiqc    | 1.34        | 1.35        |
-| nf-schema  | 2.6.1       | 3.0.0       |
-| nft-utils  | 0.0.9       | 1.2.1       |
-| samtools   | 1.23.1      | 1.25        |
+| Dependency    | Old version | New version |
+| ------------- | ----------- | ----------- |
+| fastqc        | 0.12.1      | 0.13.0      |
+| htslib        | 1.23.1      | 1.25        |
+| multiqc       | 1.34        | 1.35        |
+| nf-core-utils |             | 0.7.0       |
+| nf-schema     | 2.6.1       | 3.1.0       |
+| nft-utils     | 0.0.9       | 1.2.1       |
+| samtools      | 1.23.1      | 1.25        |
 
 ## v2.2.1 - Radia Perlman
 

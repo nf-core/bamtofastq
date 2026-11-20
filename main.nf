@@ -11,15 +11,6 @@
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    GENOME PARAMETER VALUES
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-params.fasta     = getGenomeAttribute('fasta')
-params.fasta_fai = getGenomeAttribute('fasta_fai')
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     IMPORT FUNCTIONS / MODULES / SUBWORKFLOWS / WORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
@@ -27,6 +18,7 @@ params.fasta_fai = getGenomeAttribute('fasta_fai')
 include { BAMTOFASTQ              } from './workflows/bamtofastq'
 include { SAMTOOLS_FAIDX          } from './modules/nf-core/samtools/faidx'
 include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
+include { getReferenceNames       } from 'plugin/nf-core-utils'
 include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamtofastq_pipeline'
 
 /*
@@ -41,22 +33,23 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_bamt
 workflow NFCORE_BAMTOFASTQ {
     take:
     samplesheet // channel: samplesheet read in from --input
+    references // map: resolved reference files
 
     main:
     // [meta, fasta, fai] for the run; empty when no reference
-    if (!params.fasta) {
+    if (!references.fasta) {
         ch_references = channel.empty()
     }
-    else if (params.fasta_fai) {
-        ch_references = channel.fromPath(params.fasta)
+    else if (references.fasta_fai) {
+        ch_references = channel.fromPath(references.fasta)
             .collect()
-            .combine(channel.fromPath(params.fasta_fai))
+            .combine(channel.fromPath(references.fasta_fai))
             .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
             .collect()
     }
     else {
-        SAMTOOLS_FAIDX(channel.fromPath(params.fasta).map { fasta -> [[id: fasta.baseName], fasta, []] }, false)
-        ch_references = channel.fromPath(params.fasta)
+        SAMTOOLS_FAIDX(channel.fromPath(references.fasta).map { fasta -> [[id: fasta.baseName], fasta, []] }, false)
+        ch_references = channel.fromPath(references.fasta)
             .combine(SAMTOOLS_FAIDX.out.fai.map { _meta, fasta_fai -> fasta_fai })
             .map { fasta, fasta_fai -> [[id: fasta.baseName], fasta, fasta_fai] }
             .collect()
@@ -84,6 +77,8 @@ workflow NFCORE_BAMTOFASTQ {
 */
 
 workflow {
+    def references_schema = "${projectDir}/assets/schema_references.json"
+
     //
     // SUBWORKFLOW: Run initialisation tasks
     //
@@ -97,13 +92,23 @@ workflow {
         params.help_full,
         params.show_hidden,
         params.monochrome_logs,
+        params.genome,
+        params.genomes,
+        params.igenomes_ignore,
+        params.references,
+        params.references_datasheets_path,
+        references_schema,
+        params.subMap(getReferenceNames(schema: references_schema)),
     )
+
+    def references = PIPELINE_INITIALISATION.out.references.getVal()
 
     //
     // WORKFLOW: Run main workflow
     //
     NFCORE_BAMTOFASTQ(
-        PIPELINE_INITIALISATION.out.samplesheet
+        PIPELINE_INITIALISATION.out.samplesheet,
+        references,
     )
     //
     // SUBWORKFLOW: Run completion tasks
@@ -116,23 +121,4 @@ workflow {
         params.monochrome_logs,
         NFCORE_BAMTOFASTQ.out.multiqc_report,
     )
-}
-
-/*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    FUNCTIONS
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-*/
-
-//
-// Get attribute from genome config file e.g. fasta
-//
-
-def getGenomeAttribute(attribute) {
-    if (params.genomes && params.genome && params.genomes.containsKey(params.genome)) {
-        if (params.genomes[params.genome].containsKey(attribute)) {
-            return params.genomes[params.genome][attribute]
-        }
-    }
-    return null
 }

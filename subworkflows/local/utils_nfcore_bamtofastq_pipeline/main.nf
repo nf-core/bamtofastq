@@ -16,6 +16,8 @@ include { completionEmail         } from '../../nf-core/utils_nfcore_pipeline'
 include { completionSummary       } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NFCORE_PIPELINE   } from '../../nf-core/utils_nfcore_pipeline'
 include { UTILS_NEXTFLOW_PIPELINE } from '../../nf-core/utils_nextflow_pipeline'
+include { getReferencePath        } from 'plugin/nf-core-utils'
+include { getReferences           } from 'plugin/nf-core-utils'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -34,6 +36,13 @@ workflow PIPELINE_INITIALISATION {
     help_full // boolean: Show the full help message
     show_hidden // boolean: Show hidden parameters in the help message
     monochrome_logs // boolean: Disable ANSI colour codes in log output
+    genome // string: iGenomes key, or datasheet name with igenomes_ignore
+    genomes // map: iGenomes catalogue
+    igenomes_ignore // boolean: Read --genome as a datasheet name
+    references_datasheet // string: Path to a references datasheet
+    references_datasheets_path // string: Location of the datasheets used with igenomes_ignore
+    references_schema // string: Path to the references datasheet schema
+    references_params // map: Reference params: null reads the datasheet or genome config, false turns one off
 
     main:
 
@@ -99,9 +108,21 @@ workflow PIPELINE_INITIALISATION {
     )
 
     //
-    // Custom validation for pipeline parameters
+    // References come from --genome (iGenomes) or from a references datasheet; a non-null parameter wins, false turns it off
     //
-    validateInputParameters()
+    def references_path = getReferencePath(
+        references: references_datasheet,
+        genome: genome,
+        igenomesIgnore: igenomes_ignore,
+        datasheetPath: references_datasheets_path,
+    )
+    def references_resolved = getReferences(
+        schema: references_schema,
+        rows: references_path ? samplesheetToList(references_path, references_schema, unrecognisedHeaders: 'skip') : null,
+        params: references_params,
+        genome: genome,
+        genomes: genomes,
+    )
 
     //
     // Create channel from input file provided through input
@@ -120,6 +141,7 @@ workflow PIPELINE_INITIALISATION {
         .set { ch_samplesheet }
 
     emit:
+    references  = references_resolved
     samplesheet = ch_samplesheet
     versions    = ch_versions
 }
@@ -173,13 +195,6 @@ workflow PIPELINE_COMPLETION {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 //
-// Check and validate pipeline parameters
-//
-def validateInputParameters() {
-    genomeExistsError()
-}
-
-//
 // Validate channels from input samplesheet
 //
 def validateInputSamplesheet(input) {
@@ -194,15 +209,6 @@ def validateInputSamplesheet(input) {
     return [metas[0], fastqs]
 }
 
-//
-// Exit pipeline if incorrect --genome key provided
-//
-def genomeExistsError() {
-    if (params.genomes && params.genome && !params.genomes.containsKey(params.genome)) {
-        def error_string = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" + "  Genome '${params.genome}' not found in any config files provided to the pipeline.\n" + "  Currently, the available genome keys are:\n" + "  ${params.genomes.keySet().join(", ")}\n" + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-        error(error_string)
-    }
-}
 //
 // Generate methods description for MultiQC
 //

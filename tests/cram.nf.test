@@ -48,4 +48,44 @@ nextflow_pipeline {
             )
         }
     }
+
+    test("-profile test --input test_cram_samplesheet.csv --references") {
+
+        when {
+            params {
+                outdir                       = "$outputDir"
+                pipelines_testdata_base_path = 'https://raw.githubusercontent.com/nf-core/test-datasets/bamtofastq/'
+                input                        = params.pipelines_testdata_base_path + 'samplesheet/test_cram_samplesheet.csv'
+                genome                       = null
+                references                   = "${projectDir}/tests/assets/cram.yml"
+                references_base_path         = 'https://raw.githubusercontent.com/nf-core/test-datasets/modules/data'
+            }
+        }
+
+        then {
+            // stable_name: All files + folders in ${params.outdir}/ with a stable name
+            def stable_name = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // stable_path: All files with stable content
+            def stable_path = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
+            // bam_files: All bam files
+            def bam_files  = getAllFilesFromDir(params.outdir, include: ['**/*.bam'])
+            // cram_files: All cram files
+            def cram_files  = getAllFilesFromDir(params.outdir, include: ['**/*.cram'])
+            // Reference matching the CRAM header, used by nft-bam to verify cram reads
+            def fasta      = 'https://raw.githubusercontent.com/nf-core/test-datasets/modules/data/genomics/homo_sapiens/genome/genome.fasta'
+            // CRAM decoding needs the reference from the datasheet: a bad
+            // resolution fails the run, so success proves the reference worked
+            assert workflow.success
+            assertAll(
+                { assert snapshot(
+                    workflow.trace.succeeded().size(),
+                    removeFromYamlMap("${outputDir}/pipeline_info/nf_core_bamtofastq_software_mqc_versions.yml", "Workflow"),
+                    stable_name.isEmpty() ? 'No stable paths' : stable_name,
+                    stable_path.isEmpty() ? 'No stable content' : stable_path,
+                    bam_files.isEmpty() ? 'No BAM files' : bam_files.collect { file -> file.getName() + ":md5," +  bam(file.toString()).readsMD5 },
+                    cram_files.isEmpty() ? 'No CRAM files' : cram_files.collect { file -> file.getName() + ":md5," +  cram(file.toString(), fasta).readsMD5 },
+                ).match() }
+            )
+        }
+    }
 }
