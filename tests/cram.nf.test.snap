@@ -82,9 +82,9 @@
                 "test2.stats:md5,4e30ebdb96f5f5e6c53cfaaf50a75fd0"
             ],
             "No BAM files",
-            "No CRAM files"
+            "No warnings"
         ],
-        "timestamp": "2026-11-11T13:00:51.838159641",
+        "timestamp": "2026-11-18T13:27:02.160539093",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.10.0"
